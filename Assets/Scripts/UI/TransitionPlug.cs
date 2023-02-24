@@ -1,0 +1,122 @@
+using System;
+using Helper;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
+
+namespace UI
+{
+    public class TransitionPlug : MonoBehaviour, IPointerDownHandler
+    {
+        [SerializeField] private TransitionLineInput transitionLineInput;
+
+        public StateChartManager.TransitionCondition transitionCondition;
+        public StatePlaceElement connectedState;
+        
+        private RectTransform _rectTransform;
+        private Image _image;
+        private Vector2 _plugDir;
+        private Vector3 _plugOuterPos;
+        private bool _isBeingDragged;
+        private Vector3 _mousePosition;
+        private bool _isConnectedToOtherState;
+        private int _connectedSlotId;
+
+        private void Awake()
+        {
+            _rectTransform = GetComponent<RectTransform>();
+            _image = GetComponent<Image>();
+        }
+
+        private void Start()
+        {
+            connectedState = GetComponentInParent<StatePlaceElement>();
+            transform.SetAsFirstSibling();
+            UpdateVariablesOnNewPos();
+        }
+
+        public void Initialize(TransitionUIData uiData)
+        {
+            _image.color = uiData.color;
+            transitionCondition = uiData.condition;
+        }
+
+        public int GetConnectedSlotId()
+        {
+            return _connectedSlotId;
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            _isBeingDragged = true;
+            if (_isConnectedToOtherState)
+            {
+                StateChartUIManager.Instance.RemoveTransitionByPlug(this);
+                transitionLineInput.ClearLine();
+                _isConnectedToOtherState = false;
+            }
+        }
+
+        private void Update()
+        {
+            if (!_isBeingDragged)
+                return;
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                _isBeingDragged = false;
+                return;
+            }
+
+            _mousePosition = Input.mousePosition;
+            if(MovePlugIfEmptySlotInRange())
+                return;
+            
+            var posDiff = _mousePosition - _plugOuterPos;
+            var distance = (posDiff * _plugDir).SumOfElements();
+            if (transitionLineInput.StartDrawingIfInRange(distance, _plugDir))
+            {
+                _isBeingDragged = false;
+            }
+        }
+
+        private bool MovePlugIfEmptySlotInRange()
+        {
+            int emptySlotId = connectedState.IsPosInRangeOfEmptySlot(_mousePosition);
+            if (emptySlotId >= 0)
+            {
+                connectedState.MoveTransitionPlugToSlot(this, emptySlotId);
+                UpdateVariablesOnNewPos();
+                return true;
+            }
+
+            return false;
+        }
+
+        public Transform GetLineTransform()
+        {
+            return transform.GetChild(0);
+        }
+
+        private void UpdateVariablesOnNewPos()
+        {
+            _plugDir = _rectTransform.ZRotToDir();
+            _plugOuterPos = _rectTransform.position + (Vector3)_plugDir * _rectTransform.sizeDelta.y;
+        }
+
+        public void DisconnectLine()
+        {
+            _isConnectedToOtherState = false;
+            transitionLineInput.ClearLine();
+        }
+
+        public void OnTransitionConnected(StatePlaceElement otherState, int connectedSlotId)
+        {
+            _isConnectedToOtherState = true;
+            _connectedSlotId = connectedSlotId;
+            StateChartUIManager.Instance.HandleNewTransitionConnected(GetComponentInParent<StatePlaceElement>(),
+                otherState, this);
+        }
+    }
+}
