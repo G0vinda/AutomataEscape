@@ -37,7 +37,7 @@ namespace UI
         
         private void OnEnable()
         {
-            _scaledLineElementLength = StateChartUIManager.Instance.ScaleFloat(lineElementLength);
+            _scaledLineElementLength = GameManager.Instance.GetStateChartUIManager().ScaleFloat(lineElementLength);
         }
 
         void Update()
@@ -141,7 +141,7 @@ namespace UI
             var lastDirectionIsHorizontal = Mathf.Abs(lastDirection.x) > 0;
             var currentDirectionIsHorizontal = Mathf.Abs(currentDirection.x) > 0;
             
-            var downScaledWidth = StateChartUIManager.Instance.DownscaleFloat(lineElementWidth);
+            var downScaledWidth = GameManager.Instance.GetStateChartUIManager().DownscaleFloat(lineElementWidth);
             var halfWidth = downScaledWidth * 0.5f;
             Vector3 currentInputPositionOffset;
 

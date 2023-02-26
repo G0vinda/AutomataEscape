@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GridManager gridManager;
     [SerializeField] private CameraController cameraController;
     [SerializeField] private StateChartManager stateChartManager;
-    [SerializeField] private StateChartUIManager stateChartUI;
+    [SerializeField] private StateChartUIManager stateChartUIManager;
     [SerializeField] private StateChartRunner robotStateChartRunnerPrefab;
     [SerializeField] private GameObject keyObject;
 
@@ -86,9 +86,19 @@ public class GameManager : MonoBehaviour
         LoadLevel(_currentLevelId);
     }
 
+    public StateChartUIManager GetStateChartUIManager()
+    {
+        return stateChartUIManager;
+    }
+
+    public StateChartManager GetStateChartManager()
+    {
+        return stateChartManager;
+    }
+
     public void ToggleStateChartView()
     {
-        stateChartUI.gameObject.SetActive(!stateChartUI.gameObject.activeSelf);
+        stateChartUIManager.gameObject.SetActive(!stateChartUIManager.gameObject.activeSelf);
     }
 
     public void ToggleStateChartRunState()
@@ -125,7 +135,7 @@ public class GameManager : MonoBehaviour
 
         // Setup StateChart
         stateChartManager.ResetStateChart();
-        stateChartUI.SetupUI(level.AvailableActions, level.AvailableTransitionConditions);
+        stateChartUIManager.SetupUI(level.AvailableActions, level.AvailableTransitionConditions);
     }
 
     private void LoadLevelGrid(LevelData level)

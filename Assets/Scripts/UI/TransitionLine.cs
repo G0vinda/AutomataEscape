@@ -277,20 +277,21 @@ namespace UI
             var lastLineElement = _lineElements.ElementAt(_lineElements.Count - 1);
             var lineDir = lastLineElement.Direction;
             var lineDirIsHorizontal = Mathf.Abs(lineDir.x) > 0;
+            var uiManager = GameManager.Instance.GetStateChartUIManager();
 
             if (lineDir - slotDir == Vector2.zero || lineDir + slotDir == Vector2.zero) // Directions are opposite
             {
                 if (lineDirIsHorizontal)
                 {
                     var distance1 = Mathf.Abs(slotPos.y - linePos.y);
-                    var line1Length = StateChartUIManager.Instance.ScaleFloat(distance1);
+                    var line1Length = uiManager.ScaleFloat(distance1);
                     var line1 = slotPos.y > linePos.y
                         ? CreateUpElement(lastLineElement, line1Length)
                         : CreateDownElement(lastLineElement, line1Length);
                     _lineElements.Add(line1);
                     
                     var distance2 = Mathf.Abs(slotPos.x - linePos.x);
-                    var line2Length = StateChartUIManager.Instance.ScaleFloat(distance2);
+                    var line2Length = uiManager.ScaleFloat(distance2);
                     var line2 = slotPos.x > linePos.x 
                         ? CreateRightElement(line1, line2Length)
                         : CreateLeftElement(line1, line2Length);
@@ -299,14 +300,14 @@ namespace UI
                 else
                 {
                     var distance1 = Mathf.Abs(slotPos.x - linePos.x);
-                    var line1Length = StateChartUIManager.Instance.ScaleFloat(distance1);
+                    var line1Length = uiManager.ScaleFloat(distance1);
                     var line1 = slotPos.x > linePos.x 
                         ? CreateRightElement(lastLineElement, line1Length)
                         : CreateLeftElement(lastLineElement, line1Length);
                     _lineElements.Add(line1);
 
                     var distance2 = Mathf.Abs(slotPos.y - linePos.y);
-                    var line2Length = StateChartUIManager.Instance.ScaleFloat(distance2);
+                    var line2Length = uiManager.ScaleFloat(distance2);
                     var line2 = slotPos.y > linePos.y 
                         ? CreateUpElement(line1, line2Length)
                         : CreateDownElement(line1, line2Length);
@@ -317,8 +318,8 @@ namespace UI
             {
                 var xDiff = slotPos.x - linePos.x;
                 var yDiff = slotPos.y - linePos.y;
-                var scaledXDiff = StateChartUIManager.Instance.ScaleFloat(xDiff);
-                var scaledYDiff = StateChartUIManager.Instance.ScaleFloat(yDiff);
+                var scaledXDiff = uiManager.ScaleFloat(xDiff);
+                var scaledYDiff = uiManager.ScaleFloat(yDiff);
 
                 if (lineDirIsHorizontal)
                 {
@@ -328,7 +329,7 @@ namespace UI
                     ResizeLastElement(newLength);
 
                     var lastElement = _lineElements.ElementAt(_lineElements.Count - 1);
-                    var line2Length = StateChartUIManager.Instance.ScaleFloat(Mathf.Abs(yDiff)) - 0.5f * _width;
+                    var line2Length = uiManager.ScaleFloat(Mathf.Abs(yDiff)) - 0.5f * _width;
                     var finishElement = yDiff > 0 ? CreateUpElement(lastElement, line2Length) : CreateDownElement(lastElement, line2Length);
                     _lineElements.Add(finishElement);
                 }
@@ -340,7 +341,7 @@ namespace UI
                     ResizeLastElement(newLength);
                     
                     var lastElement = _lineElements.ElementAt(_lineElements.Count - 1);
-                    var line2Length = StateChartUIManager.Instance.ScaleFloat(Mathf.Abs(xDiff)) - 0.5f * _width;
+                    var line2Length = uiManager.ScaleFloat(Mathf.Abs(xDiff)) - 0.5f * _width;
                     var finishElement = xDiff > 0 ? CreateRightElement(lastElement, line2Length) : CreateLeftElement(lastElement, line2Length);
                     _lineElements.Add(finishElement);
                 }

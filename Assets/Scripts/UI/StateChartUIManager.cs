@@ -15,8 +15,7 @@ namespace UI
         [SerializeField] private TransitionPlaceElement transitionPlaceElementPrefab;
         [SerializeField] private StateUIData startStateData;
 
-        public static StateChartUIManager Instance;
-
+        private StateChartManager _stateChartManager;
         private bool _isInPlacement;
         private StatePlaceElement _statePlaceElement;
         private TransitionPlaceElement _transitionPlaceElement;
@@ -24,17 +23,9 @@ namespace UI
         private Dictionary<(StatePlaceElement, StatePlaceElement), TransitionPlug> _connectedTransitions = new();
         private Canvas _canvas;
 
-        private void Awake()
+        private void Start()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                _canvas = GetComponent<Canvas>();
-            }
-            else
-            {
-                Destroy(this);
-            }
+            _stateChartManager = GameManager.Instance.GetStateChartManager();
         }
 
         public void SetupUI(List<StateChartManager.StateAction> availableActions,
@@ -124,7 +115,7 @@ namespace UI
                 i--;
             }
 
-            StateChartManager.Instance.RemoveState(_statePlaceElement.AssignedId);
+            _stateChartManager.RemoveState(_statePlaceElement.AssignedId);
             _statePlaceElement.AssignedId = -1;
         }
 
@@ -134,11 +125,11 @@ namespace UI
             var fromState = plug.connectedState;
             if (transitionCondition == StateChartManager.TransitionCondition.Default)
             {
-                StateChartManager.Instance.RemoveDefaultTransition(fromState.AssignedId);
+                _stateChartManager.RemoveDefaultTransition(fromState.AssignedId);
             }
             else
             {
-                StateChartManager.Instance.RemoveTransition(plug.transitionCondition, fromState.AssignedId);
+                _stateChartManager.RemoveTransition(plug.transitionCondition, fromState.AssignedId);
             }
 
             var keyToRemove = _connectedTransitions.First(item => item.Value == plug).Key;
@@ -162,7 +153,7 @@ namespace UI
                 return false;
             }
 
-            int assignedId = StateChartManager.Instance.AddState(stateUIData.action);
+            int assignedId = _stateChartManager.AddState(stateUIData.action);
             _statePlaceElement.AssignedId = assignedId;
             return true;
         }
@@ -185,11 +176,11 @@ namespace UI
             _connectedTransitions.Add((state1, state2), plug);
             if (plug.transitionCondition == StateChartManager.TransitionCondition.Default)
             {
-                StateChartManager.Instance.AddDefaultTransition(state1.AssignedId, state2.AssignedId);
+                _stateChartManager.AddDefaultTransition(state1.AssignedId, state2.AssignedId);
             }
             else
             {
-                StateChartManager.Instance.AddTransition(plug.transitionCondition, state1.AssignedId,
+                _stateChartManager.AddTransition(plug.transitionCondition, state1.AssignedId,
                     state2.AssignedId);
             }
         }

@@ -52,7 +52,7 @@ namespace UI
             _isBeingDragged = true;
             if (_isConnectedToOtherState)
             {
-                StateChartUIManager.Instance.RemoveTransitionByPlug(this);
+                GameManager.Instance.GetStateChartUIManager().RemoveTransitionByPlug(this);
                 transitionLineInput.ClearLine();
                 _isConnectedToOtherState = false;
             }
@@ -115,7 +115,7 @@ namespace UI
         {
             _isConnectedToOtherState = true;
             _connectedSlotId = connectedSlotId;
-            StateChartUIManager.Instance.HandleNewTransitionConnected(GetComponentInParent<StatePlaceElement>(),
+            GameManager.Instance.GetStateChartUIManager().HandleNewTransitionConnected(GetComponentInParent<StatePlaceElement>(),
                 otherState, this);
         }
     }

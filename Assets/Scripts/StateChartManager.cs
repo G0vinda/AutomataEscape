@@ -123,21 +123,7 @@ public class StateChartManager : MonoBehaviour
         }
     }
 
-    public static StateChartManager Instance;
-
     private StateChart _currentStateChart;
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(this);
-        }
-    }
 
     public void ResetStateChart()
     {

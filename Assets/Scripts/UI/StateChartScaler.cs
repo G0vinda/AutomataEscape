@@ -15,7 +15,7 @@ namespace UI
         void Start()
         {
             var scaledHeight =
-                StateChartUIManager.Instance.DownscaleFloat(_rectTransform.sizeDelta.y + 2 * yPadding);
+                GameManager.Instance.GetStateChartUIManager().DownscaleFloat(_rectTransform.sizeDelta.y + 2 * yPadding);
 
             if (Screen.height < scaledHeight)
             {
