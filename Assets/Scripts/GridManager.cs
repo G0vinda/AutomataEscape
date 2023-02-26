@@ -121,6 +121,17 @@ public class GridManager : MonoBehaviour
         return _grid[tileCoordinates].transform.position;
     }
 
+    public List<SpriteRenderer> GetTileObjectRenderers()
+    {
+        var renderers = new List<SpriteRenderer>();
+        foreach (var tile in _grid)
+        {
+            renderers.Add(tile.Value.GetComponentInChildren<SpriteRenderer>());
+        }
+
+        return renderers;
+    }
+
     private void ClearGrid()
     {
         foreach (var tileEntry in _grid)

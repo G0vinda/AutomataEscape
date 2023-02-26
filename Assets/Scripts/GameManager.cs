@@ -10,6 +10,7 @@ using TileType = Tiles.Tile.TileType;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
+    [SerializeField] private CameraController cameraController;
     [SerializeField] private StateChartManager stateChartManager;
     [SerializeField] private StateChartUIManager stateChartUI;
     [SerializeField] private StateChartRunner robotStateChartRunnerPrefab;
@@ -25,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     private LevelData[] _levels;
     private StateChartRunner _stateChartRunner;
-    private int _currentLevelId = 1;
+    private int _currentLevelId = 0;
 
     private void Awake()
     {
@@ -130,6 +131,8 @@ public class GameManager : MonoBehaviour
     private void LoadLevelGrid(LevelData level)
     {
         gridManager.CreateLevelBasedOnGrid(level.Grid);
+        var tileRenderers = gridManager.GetTileObjectRenderers();
+        cameraController.AlignCameraWithLevel(tileRenderers);
         Vector3 robotStartPositionOnGrid = gridManager.GetTilePosition(level.RobotStartPosition);
         Quaternion robotStartRotation = level.RobotStartRotation;
         _stateChartRunner = Instantiate(robotStateChartRunnerPrefab, robotStartPositionOnGrid, robotStartRotation);
