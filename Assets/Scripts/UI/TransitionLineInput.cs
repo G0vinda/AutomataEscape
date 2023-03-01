@@ -30,8 +30,8 @@ namespace UI
         private bool _isDrawing;
         private List<DrawInput> _inputs = new ();
         private float _scaledLineElementLength;
-        private StatePlaceElement[] _placedStates;
-        private StatePlaceElement _stateInRange;
+        private StateUIPlaceElement[] _placedStates;
+        private StateUIPlaceElement _stateInRange;
         private int _slotInRangeId = -1;
         private GameObject _currentUiGizmo;
         
@@ -86,14 +86,13 @@ namespace UI
         {
             if (_isDrawing || distance < lineElementLength * drawingThreshold)
                 return false;
-
-            Debug.Log("Input will start drawing.");
+            
             var lineScaleFactor = 1f / transform.parent.localScale.x;
             transitionLine.Initialize(_scaledLineElementLength, lineElementWidth, direction, lineScaleFactor);
             var transitionLinePosition = transitionLine.transform.position;
             //_inputs.Add(new DrawInput(transitionLinePosition, direction));
             _inputs.Add(new DrawInput(transitionLinePosition + (Vector3)direction * lineElementLength, direction));
-            _placedStates = FindObjectsOfType<StatePlaceElement>();
+            _placedStates = FindObjectsOfType<StateUIPlaceElement>();
             CheckIfStateIsInRange();
             _isDrawing = true;
             return true;
@@ -198,7 +197,7 @@ namespace UI
         {
             foreach (var state in _placedStates)
             {
-                if (state.IsPosInRangeOfState(_inputs[^1].Position))
+                if (state.IsPositionInRangeOfState(_inputs[^1].Position))
                 {
                     _stateInRange = state;
                     return;
@@ -214,8 +213,8 @@ namespace UI
             
             if (_slotInRangeId >= 0)
             {
-                var slotPosition = _stateInRange.GetSlotPos(_slotInRangeId);
-                var slotDirection = _stateInRange.GetSlotDir(_slotInRangeId);
+                var slotPosition = _stateInRange.GetSlotPosition(_slotInRangeId);
+                var slotDirection = _stateInRange.GetSlotDirection(_slotInRangeId);
                 GetComponent<TransitionPlug>().OnTransitionConnected(_stateInRange, _slotInRangeId);
                 _stateInRange.SetSlotToOccupied(_slotInRangeId);
                 _stateInRange.SetSizeToDefault();

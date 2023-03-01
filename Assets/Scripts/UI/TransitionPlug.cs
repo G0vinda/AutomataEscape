@@ -12,7 +12,7 @@ namespace UI
         [SerializeField] private TransitionLineInput transitionLineInput;
 
         public StateChartManager.TransitionCondition transitionCondition;
-        public StatePlaceElement connectedState;
+        public StateUIElement connectedState;
         
         private RectTransform _rectTransform;
         private Image _image;
@@ -25,13 +25,14 @@ namespace UI
 
         private void Awake()
         {
+            connectedState = GetComponentInParent<StateUIElement>();
+            Debug.Log($"connectedState is: {connectedState.name}");
             _rectTransform = GetComponent<RectTransform>();
             _image = GetComponent<Image>();
         }
 
         private void Start()
         {
-            connectedState = GetComponentInParent<StatePlaceElement>();
             transform.SetAsFirstSibling();
             UpdateVariablesOnNewPos();
         }
@@ -49,6 +50,7 @@ namespace UI
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            Debug.Log("Transition plug is clicked");
             _isBeingDragged = true;
             if (_isConnectedToOtherState)
             {
@@ -111,11 +113,11 @@ namespace UI
             transitionLineInput.ClearLine();
         }
 
-        public void OnTransitionConnected(StatePlaceElement otherState, int connectedSlotId)
+        public void OnTransitionConnected(StateUIPlaceElement otherState, int connectedSlotId)
         {
             _isConnectedToOtherState = true;
             _connectedSlotId = connectedSlotId;
-            GameManager.Instance.GetStateChartUIManager().HandleNewTransitionConnected(GetComponentInParent<StatePlaceElement>(),
+            GameManager.Instance.GetStateChartUIManager().HandleNewTransitionConnected(connectedState,
                 otherState, this);
         }
     }

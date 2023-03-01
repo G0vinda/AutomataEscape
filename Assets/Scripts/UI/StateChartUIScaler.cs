@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UI
 {
-    public class StateChartScaler : MonoBehaviour
+    public class StateChartUIScaler : MonoBehaviour
     {
         [SerializeField] private float yPadding;
         private RectTransform _rectTransform;
@@ -14,21 +14,18 @@ namespace UI
             _rectTransform = GetComponent<RectTransform>();
         }
 
-        private float ScaleChart()
+        public float ScaleChart()
         {
             if (!_chartIsScaled)
             {
                 _chartIsScaled = true;
                 var scaledHeight =
                     GameManager.Instance.GetStateChartUIManager().DownscaleFloat(_rectTransform.sizeDelta.y + 2 * yPadding);
-
-                if (Screen.height < scaledHeight)
-                {
-                    _scaleFactor = Screen.height / scaledHeight;
-                    _rectTransform.sizeDelta *= _scaleFactor;
-                }
+                
+                _scaleFactor = Screen.height < scaledHeight ? Screen.height / scaledHeight : 1f;
+                _rectTransform.sizeDelta *= _scaleFactor;
             }
-
+            
             return _scaleFactor;
         }
     }

@@ -24,8 +24,8 @@ namespace UI
         private Vector3 _currentInputPosition;
         private Vector2 _previousDrawDirection;
         private Vector2 _currentDrawDirection;
-        private StatePlaceElement[] _placedStates;
-        private StatePlaceElement _stateInRange;
+        private StateUIPlaceElement[] _placedStates;
+        private StateUIPlaceElement _stateInRange;
         private int _slotInRangeId = -1;
         private readonly List<GameObject> _inputLine = new();
 
@@ -36,7 +36,7 @@ namespace UI
 
         public void Initialize(Vector3 startPos, Vector2 dir)
         {
-            _placedStates = FindObjectsOfType<StatePlaceElement>();
+            _placedStates = FindObjectsOfType<StateUIPlaceElement>();
 
             _isDrawing = true;
             _previousInputPosition = startPos;
@@ -112,7 +112,7 @@ namespace UI
 
         private void ConnectToState()
         {
-            DrawLineToSlot(_stateInRange.GetSlotPos(_slotInRangeId), _stateInRange.GetSlotDir(_slotInRangeId));
+            DrawLineToSlot(_stateInRange.GetSlotPosition(_slotInRangeId), _stateInRange.GetSlotDirection(_slotInRangeId));
             _stateInRange.SetSlotToOccupied(_slotInRangeId);
             connectedSlotId = _slotInRangeId;
             _stateInRange.SetSizeToDefault();
@@ -142,7 +142,7 @@ namespace UI
 
             foreach (var state in _placedStates)
             {
-                if (state.IsPosInRangeOfState(_previousInputPosition))
+                if (state.IsPositionInRangeOfState(_previousInputPosition))
                 {
                     _stateInRange = state;
                     break;

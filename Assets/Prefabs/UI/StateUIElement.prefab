@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 2628453099235809249}
   - component: {fileID: 9185659272735531810}
   m_Layer: 5
-  m_Name: StatePlaceElement
+  m_Name: StateUIElement
   m_TagString: TransitionLineBlocker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -207,12 +207,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2628453099235809261}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1008616aea813a749820649ea32e1b7f, type: 3}
+  m_Script: {fileID: 11500000, guid: 516f3d26ad4d8a64ea1d79f63f931c7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   defaultTransitionPlugPrefab: {fileID: -2470714687439600157, guid: 9770d4c1658db3d4893e7fca7db2bfac, type: 3}
-  image: {fileID: 590796217757801763}
-  textElement: {fileID: 2628453098383229696}
   transitionSlotTransforms:
   - {fileID: 2422806029299052941}
   - {fileID: 4835799232980399223}
@@ -226,9 +224,8 @@ MonoBehaviour:
   - {fileID: 3286361286070926255}
   - {fileID: 6138243836687783605}
   - {fileID: 6716592731447541736}
-  maxSlotMouseAreaWidth: 30
-  maxSlotMouseAreaHeight: 30
-  stateBufferSpace: 90
+  maxSlotMouseAreaWidth: 10
+  maxSlotMouseAreaHeight: 50
 --- !u!1 &2915738242533621414
 GameObject:
   m_ObjectHideFlags: 0

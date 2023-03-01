@@ -9,19 +9,34 @@ namespace UI
     public class StateChartUIManager : MonoBehaviour
     {
         [SerializeField] private List<StateSelectElement> stateSelectElements;
+        [SerializeField] private StateUIPlaceElement statePlaceElementPrefab;
         [SerializeField] private List<TransitionSelectElement> transitionSelectElements;
-        [SerializeField] private StatePlaceElement statePlaceElementPrefab;
-        [SerializeField] private StatePlaceElement startStateElement;
         [SerializeField] private TransitionPlaceElement transitionPlaceElementPrefab;
+        [SerializeField] private StateUIElement startStateElement;
         [SerializeField] private StateUIData startStateData;
+        [SerializeField] private StateChartUIScaler stateChartUIScaler;
 
         private StateChartManager _stateChartManager;
         private bool _isInPlacement;
-        private StatePlaceElement _statePlaceElement;
+        private bool _setupUIOnEnable;
+        private StateUIPlaceElement _statePlaceElement;
         private TransitionPlaceElement _transitionPlaceElement;
+        private List<StateChartManager.StateAction> _availableActions;
+        private List<StateChartManager.TransitionCondition> _availableTransitionConditions;
 
-        private Dictionary<(StatePlaceElement, StatePlaceElement), TransitionPlug> _connectedTransitions = new();
+        private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionPlug> _connectedTransitions = new();
         private Canvas _canvas;
+
+        private void OnEnable()
+        {
+            _canvas = GetComponent<Canvas>();
+            
+            if (!_setupUIOnEnable) return;
+            
+            SetupStateChartUI();
+            EnableAvailableUIElements();
+            _setupUIOnEnable = false;
+        }
 
         private void Start()
         {
@@ -31,34 +46,52 @@ namespace UI
         public void SetupUI(List<StateChartManager.StateAction> availableActions,
             List<StateChartManager.TransitionCondition> availableTransitionConditions)
         {
-            ClearChart();
-            
-            // Setup start state
-            startStateElement.Initialize(this, startStateData);
-            startStateElement.PlaceState();
-            startStateElement.AssignedId = 0;
+            ClearStateChartUI();
+            _availableActions = availableActions;
+            _availableTransitionConditions = availableTransitionConditions;
 
-            // Enabled UI Elements available for that level
-            stateSelectElements.ForEach(x => x.gameObject.SetActive(availableActions.Contains(x.Action)));
-            transitionSelectElements.ForEach(x =>
-                x.gameObject.SetActive(availableTransitionConditions.Contains(x.Condition)));
+            if (gameObject.activeSelf)
+            {
+                SetupStateChartUI();
+                EnableAvailableUIElements();
+            }
+            else
+            {
+                _setupUIOnEnable = true;
+            }
         }
 
-        private void ClearChart()
+        private void SetupStateChartUI()
+        {
+            // The stateChartUIScaler causes Bugs at the moment and will only be necessary for a mobile version of the game
+            // var stateChartUIScaleFactor = stateChartUIScaler.ScaleChart();
+            // var startStateElementOffset = new Vector3(100, 0, 0) * stateChartUIScaleFactor;
+            // var startStateElementTransform = startStateElement.transform;
+            // startStateElementTransform.position = startStateElementTransform.parent.position + startStateElementOffset;
+        }
+
+        private void EnableAvailableUIElements()
+        {
+            stateSelectElements.ForEach(x => x.gameObject.SetActive(_availableActions.Contains(x.Action)));
+            transitionSelectElements.ForEach(x =>
+                x.gameObject.SetActive(_availableTransitionConditions.Contains(x.Condition)));
+        }
+    
+
+        private void ClearStateChartUI()
         {
             var deleteCounter = transform.childCount - 1;
             while (deleteCounter > 0)
             {
                 var childObject = transform.GetChild(deleteCounter).gameObject;
-                if (childObject.TryGetComponent(out StatePlaceElement placeElement))
+                if (childObject.TryGetComponent(out StateUIPlaceElement placeElement))
                 {
-                    RemoveStatePlaceElement(placeElement);
                     Destroy(childObject);
                 }
 
                 deleteCounter--;
             }
-
+            
             _connectedTransitions.Clear();
         }
 
@@ -72,7 +105,7 @@ namespace UI
             // TODO: Adjust to touch input
             _statePlaceElement =
                 Instantiate(statePlaceElementPrefab, Input.mousePosition, Quaternion.identity, transform);
-            _statePlaceElement.Initialize(this, stateUIData);
+            _statePlaceElement.Initialize(stateUIData);
             _isInPlacement = true;
         }
 
@@ -89,7 +122,7 @@ namespace UI
             _isInPlacement = true;
         }
 
-        public void HandleStatePlaceElementClicked(StatePlaceElement placeElement)
+        public void HandleStatePlaceElementClicked(StateUIPlaceElement placeElement)
         {
             if (_isInPlacement)
             {
@@ -102,14 +135,14 @@ namespace UI
         }
 
 
-        private void RemoveStatePlaceElement(StatePlaceElement placeElement)
+        private void RemoveStatePlaceElement(StateUIPlaceElement placeElement)
         {
             for (int i = 0; i < _connectedTransitions.Count; i++)
             {
                 var connectedTransition = _connectedTransitions.ElementAt(i);
                 if (connectedTransition.Key.Item2 != placeElement && connectedTransition.Key.Item1 != placeElement)
                     continue;
-
+                
                 var plug = connectedTransition.Value;
                 RemoveTransitionByPlug(plug);
                 i--;
@@ -161,7 +194,7 @@ namespace UI
         public void HandleTransitionPlaceElementReleased(TransitionUIData transitionUIData)
         {
             _isInPlacement = false;
-            var mouseOverState = HelperFunctions.CheckIfMouseIsOverObjectWithComponent<StatePlaceElement>();
+            var mouseOverState = HelperFunctions.CheckIfMouseIsOverObjectWithComponent<StateUIPlaceElement>();
             if (mouseOverState == null)
             {
                 return;
@@ -170,7 +203,7 @@ namespace UI
             mouseOverState.AddTransitionPlugToState(transitionUIData);
         }
 
-        public void HandleNewTransitionConnected(StatePlaceElement state1, StatePlaceElement state2,
+        public void HandleNewTransitionConnected(StateUIElement state1, StateUIPlaceElement state2,
             TransitionPlug plug)
         {
             _connectedTransitions.Add((state1, state2), plug);
