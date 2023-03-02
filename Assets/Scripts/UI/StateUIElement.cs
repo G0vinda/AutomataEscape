@@ -9,42 +9,56 @@ namespace UI
 {
     public class StateUIElement : MonoBehaviour
     {
-        [SerializeField] protected TransitionPlug defaultTransitionPlugPrefab;
-        [SerializeField] protected RectTransform[] transitionSlotTransforms;
-        [SerializeField] protected float maxSlotMouseAreaWidth;
-        [SerializeField] protected float maxSlotMouseAreaHeight;
-        
+        [SerializeField] public TransitionPlug defaultTransitionPlugPrefab;
+        [SerializeField] public RectTransform[] transitionSlotTransforms;
+        [SerializeField] public Image image;
+        [SerializeField] public TextMeshProUGUI textElement;
+        [SerializeField] public float maxSlotMouseAreaWidth;
+        [SerializeField] public float maxSlotMouseAreaHeight;
+        [SerializeField] public float stateBufferSpace;
+
         public int AssignedId { get; set; }
         
-        protected List<int> _emptySlotIds;
-        protected StateChartUIManager UIManager;
+        [HideInInspector]
+        public List<int> emptySlotIds;
+        [HideInInspector]
+        public TransitionPlug[] connectedTransitionPlugs;
+        
 
-        private void Start()
+        public void SetupEmptySlots()
         {
-            AssignedId = 0;
-            UIManager = GameManager.Instance.GetStateChartUIManager();
-            SetupEmptySlotIds();
-            AddDefaultTransitionPlugToState();
-        }
-
-        protected void SetupEmptySlotIds()
-        {
-            _emptySlotIds = new List<int>();
+            connectedTransitionPlugs = new TransitionPlug[12];
+            emptySlotIds = new List<int>();
             for (int i = 0; i < 12; i++)
             {
-                _emptySlotIds.Add(i);    
+                emptySlotIds.Add(i);    
             }
         }
 
-        protected virtual void AddDefaultTransitionPlugToState()
+        public void SetText(string text)
         {
-            var lastSlotId = transitionSlotTransforms.Length - 1;
-            var newPlug = Instantiate(defaultTransitionPlugPrefab,
-                transitionSlotTransforms[lastSlotId].position,
-                transitionSlotTransforms[lastSlotId].rotation,
-                transform);
-            newPlug.GetLineTransform().rotation = Quaternion.identity;
-            _emptySlotIds.Remove(lastSlotId);
+            textElement.text = text;
+        }
+
+        public void SetImageColor(Color color)
+        {
+            image.color = color;
+        }
+
+        public void AddDefaultTransitionPlugToState()
+        {
+            var defaultSlotId = transitionSlotTransforms.Length - 1;
+            var defaultPlug = InstantiateTransitionPlug(transitionSlotTransforms[defaultSlotId].position,
+                transitionSlotTransforms[defaultSlotId].rotation, defaultSlotId);
+            defaultPlug.GetLineTransform().rotation = Quaternion.identity;
+            emptySlotIds.Remove(defaultSlotId);
+        }
+
+        public TransitionPlug InstantiateTransitionPlug(Vector3 position, Quaternion rotation, int slotId)
+        {
+            var newPlug = Instantiate(defaultTransitionPlugPrefab, position, rotation, transform);
+            connectedTransitionPlugs[slotId] = newPlug;
+            return newPlug;
         }
         
         public void MoveTransitionPlugToSlot(TransitionPlug plug, int newSlotId)
@@ -54,13 +68,21 @@ namespace UI
             plugTransform.rotation = transitionSlotTransforms[newSlotId].rotation;
             plug.GetLineTransform().rotation = Quaternion.identity;
 
-            SetupEmptySlotIds(); // Set all slots to empty
-            _emptySlotIds.Remove(newSlotId);
+            RemoveTransitionPlugFromSlot(plug);
+            connectedTransitionPlugs[newSlotId] = plug;
+            emptySlotIds.Remove(newSlotId);
         }
-        
-        public int IsPosInRangeOfEmptySlot(Vector3 pos)
+
+        public void RemoveTransitionPlugFromSlot(TransitionPlug plug)
         {
-            foreach (var emptySlotId in _emptySlotIds)
+            var oldSlotId = Array.IndexOf(connectedTransitionPlugs, plug);
+            connectedTransitionPlugs[oldSlotId] = null;
+            emptySlotIds.Add(oldSlotId);
+        }
+
+        public int IsPositionInRangeOfEmptySlot(Vector3 pos)
+        {
+            foreach (var emptySlotId in emptySlotIds)
             {
                 var emptySlotTransform = transitionSlotTransforms[emptySlotId];
                 var emptySlotPos = emptySlotTransform.position;
@@ -109,7 +131,7 @@ namespace UI
             return -1;
         }
         
-        protected bool IsPosInSquare(Vector3 pos, float xMin, float yMin, float xMax, float yMax)
+        private bool IsPosInSquare(Vector3 pos, float xMin, float yMin, float xMax, float yMax)
         {
             var x = pos.x;
             var y = pos.y;
@@ -123,6 +145,5 @@ namespace UI
 
             return false;
         }
-
     }
 }

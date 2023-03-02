@@ -85,7 +85,7 @@ namespace UI
 
         private bool MovePlugIfEmptySlotInRange()
         {
-            int emptySlotId = connectedState.IsPosInRangeOfEmptySlot(_mousePosition);
+            int emptySlotId = connectedState.IsPositionInRangeOfEmptySlot(_mousePosition);
             if (emptySlotId >= 0)
             {
                 connectedState.MoveTransitionPlugToSlot(this, emptySlotId);

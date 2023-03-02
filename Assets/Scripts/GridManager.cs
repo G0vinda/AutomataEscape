@@ -136,7 +136,7 @@ public class GridManager : MonoBehaviour
     {
         foreach (var tileEntry in _grid)
         {
-            Destroy(tileEntry.Value);
+            Destroy(tileEntry.Value.gameObject);
         }
         _grid.Clear();
     }

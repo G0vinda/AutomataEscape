@@ -72,7 +72,7 @@ namespace UI
                     return;
 
                 var slotWasInRange = _slotInRangeId >= 0;
-                _slotInRangeId = _stateInRange.IsPosInRangeOfEmptySlot(_currentInputPosition);
+                _slotInRangeId = _stateInRange.IsPositionInRangeOfEmptySlot(_currentInputPosition);
                 if (!slotWasInRange && _slotInRangeId >= 0)
                 {
                     _stateInRange.SetSizeToBig();

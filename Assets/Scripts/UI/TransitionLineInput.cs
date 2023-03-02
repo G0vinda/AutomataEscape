@@ -25,12 +25,12 @@ namespace UI
         [SerializeField] private float lineElementWidth;
         [SerializeField] private float drawingThreshold;
         [SerializeField] private float maxBlockDistance;
-        [SerializeField] private GameObject uiGizmo;
 
+        private StateChartUIManager _uiManager;
         private bool _isDrawing;
         private List<DrawInput> _inputs = new ();
         private float _scaledLineElementLength;
-        private StateUIPlaceElement[] _placedStates;
+        private List<StateUIPlaceElement> _placedStates;
         private StateUIPlaceElement _stateInRange;
         private int _slotInRangeId = -1;
         private GameObject _currentUiGizmo;
@@ -38,6 +38,11 @@ namespace UI
         private void OnEnable()
         {
             _scaledLineElementLength = GameManager.Instance.GetStateChartUIManager().ScaleFloat(lineElementLength);
+        }
+
+        private void Start()
+        {
+            _uiManager = GameManager.Instance.GetStateChartUIManager();
         }
 
         void Update()
@@ -62,15 +67,11 @@ namespace UI
             }
 
             CheckDragLengthForDrawing();
-            if (Input.GetMouseButtonUp(0))
-            {
-                HandleMouseRelease();
-            }
 
             if (_stateInRange != null)
             {
                 var slotWasInRange = _slotInRangeId >= 0;
-                _slotInRangeId = _stateInRange.IsPosInRangeOfEmptySlot(Input.mousePosition);
+                _slotInRangeId = _stateInRange.IsPositionInRangeOfEmptySlot(Input.mousePosition);
                 if (!slotWasInRange && _slotInRangeId >= 0)
                 {
                     _stateInRange.SetSizeToBig();
@@ -79,6 +80,15 @@ namespace UI
                 {
                     _stateInRange.SetSizeToDefault();
                 }
+            }
+            else
+            {
+                _slotInRangeId = -1;
+            }
+            
+            if (Input.GetMouseButtonUp(0))
+            {
+                HandleMouseRelease();
             }
         }
 
@@ -92,7 +102,7 @@ namespace UI
             var transitionLinePosition = transitionLine.transform.position;
             //_inputs.Add(new DrawInput(transitionLinePosition, direction));
             _inputs.Add(new DrawInput(transitionLinePosition + (Vector3)direction * lineElementLength, direction));
-            _placedStates = FindObjectsOfType<StateUIPlaceElement>();
+            _placedStates = _uiManager.GetPlacedStates();
             CheckIfStateIsInRange();
             _isDrawing = true;
             return true;
@@ -129,7 +139,6 @@ namespace UI
 
             if (_isDrawing)
             {
-                //_currentUiGizmo = Instantiate(uiGizmo, _inputs[^1].Position, Quaternion.identity, transform);
                 CheckIfStateIsInRange();
             }
         }

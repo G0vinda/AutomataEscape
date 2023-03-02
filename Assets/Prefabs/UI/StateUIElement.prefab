@@ -224,8 +224,13 @@ MonoBehaviour:
   - {fileID: 3286361286070926255}
   - {fileID: 6138243836687783605}
   - {fileID: 6716592731447541736}
+  image: {fileID: 590796217757801763}
+  textElement: {fileID: 2628453098383229696}
   maxSlotMouseAreaWidth: 10
   maxSlotMouseAreaHeight: 50
+  stateBufferSpace: 60
+  _emptySlotIds: 
+  _connectedTransitionPlugs: []
 --- !u!1 &2915738242533621414
 GameObject:
   m_ObjectHideFlags: 0

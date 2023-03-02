@@ -1,38 +1,47 @@
-using System;
 using Helper;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace UI
 {
-    public class StateUIPlaceElement : StateUIElement, IPointerDownHandler
+    public class StateUIPlaceElement : MonoBehaviour, IPointerDownHandler
     {
-        [SerializeField] protected Image image;
-        [SerializeField] protected TextMeshProUGUI textElement;
-        [SerializeField] private float stateBufferSpace;
 
         private Vector3 _dragZOffset = new (0f, 0f, 2f);
-        private TransitionPlug[] _connectedTransitionPlugs;
         private bool _isBeingDragged;
         private StateUIData _data;
-        
+        private StateChartUIManager _uiManager;
+        private StateUIElement _uiElement;
+
+        private void Awake()
+        {
+            _uiElement = GetComponent<StateUIElement>();
+        }
+
         public void Initialize(StateUIData stateUIData)
         {
-            AssignedId = -1;
-            UIManager = GameManager.Instance.GetStateChartUIManager();
+            _uiElement.AssignedId = -1;
+            _uiManager = GameManager.Instance.GetStateChartUIManager();
             _data = stateUIData;
-            _connectedTransitionPlugs = new TransitionPlug[12];
-            SetupEmptySlotIds();
-            textElement.text = _data.text;
-            image.color = _data.color;
+            _uiElement.SetupEmptySlots();
+            _uiElement.SetText(_data.text);
+            _uiElement.SetImageColor(_data.color);
             _isBeingDragged = true;
+        }
+
+        public int GetAssignedId()
+        {
+            return _uiElement.AssignedId;
+        }
+
+        public void SetAssignedId(int newId)
+        {
+            _uiElement.AssignedId = newId;
         }
         
         public void OnPointerDown(PointerEventData eventData)
         {
-            UIManager.HandleStatePlaceElementClicked(this);
+            _uiManager.HandleStatePlaceElementClicked(this);
             RemoveAllTransitionPlugs();
             _isBeingDragged = true;
         }
@@ -44,7 +53,7 @@ namespace UI
                 transform.position = Input.mousePosition + _dragZOffset;
                 if (Input.GetMouseButtonUp(0))
                 {
-                    if (UIManager.HandleStatePlaceElementReleased(_data))
+                    if (_uiManager.HandleStatePlaceElementReleased(_data))
                     {
                         PlaceState();
                     }
@@ -62,35 +71,31 @@ namespace UI
             var placePosition = transform.position;
             placePosition.z= 1f;
             transform.position = placePosition;
-            SetupEmptySlotIds();
-            AddDefaultTransitionPlugToState();
+            _uiElement.SetupEmptySlots();
+            _uiElement.AddDefaultTransitionPlugToState();
         }
 
-        protected override void AddDefaultTransitionPlugToState()
+        public int IsPositionInRangeOfEmptySlot(Vector3 position)
         {
-            AddTransitionPlugToState(null);
+            return _uiElement.IsPositionInRangeOfEmptySlot(position);
         }
-        
+
         public void AddTransitionPlugToState(TransitionUIData data)
         {
+            var transitionSlotTransforms = _uiElement.transitionSlotTransforms;
+            var emptySlotIds = _uiElement.emptySlotIds;
             for (int i = transitionSlotTransforms.Length - 1; i >= 0; i--)
             {
-                if (!_emptySlotIds.Contains(i))
+                if (!emptySlotIds.Contains(i))
                     continue;
-                
-                var newPlug = Instantiate(
-                    defaultTransitionPlugPrefab, 
-                    transitionSlotTransforms[i].position,
-                    transitionSlotTransforms[i].rotation,
-                    transform);
-                _connectedTransitionPlugs[i] = newPlug.GetComponent<TransitionPlug>();
-                newPlug.GetLineTransform().rotation = Quaternion.identity;
-                _emptySlotIds.Remove(i);
 
-                if (data != null)
-                {
-                    newPlug.Initialize(data);
-                }
+                var newPlug = _uiElement.InstantiateTransitionPlug(transitionSlotTransforms[i].position,
+                    transitionSlotTransforms[i].rotation, i);
+                
+                newPlug.GetLineTransform().rotation = Quaternion.identity;
+                emptySlotIds.Remove(i);
+                
+                newPlug.Initialize(data);
                 
                 return;
             }
@@ -98,54 +103,50 @@ namespace UI
         
         private void RemoveAllTransitionPlugs()
         {
-            foreach (var plug in _connectedTransitionPlugs)
+            foreach (var plug in _uiElement.connectedTransitionPlugs)
             {
-                if(plug != null)
-                    RemoveTransitionPlug(plug);
+                if (plug != null)
+                {
+                    _uiElement.RemoveTransitionPlugFromSlot(plug);
+                    Destroy(plug.gameObject);
+                }
+                
             }
         }
-        
-        public void RemoveTransitionPlug(TransitionPlug plug)
-        {
-            int index = Array.IndexOf(_connectedTransitionPlugs, plug);
-            Destroy(plug.gameObject);
-            _connectedTransitionPlugs[index] = null;
-            _emptySlotIds.Add(index);
-        }
-        
+
         public bool IsPositionInRangeOfState(Vector3 pos)
         {
-            return Vector3.Distance(pos, transform.position) < stateBufferSpace;
+            return Vector3.Distance(pos, transform.position) < _uiElement.stateBufferSpace;
         }
         
         public void SetSlotToOccupied(int index)
         {
-            _emptySlotIds.Remove(index);
+            _uiElement.emptySlotIds.Remove(index);
         }
 
         public void SetSlotToEmpty(int index)
         {
-            _emptySlotIds.Add(index);
+            _uiElement.emptySlotIds.Add(index);
         }
         
         public Vector3 GetSlotPosition(int slotId)
         {
-            return transitionSlotTransforms[slotId].position;
+            return _uiElement.transitionSlotTransforms[slotId].position;
         }
 
         public Vector2 GetSlotDirection(int slotId)
         {
-            return transitionSlotTransforms[slotId].ZRotToDir();
+            return _uiElement.transitionSlotTransforms[slotId].ZRotToDir();
         }
 
         public void SetSizeToBig()
         {
-            image.rectTransform.localScale = new Vector2(1.15f, 1.15f);
+            _uiElement.image.rectTransform.localScale = new Vector2(1.15f, 1.15f);
         }
 
         public void SetSizeToDefault() 
         { 
-            image.rectTransform.localScale = new Vector2(1f, 1f);
+            _uiElement.image.rectTransform.localScale = new Vector2(1f, 1f);
         }
     }
 }

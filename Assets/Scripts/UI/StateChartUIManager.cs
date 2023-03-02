@@ -12,14 +12,14 @@ namespace UI
         [SerializeField] private StateUIPlaceElement statePlaceElementPrefab;
         [SerializeField] private List<TransitionSelectElement> transitionSelectElements;
         [SerializeField] private TransitionPlaceElement transitionPlaceElementPrefab;
-        [SerializeField] private StateUIElement startStateElement;
-        [SerializeField] private StateUIData startStateData;
+        [SerializeField] private StartStateUIElement startStateUIElement;
         [SerializeField] private StateChartUIScaler stateChartUIScaler;
 
         private StateChartManager _stateChartManager;
         private bool _isInPlacement;
         private bool _setupUIOnEnable;
         private StateUIPlaceElement _statePlaceElement;
+        private List<StateUIPlaceElement> _placedStateElements;
         private TransitionPlaceElement _transitionPlaceElement;
         private List<StateChartManager.StateAction> _availableActions;
         private List<StateChartManager.TransitionCondition> _availableTransitionConditions;
@@ -30,9 +30,9 @@ namespace UI
         private void OnEnable()
         {
             _canvas = GetComponent<Canvas>();
-            
+
             if (!_setupUIOnEnable) return;
-            
+
             SetupStateChartUI();
             EnableAvailableUIElements();
             _setupUIOnEnable = false;
@@ -41,6 +41,7 @@ namespace UI
         private void Start()
         {
             _stateChartManager = GameManager.Instance.GetStateChartManager();
+            _placedStateElements = new List<StateUIPlaceElement>();
         }
 
         public void SetupUI(List<StateChartManager.StateAction> availableActions,
@@ -76,22 +77,21 @@ namespace UI
             transitionSelectElements.ForEach(x =>
                 x.gameObject.SetActive(_availableTransitionConditions.Contains(x.Condition)));
         }
-    
+
 
         private void ClearStateChartUI()
         {
-            var deleteCounter = transform.childCount - 1;
-            while (deleteCounter > 0)
+            for (int i = transform.childCount - 1; i >= 0; i--)
             {
-                var childObject = transform.GetChild(deleteCounter).gameObject;
+                var childObject = transform.GetChild(i).gameObject;
                 if (childObject.TryGetComponent(out StateUIPlaceElement placeElement))
                 {
                     Destroy(childObject);
                 }
-
-                deleteCounter--;
             }
-            
+
+            _placedStateElements.Clear();
+            startStateUIElement.ClearDefaultStateLine();
             _connectedTransitions.Clear();
         }
 
@@ -133,23 +133,23 @@ namespace UI
             _isInPlacement = true;
             RemoveStatePlaceElement(placeElement);
         }
-
-
+        
         private void RemoveStatePlaceElement(StateUIPlaceElement placeElement)
         {
             for (int i = 0; i < _connectedTransitions.Count; i++)
             {
                 var connectedTransition = _connectedTransitions.ElementAt(i);
-                if (connectedTransition.Key.Item2 != placeElement && connectedTransition.Key.Item1 != placeElement)
+                if (connectedTransition.Key.Item2 != placeElement &&
+                    connectedTransition.Key.Item1 != placeElement.GetComponent<StateUIElement>())
                     continue;
-                
+
                 var plug = connectedTransition.Value;
                 RemoveTransitionByPlug(plug);
                 i--;
             }
 
-            _stateChartManager.RemoveState(_statePlaceElement.AssignedId);
-            _statePlaceElement.AssignedId = -1;
+            _stateChartManager.RemoveState(_statePlaceElement.GetAssignedId());
+            _statePlaceElement.SetAssignedId(-1);
         }
 
         public void RemoveTransitionByPlug(TransitionPlug plug, bool destinationStateWillBeRemoved = false)
@@ -187,7 +187,8 @@ namespace UI
             }
 
             int assignedId = _stateChartManager.AddState(stateUIData.action);
-            _statePlaceElement.AssignedId = assignedId;
+            _statePlaceElement.SetAssignedId(assignedId);
+            _placedStateElements.Add(_statePlaceElement);
             return true;
         }
 
@@ -209,13 +210,18 @@ namespace UI
             _connectedTransitions.Add((state1, state2), plug);
             if (plug.transitionCondition == StateChartManager.TransitionCondition.Default)
             {
-                _stateChartManager.AddDefaultTransition(state1.AssignedId, state2.AssignedId);
+                _stateChartManager.AddDefaultTransition(state1.AssignedId, state2.GetAssignedId());
             }
             else
             {
                 _stateChartManager.AddTransition(plug.transitionCondition, state1.AssignedId,
-                    state2.AssignedId);
+                    state2.GetAssignedId());
             }
+        }
+
+        public List<StateUIPlaceElement> GetPlacedStates()
+        {
+            return _placedStateElements;
         }
 
         public float ScaleFloat(float downscaledFloat)

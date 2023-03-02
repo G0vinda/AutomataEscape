@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &3664787877383082217
+--- !u!1001 &1744581308451653995
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -93,24 +93,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809261, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_Name
-      value: StateUIPlaceElement
+      value: StartStateUIElement
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
---- !u!1 &1630818747607025412 stripped
+--- !u!1 &4345933362690891398 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2628453099235809261, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
-  m_PrefabInstance: {fileID: 3664787877383082217}
+  m_PrefabInstance: {fileID: 1744581308451653995}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-1798996941539083538
+--- !u!114 &3551830307124078167
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1630818747607025412}
+  m_GameObject: {fileID: 4345933362690891398}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d6bcd79ffc497543b8052719140f0aa, type: 3}
+  m_Script: {fileID: 11500000, guid: 91fba40d49b67484f8247764d52b6aa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

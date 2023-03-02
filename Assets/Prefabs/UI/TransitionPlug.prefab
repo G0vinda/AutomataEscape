@@ -169,8 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transitionLine: {fileID: 7029746326622197298}
-  lineElementLength: 30
+  lineElementLength: 20
   lineElementWidth: 15
   drawingThreshold: 0.7
   maxBlockDistance: 30
-  uiGizmo: {fileID: 6545871113973482296, guid: 2454141c3cbe169459ec40dcd411993f, type: 3}
