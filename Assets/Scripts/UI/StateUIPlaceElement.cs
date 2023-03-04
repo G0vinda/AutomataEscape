@@ -6,32 +6,39 @@ namespace UI
 {
     public class StateUIPlaceElement : MonoBehaviour, IPointerDownHandler
     {
+        public enum Mode
+        {
+            IsInSelection,
+            IsBeingDragged,
+            IsPlaced
+        }
 
+        private Mode _currentMode;
         private Vector3 _dragZOffset = new (0f, 0f, 2f);
-        private bool _isBeingDragged;
         private StateUIData _data;
         private StateChartUIManager _uiManager;
         private StateUIElement _uiElement;
 
-        private void Awake()
-        {
-            _uiElement = GetComponent<StateUIElement>();
-        }
-
         public void Initialize(StateUIData stateUIData)
         {
+            _uiElement = GetComponent<StateUIElement>();
             _uiElement.AssignedId = -1;
+            _currentMode = Mode.IsInSelection;
             _uiManager = GameManager.Instance.GetStateChartUIManager();
             _data = stateUIData;
             _uiElement.SetupEmptySlots();
             _uiElement.SetText(_data.text);
             _uiElement.SetImageColor(_data.color);
-            _isBeingDragged = true;
         }
 
         public int GetAssignedId()
         {
             return _uiElement.AssignedId;
+        }
+
+        public StateChartManager.StateAction GetAction()
+        {
+            return _data.action;
         }
 
         public void SetAssignedId(int newId)
@@ -41,14 +48,23 @@ namespace UI
         
         public void OnPointerDown(PointerEventData eventData)
         {
-            _uiManager.HandleStatePlaceElementClicked(this);
-            RemoveAllTransitionPlugs();
-            _isBeingDragged = true;
+            switch (_currentMode)
+            {
+                case Mode.IsPlaced:
+                    _uiManager.HandleStatePlaceElementClicked(this, true);
+                    RemoveAllTransitionPlugs();
+                    break;
+                case Mode.IsInSelection:
+                    _uiManager.HandleStatePlaceElementClicked(this, false);
+                    break;
+            }
+
+            _currentMode = Mode.IsBeingDragged;
         }
         
         private void Update()
         {
-            if (_isBeingDragged)
+            if (_currentMode == Mode.IsBeingDragged)
             {
                 transform.position = Input.mousePosition + _dragZOffset;
                 if (Input.GetMouseButtonUp(0))
@@ -67,7 +83,7 @@ namespace UI
         
         public void PlaceState()
         {
-            _isBeingDragged = false;
+            _currentMode = Mode.IsPlaced;
             var placePosition = transform.position;
             placePosition.z= 1f;
             transform.position = placePosition;

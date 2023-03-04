@@ -5,10 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Key
-  - DropZone
   - TransitionLine
   - TransitionLineBlocker
   - Goal
+  - StateChartDropZone
+  - StateSelectionDropZone
   layers:
   - Default
   - TransparentFX

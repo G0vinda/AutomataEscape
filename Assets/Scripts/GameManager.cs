@@ -52,8 +52,11 @@ public class GameManager : MonoBehaviour
                     { TileType.Floor, TileType.Floor, TileType.None, TileType.Floor },
                     { TileType.Floor, TileType.Floor, TileType.Floor, TileType.Goal }
                 },
-                new List<StateChartManager.StateAction>()
-                    { StateChartManager.StateAction.MoveForward, StateChartManager.StateAction.TurnRight },
+                new List<LevelData.AvailableStateInfo>()
+                {
+                    new (StateChartManager.StateAction.MoveForward, 2), 
+                    new (StateChartManager.StateAction.TurnRight, 1)
+                },
                 new List<StateChartManager.TransitionCondition>()
             ),
             new LevelWithKeyData(
@@ -67,13 +70,13 @@ public class GameManager : MonoBehaviour
                     { TileType.Floor, TileType.Floor, TileType.GateLeft, TileType.Floor, TileType.Floor },
                     { TileType.Floor, TileType.None, TileType.None, TileType.Floor, TileType.Floor }
                 },
-                new List<StateChartManager.StateAction>()
+                new List<LevelData.AvailableStateInfo>()
                 {
-                    StateChartManager.StateAction.MoveForward, 
-                    StateChartManager.StateAction.TurnRight,
-                    StateChartManager.StateAction.TurnLeft, 
-                    StateChartManager.StateAction.Grab,
-                    StateChartManager.StateAction.Drop
+                    new(StateChartManager.StateAction.MoveForward, 2), 
+                    new(StateChartManager.StateAction.TurnRight, 1),
+                    new(StateChartManager.StateAction.TurnLeft, 1), 
+                    new(StateChartManager.StateAction.Grab, 1),
+                    new(StateChartManager.StateAction.Drop, 1)
                 },
                 new List<StateChartManager.TransitionCondition>()
                 {

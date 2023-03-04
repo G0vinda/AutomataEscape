@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Helper;
+using PlasticGui;
 
 namespace UI
 {
     public class StateChartUIManager : MonoBehaviour
     {
-        [SerializeField] private List<StateSelectElement> stateSelectElements;
+        [SerializeField] private List<StateUIElementStack> stateUIElementStacks;
         [SerializeField] private StateUIPlaceElement statePlaceElementPrefab;
         [SerializeField] private List<TransitionSelectElement> transitionSelectElements;
         [SerializeField] private TransitionPlaceElement transitionPlaceElementPrefab;
@@ -21,7 +22,7 @@ namespace UI
         private StateUIPlaceElement _statePlaceElement;
         private List<StateUIPlaceElement> _placedStateElements;
         private TransitionPlaceElement _transitionPlaceElement;
-        private List<StateChartManager.StateAction> _availableActions;
+        private List<LevelData.AvailableStateInfo> _availableStateInfo;
         private List<StateChartManager.TransitionCondition> _availableTransitionConditions;
 
         private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionPlug> _connectedTransitions = new();
@@ -44,11 +45,11 @@ namespace UI
             _placedStateElements = new List<StateUIPlaceElement>();
         }
 
-        public void SetupUI(List<StateChartManager.StateAction> availableActions,
+        public void SetupUI(List<LevelData.AvailableStateInfo> availableStateInfo,
             List<StateChartManager.TransitionCondition> availableTransitionConditions)
         {
             ClearStateChartUI();
-            _availableActions = availableActions;
+            _availableStateInfo = availableStateInfo;
             _availableTransitionConditions = availableTransitionConditions;
 
             if (gameObject.activeSelf)
@@ -73,9 +74,18 @@ namespace UI
 
         private void EnableAvailableUIElements()
         {
-            stateSelectElements.ForEach(x => x.gameObject.SetActive(_availableActions.Contains(x.Action)));
-            transitionSelectElements.ForEach(x =>
-                x.gameObject.SetActive(_availableTransitionConditions.Contains(x.Condition)));
+            foreach (var availableStateInfo in _availableStateInfo)
+            {
+                var availableStack = stateUIElementStacks.First(stack => stack.GetAction() == availableStateInfo.Action);
+                availableStack.gameObject.SetActive(true);
+                availableStack.Initialize(availableStateInfo.Amount);
+            }
+   
+            foreach (var transitionSelectElement in transitionSelectElements)
+            {
+                transitionSelectElement.gameObject.SetActive(
+                    _availableTransitionConditions.Contains(transitionSelectElement.Condition));
+            }
         }
 
 
@@ -122,16 +132,24 @@ namespace UI
             _isInPlacement = true;
         }
 
-        public void HandleStatePlaceElementClicked(StateUIPlaceElement placeElement)
+        public void HandleStatePlaceElementClicked(StateUIPlaceElement placeElement, bool wasPlaced)
         {
             if (_isInPlacement)
             {
                 return;
             }
 
+            if (wasPlaced)
+            {
+                RemoveStatePlaceElement(placeElement);
+            }
+            else
+            {
+                stateUIElementStacks.First(s => s.GetAction() == placeElement.GetAction()).RemoveState(placeElement);
+            }
+
             _statePlaceElement = placeElement;
             _isInPlacement = true;
-            RemoveStatePlaceElement(placeElement);
         }
         
         private void RemoveStatePlaceElement(StateUIPlaceElement placeElement)
@@ -149,6 +167,7 @@ namespace UI
             }
 
             _stateChartManager.RemoveState(_statePlaceElement.GetAssignedId());
+            _placedStateElements.Remove(placeElement);
             _statePlaceElement.SetAssignedId(-1);
         }
 
@@ -181,12 +200,13 @@ namespace UI
         public bool HandleStatePlaceElementReleased(StateUIData stateUIData)
         {
             _isInPlacement = false;
-            if (!HelperFunctions.CheckIfMouseIsOverObjectWithTag("DropZone"))
+            if (!HelperFunctions.CheckIfMouseIsOverObjectWithTag("StateChartDropZone"))
             {
+                stateUIElementStacks.First(s => s.GetAction() == stateUIData.action).AddState();
                 return false;
             }
 
-            int assignedId = _stateChartManager.AddState(stateUIData.action);
+            var assignedId = _stateChartManager.AddState(stateUIData.action);
             _statePlaceElement.SetAssignedId(assignedId);
             _placedStateElements.Add(_statePlaceElement);
             return true;

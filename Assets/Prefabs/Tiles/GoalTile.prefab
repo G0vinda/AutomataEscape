@@ -99,6 +99,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GoalTile
       objectReference: {fileID: 0}
+    - target: {fileID: 2586302952462516929, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
       propertyPath: m_SortingLayer
       value: -1

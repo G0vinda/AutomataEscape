@@ -8,36 +8,35 @@ namespace UI
     {
         [SerializeField] private Vector2 padding;
         [SerializeField] private Vector2 spacing;
-        [SerializeField] private RectTransform stateElementTransform;
+        [SerializeField] private RectTransform panelTransform;
+        [SerializeField] private RectTransform availableStateStackTransform;
 
-        public float availableGroupWidth;
-        public int maxColumns;
-        public float stateSize;
+        private float _availablePanelWidth;
+        private float _availableStateStackWidth;
+        private float _availableStateStackHeight;
 
         public override void SetLayoutHorizontal()
         {
-            availableGroupWidth = rectTransform.sizeDelta.x - 2 * padding.x;
-            stateSize = stateElementTransform.sizeDelta.x;
-            maxColumns = Mathf.FloorToInt(availableGroupWidth / (stateSize + spacing.x));
-            int maxRows = Mathf.CeilToInt(rectChildren.Count / (float)maxColumns);
+            _availablePanelWidth = panelTransform.sizeDelta.x - 2 * padding.x;
+            _availableStateStackHeight = availableStateStackTransform.sizeDelta.y;
+            _availableStateStackWidth = availableStateStackTransform.sizeDelta.x;
+            var maxColumns = Mathf.FloorToInt(_availablePanelWidth / (_availableStateStackWidth + spacing.x));
+            var maxRows = Mathf.CeilToInt(rectChildren.Count / (float)maxColumns);
 
-            PositionChildren(maxColumns, maxRows, stateSize);
+            PositionChildren(maxColumns, maxRows);
         }
 
-        private void PositionChildren(int maxColumns, int maxRows, float stateSize)
+        private void PositionChildren(int maxColumns, int maxRows)
         {
-            float xPos = 0f;
-            float yPos = 0f;
-            
-            int childCounter = 0;
-            for (int y = 0; y < maxRows; y++)
+            var childCounter = 0;
+            for (var y = 0; y < maxRows; y++)
             {
-                yPos = y * (stateSize + spacing.y) + padding.y;
-                for (int x = 0; x < maxColumns; x++)
+                var yPos = y * (_availableStateStackHeight + spacing.y) + padding.y;
+                for (var x = 0; x < maxColumns; x++)
                 {
                     var item = rectChildren[childCounter];
 
-                    xPos = x * (stateSize + spacing.x) + padding.x;
+                    var xPos = x * (_availableStateStackWidth + spacing.x) + padding.x;
 
                     SetChildAlongAxis(item, 0, xPos);
                     SetChildAlongAxis(item, 1, yPos);
@@ -51,12 +50,12 @@ namespace UI
         
         public override void CalculateLayoutInputVertical()
         {
-            
+            // Meant to be empty
         }
 
         public override void SetLayoutVertical()
         {
-            
+            // Meant to be empty
         }
     }
 }
