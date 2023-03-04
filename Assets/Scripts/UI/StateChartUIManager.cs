@@ -91,13 +91,21 @@ namespace UI
 
         private void ClearStateChartUI()
         {
-            for (int i = transform.childCount - 1; i >= 0; i--)
+            for (var i = transform.childCount - 1; i >= 0; i--)
             {
                 var childObject = transform.GetChild(i).gameObject;
                 if (childObject.TryGetComponent(out StateUIPlaceElement placeElement))
                 {
                     Destroy(childObject);
                 }
+            }
+            
+            foreach (var stateUIElementStack in stateUIElementStacks)
+            {
+                if(!stateUIElementStack.gameObject.activeSelf)
+                    continue;
+                
+                stateUIElementStack.DestroyStates();
             }
 
             _placedStateElements.Clear();
@@ -138,6 +146,9 @@ namespace UI
             {
                 return;
             }
+            
+            _statePlaceElement = placeElement;
+            _isInPlacement = true;
 
             if (wasPlaced)
             {
@@ -146,10 +157,7 @@ namespace UI
             else
             {
                 stateUIElementStacks.First(s => s.GetAction() == placeElement.GetAction()).RemoveState(placeElement);
-            }
-
-            _statePlaceElement = placeElement;
-            _isInPlacement = true;
+            } 
         }
         
         private void RemoveStatePlaceElement(StateUIPlaceElement placeElement)
