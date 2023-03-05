@@ -145,5 +145,40 @@ namespace UI
 
             return false;
         }
+
+        private void OnDrawGizmos()
+        {
+            // Draw top slotAreas
+            Gizmos.color = Color.red;
+            for (var i = 0; i < 3; i++)
+            {
+                var slotPos = transitionSlotTransforms[i].position;
+                Gizmos.DrawLine(
+                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, 0, 0),
+                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, maxSlotMouseAreaHeight, 0));
+                Gizmos.DrawLine(
+                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, maxSlotMouseAreaHeight, 0),
+                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, maxSlotMouseAreaHeight, 0));
+                Gizmos.DrawLine(
+                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, maxSlotMouseAreaHeight, 0),
+                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, 0, 0));
+            }
+            
+            // Draw bottom slotAreas
+            Gizmos.color = Color.red;
+            for (var i = 6; i < 9; i++)
+            {
+                var slotPos = transitionSlotTransforms[i].position;
+                Gizmos.DrawLine(
+                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, 0, 0),
+                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, -maxSlotMouseAreaHeight, 0));
+                Gizmos.DrawLine(
+                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, -maxSlotMouseAreaHeight, 0),
+                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, -maxSlotMouseAreaHeight, 0));
+                Gizmos.DrawLine(
+                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, -maxSlotMouseAreaHeight, 0),
+                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, 0, 0));
+            }
+        }
     }
 }

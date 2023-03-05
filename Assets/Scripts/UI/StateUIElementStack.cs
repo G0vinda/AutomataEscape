@@ -9,11 +9,11 @@ namespace UI
         [SerializeField] private StateUIPlaceElement stateElementPrefab;
         [SerializeField] private float stateElementPlaceOffset;
     
-        private List<RectTransform> _stateElementTransforms;
+        private List<StateUIPlaceElement> _stateElements;
 
         public void Initialize(int numberOfStates)
         {
-            _stateElementTransforms = new List<RectTransform>();
+            _stateElements = new List<StateUIPlaceElement>();
             for (var i = 0; i < numberOfStates; i++)
             {
                 AddState();
@@ -29,23 +29,25 @@ namespace UI
         {
             var newState = Instantiate(stateElementPrefab, transform);
             newState.Initialize(stateData);
+            newState.SetToAvailable();
+            var numOfStates = _stateElements.Count;
+            if(numOfStates > 0)
+                _stateElements[^1].SetToUnavailable();
+            
             var newStateTransform = newState.GetComponent<RectTransform>();
-            var newStateIndex = _stateElementTransforms.Count;
-            newStateTransform.SetSiblingIndex(newStateIndex);
+            newStateTransform.SetSiblingIndex(numOfStates);
+            
             var newStatePosition = newStateTransform.localPosition;
-            newStatePosition.y = stateElementPlaceOffset * newStateIndex;
+            newStatePosition.y = stateElementPlaceOffset * numOfStates;
             newStateTransform.localPosition = newStatePosition;
-            _stateElementTransforms.Add(newStateTransform);
+            _stateElements.Add(newState);
         }
 
         public void RemoveState(StateUIPlaceElement stateUIPlaceElement)
         {
-            RemoveState(stateUIPlaceElement.GetComponent<RectTransform>());
-        }
-
-        public void RemoveState(RectTransform stateElementTransform)
-        {
-            _stateElementTransforms.Remove(stateElementTransform);
+            _stateElements.Remove(stateUIPlaceElement);
+            if(_stateElements.Count > 0)
+                _stateElements[^1].SetToAvailable();
         }
 
         public void DestroyStates()

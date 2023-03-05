@@ -8,7 +8,8 @@ namespace UI
     {
         public enum Mode
         {
-            IsInSelection,
+            IsInSelectionUnavailable,
+            IsInSelectionAvailable,
             IsBeingDragged,
             IsPlaced
         }
@@ -23,7 +24,7 @@ namespace UI
         {
             _uiElement = GetComponent<StateUIElement>();
             _uiElement.AssignedId = -1;
-            _currentMode = Mode.IsInSelection;
+            SetToUnavailable();
             _uiManager = GameManager.Instance.GetStateChartUIManager();
             _data = stateUIData;
             _uiElement.SetupEmptySlots();
@@ -45,6 +46,16 @@ namespace UI
         {
             _uiElement.AssignedId = newId;
         }
+
+        public void SetToUnavailable()
+        {
+            _currentMode = Mode.IsInSelectionUnavailable;
+        }
+        
+        public void SetToAvailable()
+        {
+            _currentMode = Mode.IsInSelectionAvailable;
+        }
         
         public void OnPointerDown(PointerEventData eventData)
         {
@@ -54,9 +65,11 @@ namespace UI
                     _uiManager.HandleStatePlaceElementClicked(this, true);
                     RemoveAllTransitionPlugs();
                     break;
-                case Mode.IsInSelection:
+                case Mode.IsInSelectionAvailable:
                     _uiManager.HandleStatePlaceElementClicked(this, false);
                     break;
+                case Mode.IsInSelectionUnavailable:
+                    return;
             }
 
             _currentMode = Mode.IsBeingDragged;
