@@ -37,11 +37,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -94,6 +94,10 @@ PrefabInstance:
     - target: {fileID: 2628453099235809261, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_Name
       value: StartStateUIElement
+      objectReference: {fileID: 0}
+    - target: {fileID: 2628453099235809261, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
+      propertyPath: m_TagString
+      value: Blocker
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}

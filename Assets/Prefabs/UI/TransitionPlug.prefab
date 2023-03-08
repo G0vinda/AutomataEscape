@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7029746326622197298}
   m_Layer: 5
   m_Name: TransitionLine
-  m_TagString: Untagged
+  m_TagString: TransitionLine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 34.8}
+  m_AnchoredPosition: {x: -0, y: 54.3}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &979497307655376123
@@ -101,7 +101,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 29, y: 35}
+  m_SizeDelta: {x: 45, y: 55}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &514247546716612002
 CanvasRenderer:

@@ -100,7 +100,6 @@ namespace UI
             var lineScaleFactor = 1f / transform.parent.localScale.x;
             transitionLine.Initialize(_scaledLineElementLength, lineElementWidth, direction, lineScaleFactor);
             var transitionLinePosition = transitionLine.transform.position;
-            //_inputs.Add(new DrawInput(transitionLinePosition, direction));
             _inputs.Add(new DrawInput(transitionLinePosition + (Vector3)direction * lineElementLength, direction));
             _placedStates = _uiManager.GetPlacedStates();
             CheckIfStateIsInRange();

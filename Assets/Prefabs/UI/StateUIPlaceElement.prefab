@@ -37,11 +37,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -95,6 +95,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: StateUIPlaceElement
       objectReference: {fileID: 0}
+    - target: {fileID: 2628453099235809261, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
 --- !u!1 &1630818747607025412 stripped
@@ -114,3 +118,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d6bcd79ffc497543b8052719140f0aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  transitionLineBlocker: {fileID: 4760058801698975983}
+  placeAreaSize: 150
+--- !u!1 &4760058801698975983 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8130353484696297478, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
+  m_PrefabInstance: {fileID: 3664787877383082217}
+  m_PrefabAsset: {fileID: 0}

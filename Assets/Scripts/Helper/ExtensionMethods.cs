@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Helper
 {
@@ -52,6 +53,17 @@ namespace Helper
         public static float SumOfElements(this Vector2 vector)
         {
             return Vector2.Dot(vector, Vector2.one);
+        }
+
+        public static List<GameObject> ToGameObjects(this List<RaycastResult> raycastResults)
+        {
+            var gameObjectList = new List<GameObject>();
+            foreach (var raycastResult in raycastResults)
+            {
+                gameObjectList.Add(raycastResult.gameObject);
+            }
+
+            return gameObjectList;
         }
     }
 }

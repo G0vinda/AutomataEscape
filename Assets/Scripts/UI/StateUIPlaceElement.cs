@@ -14,11 +14,16 @@ namespace UI
             IsPlaced
         }
 
+        [SerializeField] private GameObject transitionLineBlocker;
+        [SerializeField] private float placeAreaSize;
+
         private Mode _currentMode;
-        private Vector3 _dragZOffset = new (0f, 0f, 2f);
+        private Vector3 _dragOffset = new (0f, 75f, 2f);
         private StateUIData _data;
         private StateChartUIManager _uiManager;
         private StateUIElement _uiElement;
+        private bool _canBePlaced;
+        private float _scaledPlaceAreaSize;
 
         public void Initialize(StateUIData stateUIData)
         {
@@ -26,6 +31,8 @@ namespace UI
             _uiElement.AssignedId = -1;
             SetToUnavailable();
             _uiManager = GameManager.Instance.GetStateChartUIManager();
+            _scaledPlaceAreaSize = _uiManager.DownscaleFloat(placeAreaSize);
+            _dragOffset = new Vector3(0f, _uiManager.DownscaleFloat(_dragOffset.y), 2f);
             _data = stateUIData;
             _uiElement.SetupEmptySlots();
             _uiElement.SetText(_data.text);
@@ -72,6 +79,9 @@ namespace UI
                     return;
             }
 
+            SetColorsToDisabled();
+            _canBePlaced = false;
+            transitionLineBlocker.SetActive(false);
             _currentMode = Mode.IsBeingDragged;
         }
         
@@ -79,10 +89,12 @@ namespace UI
         {
             if (_currentMode == Mode.IsBeingDragged)
             {
-                transform.position = Input.mousePosition + _dragZOffset;
+                transform.position = Input.mousePosition + _dragOffset;
+                CheckIfCanBePlaced();
                 if (Input.GetMouseButtonUp(0))
                 {
-                    if (_uiManager.HandleStatePlaceElementReleased(_data))
+                    _uiManager.HandleStatePlaceElementReleased(_data, _canBePlaced);
+                    if (_canBePlaced)
                     {
                         PlaceState();
                     }
@@ -93,6 +105,43 @@ namespace UI
                 }
             }
         }
+
+        private void CheckIfCanBePlaced()
+        {
+            if (HelperFunctions.CheckIfMouseAreaIsOverFreeAreaWithTag(_scaledPlaceAreaSize, "StateChartDropZone", "Blocker"))
+            {
+                if(!_canBePlaced)
+                    SetColorsToDefault();
+                _canBePlaced = true;
+            }
+            else
+            {
+                if(_canBePlaced)
+                    SetColorsToDisabled();
+                _canBePlaced = false;
+            }
+            Debug.Log($"Can be placed: {_canBePlaced}, size {_scaledPlaceAreaSize}");
+        }
+
+        private void SetColorsToDisabled()
+        {
+            var imageColor = _uiElement.image.color;
+            var textColor = _uiElement.textElement.color;
+            imageColor.a = 0.6f;
+            textColor.a = 0.6f;
+            _uiElement.image.color = imageColor;
+            _uiElement.textElement.color = textColor;
+        }
+
+        private void SetColorsToDefault()
+        {
+            var imageColor = _uiElement.image.color;
+            var textColor = _uiElement.textElement.color;
+            imageColor.a = 1;
+            textColor.a = 1;
+            _uiElement.image.color = imageColor;
+            _uiElement.textElement.color = textColor;
+        }
         
         public void PlaceState()
         {
@@ -100,6 +149,7 @@ namespace UI
             var placePosition = transform.position;
             placePosition.z= 1f;
             transform.position = placePosition;
+            transitionLineBlocker.SetActive(true);
             _uiElement.SetupEmptySlots();
             _uiElement.AddDefaultTransitionPlugToState();
         }

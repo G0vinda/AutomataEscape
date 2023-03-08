@@ -13,8 +13,8 @@ namespace UI
         [SerializeField] public RectTransform[] transitionSlotTransforms;
         [SerializeField] public Image image;
         [SerializeField] public TextMeshProUGUI textElement;
-        [SerializeField] public float maxSlotMouseAreaWidth;
-        [SerializeField] public float maxSlotMouseAreaHeight;
+        [SerializeField] public float slotAreaWidth;
+        [SerializeField] public float slotAreaHeight;
         [SerializeField] public float stateBufferSpace;
 
         public int AssignedId { get; set; }
@@ -23,7 +23,16 @@ namespace UI
         public List<int> emptySlotIds;
         [HideInInspector]
         public TransitionPlug[] connectedTransitionPlugs;
-        
+
+        private float _scaledSlotAreaWidth;
+        private float _scaledSlotAreaHeight;
+
+        private void Start()
+        {
+            var uiManager = GameManager.Instance.GetStateChartUIManager();
+            _scaledSlotAreaWidth = uiManager.DownscaleFloat(slotAreaWidth);
+            _scaledSlotAreaHeight = uiManager.DownscaleFloat(slotAreaHeight);
+        }
 
         public void SetupEmptySlots()
         {
@@ -86,7 +95,7 @@ namespace UI
             {
                 var emptySlotTransform = transitionSlotTransforms[emptySlotId];
                 var emptySlotPos = emptySlotTransform.position;
-                if (Vector3.Distance(pos, emptySlotPos) > maxSlotMouseAreaWidth + maxSlotMouseAreaHeight)
+                if (Vector3.Distance(pos, emptySlotPos) > slotAreaWidth + slotAreaHeight)
                     continue;
 
                 var emptySlotDir = emptySlotTransform.ZRotToDir();
@@ -100,28 +109,28 @@ namespace UI
                 float xMin, xMax, yMin, yMax;
                 if (emptySlotDir.Equals(Vector2.left))
                 {
-                    xMin = emptySlotPos.x - maxSlotMouseAreaHeight;
+                    xMin = emptySlotPos.x - _scaledSlotAreaHeight;
                     xMax = emptySlotPos.x;
-                    yMin = emptySlotPos.y - maxSlotMouseAreaWidth * 0.5f;
-                    yMax = emptySlotPos.y + maxSlotMouseAreaWidth * 0.5f;
+                    yMin = emptySlotPos.y - _scaledSlotAreaWidth * 0.5f;
+                    yMax = emptySlotPos.y + _scaledSlotAreaWidth * 0.5f;
                 } else if (emptySlotDir.Equals(Vector2.right))
                 {
                     xMin = emptySlotPos.x;
-                    xMax = emptySlotPos.x + maxSlotMouseAreaHeight;
-                    yMin = emptySlotPos.y - maxSlotMouseAreaWidth * 0.5f;
-                    yMax = emptySlotPos.y + maxSlotMouseAreaWidth * 0.5f;
+                    xMax = emptySlotPos.x + _scaledSlotAreaHeight;
+                    yMin = emptySlotPos.y - _scaledSlotAreaWidth * 0.5f;
+                    yMax = emptySlotPos.y + _scaledSlotAreaWidth * 0.5f;
                 } else if (emptySlotDir.Equals(Vector2.down))
                 {
-                    xMin = emptySlotPos.x - maxSlotMouseAreaWidth * 0.5f;
-                    xMax = emptySlotPos.x + maxSlotMouseAreaWidth * 0.5f;
-                    yMin = emptySlotPos.y - maxSlotMouseAreaHeight;
+                    xMin = emptySlotPos.x - _scaledSlotAreaWidth * 0.5f;
+                    xMax = emptySlotPos.x + _scaledSlotAreaWidth * 0.5f;
+                    yMin = emptySlotPos.y - _scaledSlotAreaHeight;
                     yMax = emptySlotPos.y;
                 } else // Vector2.up
                 {
-                    xMin = emptySlotPos.x - maxSlotMouseAreaWidth * 0.5f;
-                    xMax = emptySlotPos.x + maxSlotMouseAreaWidth * 0.5f;
+                    xMin = emptySlotPos.x - _scaledSlotAreaWidth * 0.5f;
+                    xMax = emptySlotPos.x + _scaledSlotAreaWidth * 0.5f;
                     yMin = emptySlotPos.y;
-                    yMax = emptySlotPos.y + maxSlotMouseAreaHeight;;
+                    yMax = emptySlotPos.y + _scaledSlotAreaHeight;;
                 }
 
                 if (IsPosInSquare(pos, xMin, yMin, xMax, yMax))
@@ -154,14 +163,14 @@ namespace UI
             {
                 var slotPos = transitionSlotTransforms[i].position;
                 Gizmos.DrawLine(
-                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, 0, 0),
-                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, maxSlotMouseAreaHeight, 0));
+                    slotPos + new Vector3(-_scaledSlotAreaWidth * 0.5f, 0, 0),
+                    slotPos + new Vector3(-_scaledSlotAreaWidth * 0.5f, _scaledSlotAreaHeight, 0));
                 Gizmos.DrawLine(
-                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, maxSlotMouseAreaHeight, 0),
-                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, maxSlotMouseAreaHeight, 0));
+                    slotPos + new Vector3(-_scaledSlotAreaWidth * 0.5f, _scaledSlotAreaHeight, 0),
+                    slotPos + new Vector3(_scaledSlotAreaWidth * 0.5f, _scaledSlotAreaHeight, 0));
                 Gizmos.DrawLine(
-                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, maxSlotMouseAreaHeight, 0),
-                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, 0, 0));
+                    slotPos + new Vector3(_scaledSlotAreaWidth * 0.5f, _scaledSlotAreaHeight, 0),
+                    slotPos + new Vector3(_scaledSlotAreaWidth * 0.5f, 0, 0));
             }
             
             // Draw bottom slotAreas
@@ -170,14 +179,14 @@ namespace UI
             {
                 var slotPos = transitionSlotTransforms[i].position;
                 Gizmos.DrawLine(
-                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, 0, 0),
-                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, -maxSlotMouseAreaHeight, 0));
+                    slotPos + new Vector3(-_scaledSlotAreaWidth * 0.5f, 0, 0),
+                    slotPos + new Vector3(-_scaledSlotAreaWidth * 0.5f, -_scaledSlotAreaHeight, 0));
                 Gizmos.DrawLine(
-                    slotPos + new Vector3(-maxSlotMouseAreaWidth * 0.5f, -maxSlotMouseAreaHeight, 0),
-                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, -maxSlotMouseAreaHeight, 0));
+                    slotPos + new Vector3(-_scaledSlotAreaWidth * 0.5f, -_scaledSlotAreaHeight, 0),
+                    slotPos + new Vector3(_scaledSlotAreaWidth * 0.5f, -_scaledSlotAreaHeight, 0));
                 Gizmos.DrawLine(
-                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, -maxSlotMouseAreaHeight, 0),
-                    slotPos + new Vector3(maxSlotMouseAreaWidth * 0.5f, 0, 0));
+                    slotPos + new Vector3(_scaledSlotAreaWidth * 0.5f, -_scaledSlotAreaHeight, 0),
+                    slotPos + new Vector3(_scaledSlotAreaWidth * 0.5f, 0, 0));
             }
         }
     }

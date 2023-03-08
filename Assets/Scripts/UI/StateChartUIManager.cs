@@ -205,19 +205,18 @@ namespace UI
         }
 
 
-        public bool HandleStatePlaceElementReleased(StateUIData stateUIData)
+        public void HandleStatePlaceElementReleased(StateUIData stateUIData, bool canBePlaced)
         {
             _isInPlacement = false;
-            if (!HelperFunctions.CheckIfMouseIsOverObjectWithTag("StateChartDropZone"))
+            if (!canBePlaced)
             {
                 stateUIElementStacks.First(s => s.GetAction() == stateUIData.action).AddState();
-                return false;
+                return;
             }
-
+            
             var assignedId = _stateChartManager.AddState(stateUIData.action);
             _statePlaceElement.SetAssignedId(assignedId);
             _placedStateElements.Add(_statePlaceElement);
-            return true;
         }
 
         public void HandleTransitionPlaceElementReleased(TransitionUIData transitionUIData)
