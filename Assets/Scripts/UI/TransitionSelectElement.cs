@@ -22,7 +22,7 @@ namespace UI
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            GameManager.Instance.GetStateChartUIManager().HandleTransitionSelectElementClicked(data);
+            GameManager.Instance.GetUIManager().HandleTransitionSelectElementClicked(data);
         }
     }
 }

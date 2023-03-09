@@ -26,7 +26,7 @@ namespace UI
         [SerializeField] private float drawingThreshold;
         [SerializeField] private float maxBlockDistance;
 
-        private StateChartUIManager _uiManager;
+        private UIManager _uiManager;
         private bool _isDrawing;
         private List<DrawInput> _inputs = new ();
         private float _scaledLineElementLength;
@@ -37,12 +37,12 @@ namespace UI
         
         private void OnEnable()
         {
-            _scaledLineElementLength = GameManager.Instance.GetStateChartUIManager().ScaleFloat(lineElementLength);
+            _scaledLineElementLength = GameManager.Instance.GetUIManager().UnscaleFloat(lineElementLength);
         }
 
         private void Start()
         {
-            _uiManager = GameManager.Instance.GetStateChartUIManager();
+            _uiManager = GameManager.Instance.GetUIManager();
         }
 
         void Update()
@@ -148,7 +148,7 @@ namespace UI
             var lastDirectionIsHorizontal = Mathf.Abs(lastDirection.x) > 0;
             var currentDirectionIsHorizontal = Mathf.Abs(currentDirection.x) > 0;
             
-            var downScaledWidth = GameManager.Instance.GetStateChartUIManager().DownscaleFloat(lineElementWidth);
+            var downScaledWidth = GameManager.Instance.GetUIManager().ScaleFloat(lineElementWidth);
             var halfWidth = downScaledWidth * 0.5f;
             Vector3 currentInputPositionOffset;
 

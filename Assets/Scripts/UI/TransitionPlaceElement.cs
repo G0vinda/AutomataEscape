@@ -7,10 +7,10 @@ namespace UI
     public class TransitionPlaceElement : MonoBehaviour
     {
         private Image _image; 
-        private StateChartUIManager _uiManager;
+        private UIManager _uiManager;
         private TransitionUIData _data;
         private Vector3 _dragZOffset = new (0f, 0f, 2f);
-        public void Initialize(StateChartUIManager uiManager, TransitionUIData transitionUIData)
+        public void Initialize(UIManager uiManager, TransitionUIData transitionUIData)
         {
             _image = GetComponent<Image>();
             _uiManager = uiManager;

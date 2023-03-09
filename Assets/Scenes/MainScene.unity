@@ -888,7 +888,7 @@ MonoBehaviour:
   - {fileID: 1221022764}
   transitionPlaceElementPrefab: {fileID: -2691666547749979907, guid: c92c1c8e99840af488bab7404d5af30e, type: 3}
   startStateUIElement: {fileID: 714388723}
-  stateChartUIScaler: {fileID: 1189406611}
+  stateChartPanel: {fileID: 1189406611}
 --- !u!1001 &670139516
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1021,6 +1021,10 @@ PrefabInstance:
     - target: {fileID: 4345933362690891398, guid: dfaca3cbe223b634ab8412fdf18eb182, type: 3}
       propertyPath: m_Name
       value: StartStateUIElement
+      objectReference: {fileID: 0}
+    - target: {fileID: 4345933362690891398, guid: dfaca3cbe223b634ab8412fdf18eb182, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4345933362690891399, guid: dfaca3cbe223b634ab8412fdf18eb182, type: 3}
       propertyPath: m_Pivot.x
@@ -1178,7 +1182,7 @@ MonoBehaviour:
   gridManager: {fileID: 1040296883}
   cameraController: {fileID: 519420033}
   stateChartManager: {fileID: 868897338}
-  stateChartUIManager: {fileID: 654531688}
+  uiManager: {fileID: 654531688}
   robotStateChartRunnerPrefab: {fileID: 5906237375931738515, guid: 4e1cc2fbe5a373345aea51e3bbf8a233, type: 3}
   keyObject: {fileID: 8136169380437567612, guid: 0cf3fc4228cd19144b0ee149455fb0b8, type: 3}
 --- !u!114 &868897338
@@ -1608,6 +1612,7 @@ GameObject:
   - component: {fileID: 1189406610}
   - component: {fileID: 1189406609}
   - component: {fileID: 1189406611}
+  - component: {fileID: 1189406612}
   m_Layer: 5
   m_Name: StateChartPanel
   m_TagString: StateChartDropZone
@@ -1634,7 +1639,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 100, y: 0}
-  m_SizeDelta: {x: 1050, y: 1050}
+  m_SizeDelta: {x: 1040, y: 1040}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1189406609
 MonoBehaviour:
@@ -1686,7 +1691,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 762d5ad02b20dd242b3505503f4cce2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yPadding: 30
+  yMargin: 30
+  padding: 50
+--- !u!114 &1189406612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189406607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfbc99885a8660469ed716fa45ca4fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridTestPrefab: {fileID: 2639917824283387851, guid: 876590f601734e343a515cb7bc49a2a5, type: 3}
+  numberOfRows: 7
+  drawTestGrid: 0
 --- !u!1001 &1221022762
 PrefabInstance:
   m_ObjectHideFlags: 0

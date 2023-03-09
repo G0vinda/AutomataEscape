@@ -1,4 +1,5 @@
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace UI
@@ -11,7 +12,12 @@ namespace UI
         {
             _uiElement = GetComponent<StateUIElement>();
             _uiElement.SetupEmptySlots();
-            _uiElement.AddDefaultTransitionPlugToState();
+            //_uiElement.AddDefaultTransitionPlugToState();
+        }
+
+        public void Initialize(float scaleFactor)
+        {
+            _uiElement.Initialize(scaleFactor, 0);
         }
 
         public void ClearDefaultStateLine()

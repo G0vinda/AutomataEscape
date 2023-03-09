@@ -65,5 +65,11 @@ namespace Helper
 
             return gameObjectList;
         }
+
+        public static bool IsInsideSquare(this Vector2 position, Vector2 squareBottomLeft, float squareSize)
+        {
+            return !(position.x < squareBottomLeft.x || position.x > squareBottomLeft.x + squareSize ||
+                     position.y < squareBottomLeft.y || position.y > squareBottomLeft.y + squareSize);
+        }
     }
 }

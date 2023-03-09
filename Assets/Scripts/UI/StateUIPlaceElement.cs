@@ -6,7 +6,7 @@ namespace UI
 {
     public class StateUIPlaceElement : MonoBehaviour, IPointerDownHandler
     {
-        public enum Mode
+        private enum Mode
         {
             IsInSelectionUnavailable,
             IsInSelectionAvailable,
@@ -14,29 +14,32 @@ namespace UI
             IsPlaced
         }
 
-        [SerializeField] private GameObject transitionLineBlocker;
-        [SerializeField] private float placeAreaSize;
-
+        private StateChartCell _connectedCell;
         private Mode _currentMode;
-        private Vector3 _dragOffset = new (0f, 75f, 2f);
+        private Vector3 _dragOffset;
         private StateUIData _data;
-        private StateChartUIManager _uiManager;
+        private UIManager _uiManager;
         private StateUIElement _uiElement;
-        private bool _canBePlaced;
-        private float _scaledPlaceAreaSize;
+        private RectTransform _rectTransform;
+        private Vector2 _defaultSize;
+        private Vector3 _defaultImageScale;
+        private Vector3 _defaultDragOffset = new (0f, 75f, 2f);
 
-        public void Initialize(StateUIData stateUIData)
+        public void Initialize(StateUIData stateUIData, float gridScaleFactor)
         {
+            _uiManager = GameManager.Instance.GetUIManager();
             _uiElement = GetComponent<StateUIElement>();
-            _uiElement.AssignedId = -1;
-            SetToUnavailable();
-            _uiManager = GameManager.Instance.GetStateChartUIManager();
-            _scaledPlaceAreaSize = _uiManager.DownscaleFloat(placeAreaSize);
-            _dragOffset = new Vector3(0f, _uiManager.DownscaleFloat(_dragOffset.y), 2f);
+            _rectTransform = GetComponent<RectTransform>();
+            _uiElement.Initialize(gridScaleFactor, -1);
+            _defaultSize = _rectTransform.sizeDelta;
+            _defaultImageScale = _uiElement.image.rectTransform.localScale;
+            _defaultDragOffset.y = _uiManager.ScaleFloat(_defaultDragOffset.y) * gridScaleFactor;
+            _dragOffset = _defaultDragOffset;
             _data = stateUIData;
             _uiElement.SetupEmptySlots();
             _uiElement.SetText(_data.text);
             _uiElement.SetImageColor(_data.color);
+            SetToUnavailable();
         }
 
         public int GetAssignedId()
@@ -66,61 +69,11 @@ namespace UI
         
         public void OnPointerDown(PointerEventData eventData)
         {
-            switch (_currentMode)
-            {
-                case Mode.IsPlaced:
-                    _uiManager.HandleStatePlaceElementClicked(this, true);
-                    RemoveAllTransitionPlugs();
-                    break;
-                case Mode.IsInSelectionAvailable:
-                    _uiManager.HandleStatePlaceElementClicked(this, false);
-                    break;
-                case Mode.IsInSelectionUnavailable:
-                    return;
-            }
-
-            SetColorsToDisabled();
-            _canBePlaced = false;
-            transitionLineBlocker.SetActive(false);
+            if(_currentMode == Mode.IsInSelectionUnavailable)
+                return;
+            
+            _uiManager.HandleStatePlaceElementClicked(this, _connectedCell);
             _currentMode = Mode.IsBeingDragged;
-        }
-        
-        private void Update()
-        {
-            if (_currentMode == Mode.IsBeingDragged)
-            {
-                transform.position = Input.mousePosition + _dragOffset;
-                CheckIfCanBePlaced();
-                if (Input.GetMouseButtonUp(0))
-                {
-                    _uiManager.HandleStatePlaceElementReleased(_data, _canBePlaced);
-                    if (_canBePlaced)
-                    {
-                        PlaceState();
-                    }
-                    else
-                    {
-                        Destroy(gameObject);
-                    }
-                }
-            }
-        }
-
-        private void CheckIfCanBePlaced()
-        {
-            if (HelperFunctions.CheckIfMouseAreaIsOverFreeAreaWithTag(_scaledPlaceAreaSize, "StateChartDropZone", "Blocker"))
-            {
-                if(!_canBePlaced)
-                    SetColorsToDefault();
-                _canBePlaced = true;
-            }
-            else
-            {
-                if(_canBePlaced)
-                    SetColorsToDisabled();
-                _canBePlaced = false;
-            }
-            Debug.Log($"Can be placed: {_canBePlaced}, size {_scaledPlaceAreaSize}");
         }
 
         private void SetColorsToDisabled()
@@ -143,15 +96,15 @@ namespace UI
             _uiElement.textElement.color = textColor;
         }
         
-        public void PlaceState()
+        public void PlaceState(StateChartCell cellToPlaceOn)
         {
+            _connectedCell = cellToPlaceOn;
             _currentMode = Mode.IsPlaced;
             var placePosition = transform.position;
             placePosition.z= 1f;
             transform.position = placePosition;
-            transitionLineBlocker.SetActive(true);
             _uiElement.SetupEmptySlots();
-            _uiElement.AddDefaultTransitionPlugToState();
+            //_uiElement.AddDefaultTransitionPlugToState();
         }
 
         public int IsPositionInRangeOfEmptySlot(Vector3 position)
@@ -189,8 +142,24 @@ namespace UI
                     _uiElement.RemoveTransitionPlugFromSlot(plug);
                     Destroy(plug.gameObject);
                 }
-                
             }
+        }
+
+        public void SwitchAppearanceToOnGrid(float zoomFactor)
+        {
+            SetSizeToCellSize(zoomFactor);
+            SetColorsToDefault();
+        }
+
+        public void SwitchAppearanceToOffGrid()
+        {
+            SetSizeToDefault();
+            SetColorsToDisabled();
+        }
+
+        public void SetPosition(Vector3 newPosition)
+        {
+            transform.position = newPosition + _dragOffset;
         }
 
         public bool IsPositionInRangeOfState(Vector3 pos)
@@ -224,8 +193,15 @@ namespace UI
         }
 
         public void SetSizeToDefault() 
-        { 
-            _uiElement.image.rectTransform.localScale = new Vector2(1f, 1f);
+        {
+            _rectTransform.sizeDelta = _defaultSize;
+            _uiElement.image.rectTransform.localScale = _defaultImageScale;
+        }
+
+        private void SetSizeToCellSize(float zoomFactor)
+        {
+            _rectTransform.sizeDelta *= zoomFactor;
+            _uiElement.image.rectTransform.localScale *= zoomFactor;
         }
     }
 }

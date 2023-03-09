@@ -11,12 +11,13 @@ namespace UI
     
         private List<StateUIPlaceElement> _stateElements;
 
-        public void Initialize(int numberOfStates)
+        public void Initialize(int numberOfStates, float gridScaleFactor)
         {
             _stateElements = new List<StateUIPlaceElement>();
+            ((RectTransform)transform).sizeDelta *= gridScaleFactor;
             for (var i = 0; i < numberOfStates; i++)
             {
-                AddState();
+                AddState(gridScaleFactor);
             }
         }
 
@@ -25,10 +26,10 @@ namespace UI
             return stateData.action;
         }
 
-        public void AddState()
+        public void AddState(float gridScaleFactor)
         {
             var newState = Instantiate(stateElementPrefab, transform);
-            newState.Initialize(stateData);
+            newState.Initialize(stateData, gridScaleFactor);
             newState.SetToAvailable();
             var numOfStates = _stateElements.Count;
             if(numOfStates > 0)

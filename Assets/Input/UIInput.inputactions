@@ -1,0 +1,94 @@
+{
+    "name": "UIInput",
+    "maps": [
+        {
+            "name": "Input",
+            "id": "938eaf69-95e0-45cb-95cf-b33ea68ed567",
+            "actions": [
+                {
+                    "name": "Position",
+                    "type": "Value",
+                    "id": "f1fd97e5-f859-48f0-bdee-3ca47478c7bd",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "PressRelease",
+                    "type": "Button",
+                    "id": "5ad6c6d9-896c-4100-b269-c1eb90f8b675",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PositionDelta",
+                    "type": "Value",
+                    "id": "f3d61140-e30c-4993-9d39-1fe028e4fbf9",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Zoom",
+                    "type": "Value",
+                    "id": "613f70f3-020b-4cc0-95d5-11fe97474a7f",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "913c46c8-635c-4212-b245-5f6425a33315",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1704ec47-492b-4a5d-b1dd-ebb928f4b7b5",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PressRelease",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "71870b36-71e1-4ae2-aa29-886403ee96e5",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PositionDelta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "36c596ef-899d-47aa-8591-67372b2b0a3f",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

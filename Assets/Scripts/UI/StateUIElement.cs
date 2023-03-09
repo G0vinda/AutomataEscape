@@ -29,9 +29,16 @@ namespace UI
 
         private void Start()
         {
-            var uiManager = GameManager.Instance.GetStateChartUIManager();
-            _scaledSlotAreaWidth = uiManager.DownscaleFloat(slotAreaWidth);
-            _scaledSlotAreaHeight = uiManager.DownscaleFloat(slotAreaHeight);
+            var uiManager = GameManager.Instance.GetUIManager();
+            _scaledSlotAreaWidth = uiManager.ScaleFloat(slotAreaWidth);
+            _scaledSlotAreaHeight = uiManager.ScaleFloat(slotAreaHeight);
+        }
+
+        public void Initialize(float scaleFactor, int assignedId)
+        {
+            ((RectTransform)transform).sizeDelta *= scaleFactor;
+            image.rectTransform.localScale *= scaleFactor;
+            AssignedId = assignedId;
         }
 
         public void SetupEmptySlots()
