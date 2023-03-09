@@ -47,9 +47,7 @@ namespace UI
 
         public void ZoomChart(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
         {
-            Vector2 panelCenterOffset = new Vector2(_uiManager.ScaleFloat(_rectTransform.sizeDelta.x * 0.5f), 0);
-            Vector2 panelCenter = (Vector2)_rectTransform.position + panelCenterOffset;
-            var zoomCenterDifference = zoomCenter - panelCenter;
+            var zoomCenterDifference = zoomCenter - (Vector2)_rectTransform.position;
             var zoomOffset = - zoomCenterDifference * zoomDelta;
             _rectTransform.position += (Vector3)zoomOffset;
             _rectTransform.sizeDelta = _defaultScale * zoomFactor;
