@@ -13,6 +13,8 @@ namespace UI
         private StateChartUIGrid _stateChartUIGrid;
         private Vector2 _defaultScale;
         private float _scaleFactor;
+        private float _gridHeight;
+        private Vector2 _bottomLeftGridPosition;
 
         private void Awake()
         {
@@ -25,15 +27,20 @@ namespace UI
             _uiManager = GameManager.Instance.GetUIManager();
             ScaleChartToFitScreen();
             Debug.Log($"StateChartPanelsPosition is {_rectTransform.position}");
-            var gridHeight = _uiManager.ScaleFloat(_rectTransform.sizeDelta.y - 2 * padding);
-            var topLeftGridPosition = (Vector2)transform.position +
-                                      new Vector2(_uiManager.ScaleFloat(padding), -gridHeight * 0.5f);
-            _stateChartUIGrid.Initialize(gridHeight, topLeftGridPosition);
+            CalculateGridValues();
+            _stateChartUIGrid.Initialize(_gridHeight, _bottomLeftGridPosition);
         }
 
         public float GetScaleFactor()
         {
             return _scaleFactor;
+        }
+
+        private void CalculateGridValues()
+        {
+            _gridHeight = _uiManager.ScaleFloat(_rectTransform.sizeDelta.y - 2 * padding);
+            _bottomLeftGridPosition = (Vector2)transform.position +
+                                      new Vector2(_uiManager.ScaleFloat(padding), -_gridHeight * 0.5f);
         }
 
         private void ScaleChartToFitScreen()
@@ -51,6 +58,8 @@ namespace UI
             var zoomOffset = - zoomCenterDifference * zoomDelta;
             _rectTransform.position += (Vector3)zoomOffset;
             _rectTransform.sizeDelta = _defaultScale * zoomFactor;
+            CalculateGridValues();
+            _stateChartUIGrid.UpdateGrid(_gridHeight,_bottomLeftGridPosition,zoomFactor);
         }
     }
 }

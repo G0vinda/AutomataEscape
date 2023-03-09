@@ -54,7 +54,7 @@ namespace UI
             {
                 if (_stateInRange != null)
                 {
-                    _stateInRange.SetSizeToDefault();
+                    //_stateInRange.SetSizeToDefault();
                     _slotInRangeId = -1;
                 }
 
@@ -78,7 +78,7 @@ namespace UI
                 }
                 else if (slotWasInRange && _slotInRangeId < 0)
                 {
-                    _stateInRange.SetSizeToDefault();
+                    //_stateInRange.SetSizeToDefault();
                 }
             }
             else
@@ -225,7 +225,7 @@ namespace UI
                 var slotDirection = _stateInRange.GetSlotDirection(_slotInRangeId);
                 GetComponent<TransitionPlug>().OnTransitionConnected(_stateInRange, _slotInRangeId);
                 _stateInRange.SetSlotToOccupied(_slotInRangeId);
-                _stateInRange.SetSizeToDefault();
+                //_stateInRange.SetSizeToDefault();
                 transitionLine.DrawLineToSlot(_inputs[^1].Position, slotPosition, slotDirection);
             }
             else

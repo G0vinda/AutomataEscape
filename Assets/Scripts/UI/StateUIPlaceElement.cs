@@ -20,19 +20,13 @@ namespace UI
         private StateUIData _data;
         private UIManager _uiManager;
         private StateUIElement _uiElement;
-        private RectTransform _rectTransform;
-        private Vector2 _defaultSize;
-        private Vector3 _defaultImageScale;
         private Vector3 _defaultDragOffset = new (0f, 75f, 2f);
 
         public void Initialize(StateUIData stateUIData, float gridScaleFactor)
         {
             _uiManager = GameManager.Instance.GetUIManager();
             _uiElement = GetComponent<StateUIElement>();
-            _rectTransform = GetComponent<RectTransform>();
             _uiElement.Initialize(gridScaleFactor, -1);
-            _defaultSize = _rectTransform.sizeDelta;
-            _defaultImageScale = _uiElement.image.rectTransform.localScale;
             _defaultDragOffset.y = _uiManager.ScaleFloat(_defaultDragOffset.y) * gridScaleFactor;
             _dragOffset = _defaultDragOffset;
             _data = stateUIData;
@@ -147,13 +141,13 @@ namespace UI
 
         public void SwitchAppearanceToOnGrid(float zoomFactor)
         {
-            SetSizeToCellSize(zoomFactor);
+            _uiElement.SetSizeToCellSize(zoomFactor);
             SetColorsToDefault();
         }
 
         public void SwitchAppearanceToOffGrid()
         {
-            SetSizeToDefault();
+            _uiElement.SetSizeToDefault();
             SetColorsToDisabled();
         }
 
@@ -190,18 +184,6 @@ namespace UI
         public void SetSizeToBig()
         {
             _uiElement.image.rectTransform.localScale = new Vector2(1.15f, 1.15f);
-        }
-
-        public void SetSizeToDefault() 
-        {
-            _rectTransform.sizeDelta = _defaultSize;
-            _uiElement.image.rectTransform.localScale = _defaultImageScale;
-        }
-
-        private void SetSizeToCellSize(float zoomFactor)
-        {
-            _rectTransform.sizeDelta *= zoomFactor;
-            _uiElement.image.rectTransform.localScale *= zoomFactor;
         }
     }
 }

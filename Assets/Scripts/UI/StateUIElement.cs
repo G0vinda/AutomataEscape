@@ -27,6 +27,10 @@ namespace UI
         private float _scaledSlotAreaWidth;
         private float _scaledSlotAreaHeight;
 
+        private RectTransform _rectTransform;
+        private Vector2 _defaultSize;
+        private Vector3 _defaultImageScale;
+
         private void Start()
         {
             var uiManager = GameManager.Instance.GetUIManager();
@@ -36,11 +40,26 @@ namespace UI
 
         public void Initialize(float scaleFactor, int assignedId)
         {
-            ((RectTransform)transform).sizeDelta *= scaleFactor;
-            image.rectTransform.localScale *= scaleFactor;
+            _rectTransform = GetComponent<RectTransform>();
+            _defaultSize = _rectTransform.sizeDelta * scaleFactor;
+            _rectTransform.sizeDelta = _defaultSize; 
+            _defaultImageScale = image.rectTransform.localScale * scaleFactor;
+            image.rectTransform.localScale = _defaultImageScale;
+
             AssignedId = assignedId;
         }
 
+        public void SetSizeToDefault() 
+        {
+            _rectTransform.sizeDelta = _defaultSize;
+            image.rectTransform.localScale = _defaultImageScale;
+        }
+
+        public void SetSizeToCellSize(float zoomFactor)
+        {
+            _rectTransform.sizeDelta = _defaultSize * zoomFactor;
+            image.rectTransform.localScale = _defaultImageScale * zoomFactor;
+        }
         public void SetupEmptySlots()
         {
             connectedTransitionPlugs = new TransitionPlug[12];

@@ -30,9 +30,7 @@ namespace UI
 
         public void Initialize(float gridHeight, Vector2 bottomLeftPosition)
         {
-            _gridHeight = gridHeight;
-            _cellSize = _gridHeight / numberOfRows;
-            _bottomLeftPosition = bottomLeftPosition;
+            SetGridValues(gridHeight, bottomLeftPosition);
 
             for (byte x = 0; x < numberOfRows; x++)
             {
@@ -45,6 +43,36 @@ namespace UI
             
             if(drawTestGrid)
                 DrawGrid();
+        }
+
+        private void SetGridValues(float gridHeight, Vector2 bottomLeftPosition)
+        {
+            _gridHeight = gridHeight;
+            _cellSize = _gridHeight / numberOfRows;
+            _bottomLeftPosition = bottomLeftPosition;
+        }
+
+        public void UpdateGrid(float gridHeight, Vector2 bottomLeftPosition, float zoomFactor)
+        {
+            SetGridValues(gridHeight, bottomLeftPosition);
+
+            foreach (var stateChartCell in _gridCells)
+            {
+                var connectedStateElement = stateChartCell.Value.PlacedStateElement;
+                if(connectedStateElement == null)
+                    continue;
+
+                var newStatePosition = CellToScreenCoordinates(stateChartCell.Key);
+                if (connectedStateElement.TryGetComponent<StateUIPlaceElement>(out var connectedStatePlaceElement))
+                {
+                    connectedStatePlaceElement.SetPosition(newStatePosition);
+                }
+                else
+                {
+                    connectedStateElement.transform.position = newStatePosition;   
+                }
+                connectedStateElement.SetSizeToCellSize(zoomFactor);
+            }
         }
 
         private Vector3 CellToScreenCoordinates(ByteCoordinates cellCoordinates)
