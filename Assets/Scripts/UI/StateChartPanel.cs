@@ -14,6 +14,7 @@ namespace UI
         private Vector2 _defaultScale;
         private float _scaleFactor;
         private float _gridHeight;
+        private float _scaledPadding;
         private Vector2 _bottomLeftGridPosition;
 
         private void Awake()
@@ -26,7 +27,7 @@ namespace UI
         {
             _uiManager = GameManager.Instance.GetUIManager();
             ScaleChartToFitScreen();
-            Debug.Log($"StateChartPanelsPosition is {_rectTransform.position}");
+            _scaledPadding = _uiManager.ScaleFloat(padding) * _scaleFactor;
             CalculateGridValues();
             _stateChartUIGrid.Initialize(_gridHeight, _bottomLeftGridPosition);
         }
@@ -38,9 +39,9 @@ namespace UI
 
         private void CalculateGridValues()
         {
-            _gridHeight = _uiManager.ScaleFloat(_rectTransform.sizeDelta.y - 2 * padding);
+            _gridHeight = _uiManager.ScaleFloat(_rectTransform.sizeDelta.y) - 2 * _scaledPadding;
             _bottomLeftGridPosition = (Vector2)transform.position +
-                                      new Vector2(_uiManager.ScaleFloat(padding), -_gridHeight * 0.5f);
+                                      new Vector2(_scaledPadding, -_gridHeight * 0.5f);
         }
 
         private void ScaleChartToFitScreen()
@@ -58,6 +59,7 @@ namespace UI
             var zoomOffset = - zoomCenterDifference * zoomDelta;
             _rectTransform.position += (Vector3)zoomOffset;
             _rectTransform.sizeDelta = _defaultScale * zoomFactor;
+            _scaledPadding = _uiManager.ScaleFloat(padding) * _scaleFactor * zoomFactor; 
             CalculateGridValues();
             _stateChartUIGrid.UpdateGrid(_gridHeight,_bottomLeftGridPosition,zoomFactor);
         }

@@ -16,7 +16,6 @@ namespace UI
             _stateElements = new List<StateUIPlaceElement>();
             ((RectTransform)transform).sizeDelta *= gridScaleFactor;
             stateElementPlaceOffset *= gridScaleFactor;
-            Debug.Log($"StatePlaceElementOffset: {stateElementPlaceOffset}");
             for (var i = 0; i < numberOfStates; i++)
             {
                 AddState(gridScaleFactor);
@@ -55,7 +54,7 @@ namespace UI
 
         public void DestroyStates()
         {
-            for (int i = transform.childCount - 1; i >= 0; i--)
+            for (var i = transform.childCount - 1; i >= 0; i--)
             {
                 Destroy(transform.GetChild(i).gameObject);
             }

@@ -163,7 +163,6 @@ namespace UI
 
         private IEnumerator ProcessPlayerInput(StateUIPlaceElement clickedElement, StateChartCell connectedCell)
         {
-            Debug.Log($"ProcessPlayerInput was started");
             _input.Input.PressRelease.performed += OnInputRelease;
             while (true)
             {
@@ -197,13 +196,11 @@ namespace UI
 
         private void StatePlaceElementClicked()
         {
-            Debug.Log("State was clicked!");
             _inputReleased = false;
         }
 
         private IEnumerator DragStatePlaceElement()
         {
-            Debug.Log("State drag will start");
             var wasOnGrid = false;
             _statePlaceElement.SwitchAppearanceToOffGrid();
             _statePlaceElement.transform.SetAsLastSibling();
@@ -217,7 +214,6 @@ namespace UI
                 {
                     if (!wasOnGrid)
                     {
-                        Debug.Log("State moved on Grid");
                         _statePlaceElement.SwitchAppearanceToOnGrid(_zoomFactor);
                     }
                     _statePlaceElement.transform.position = cellPosition;
@@ -227,7 +223,6 @@ namespace UI
                 {
                     if (wasOnGrid)
                     {
-                        Debug.Log("State moved off Grid");  
                         _statePlaceElement.SwitchAppearanceToOffGrid();
                     }
                     _statePlaceElement.transform.position = inputPosition;
@@ -257,7 +252,6 @@ namespace UI
 
             _inputReleased = false;
             _input.Input.PressRelease.performed += OnInputRelease;
-            Debug.Log("State drag will end");
         }
         
         private void OnInputRelease(InputAction.CallbackContext obj)

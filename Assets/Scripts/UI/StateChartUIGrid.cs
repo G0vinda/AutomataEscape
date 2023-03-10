@@ -103,7 +103,7 @@ namespace UI
             foreach (var stateChartCell in _gridCells)
             {
                 var gridTest = Instantiate(gridTestPrefab, CellToScreenCoordinates(stateChartCell.Key), Quaternion.identity, transform);
-                gridTest.transform.localScale *= testScaleFactor;
+                ((RectTransform)gridTest.transform).sizeDelta *= testScaleFactor;
                 _gridTestObjects.Add(gridTest);
             }
         }

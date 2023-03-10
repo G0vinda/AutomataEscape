@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1643182638292262741, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -37,11 +41,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 130
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 150
+      value: 130
       objectReference: {fileID: 0}
     - target: {fileID: 2628453099235809260, guid: 7a9029dd8e614654a8b10ca39055b75c, type: 3}
       propertyPath: m_LocalPosition.x
