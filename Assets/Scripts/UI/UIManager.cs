@@ -43,9 +43,6 @@ namespace UI
 
         private void OnEnable()
         {
-            _input.Enable();
-            _input.Input.Zoom.performed += ProcessZoom;
-            
             if (!_setupUIOnEnable) return;
 
             SetupStateChartUI();
@@ -53,32 +50,17 @@ namespace UI
             _setupUIOnEnable = false;
         }
 
-        private void OnDisable()
+        public void ProcessZoom(float zoomFactorChange, Vector2 zoomCenter)
         {
-            _input.Disable();
-            _input.Input.Zoom.performed -= ProcessZoom;
-        }
-        
-        private void ProcessZoom(InputAction.CallbackContext context)
-        {
-            float zoomDelta;
-            if (context.ReadValue<float>() > 0)
-            {
-                if(_zoomFactor > 1.85f)
-                    return;
+            const float minZoomFactor = 1f;
+            const float maxZoomFactor = 2f;
+            if (_zoomFactor == minZoomFactor  && zoomFactorChange < 0 || _zoomFactor == maxZoomFactor && zoomFactorChange > 0)
+                return;
 
-                zoomDelta = 0.15f;
-            }
-            else
-            {
-                if(_zoomFactor < 1.15f)
-                    return;
-                
-                zoomDelta = -0.15f;
-            }
-
-            _zoomFactor += zoomDelta;
-            stateChartPanel.ZoomChart(_zoomFactor, zoomDelta, _input.Input.Position.ReadValue<Vector2>());
+            var zoomDelta = zoomFactorChange / _zoomFactor;
+            _zoomFactor += zoomFactorChange;
+            _zoomFactor = Mathf.Clamp(_zoomFactor, minZoomFactor, maxZoomFactor);
+            stateChartPanel.ZoomChart(_zoomFactor, zoomDelta, zoomCenter);
         }
 
         private void Start()

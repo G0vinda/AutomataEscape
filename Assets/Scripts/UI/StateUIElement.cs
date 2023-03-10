@@ -44,9 +44,9 @@ namespace UI
             _defaultSize = _rectTransform.sizeDelta * scaleFactor;
             Debug.Log($"Default size is: {GameManager.Instance.GetUIManager().ScaleFloat(_defaultSize.x)}");
             _rectTransform.sizeDelta = _defaultSize; 
-            //_defaultImageScale = image.rectTransform.localScale * scaleFactor;
+            _defaultImageScale = image.rectTransform.localScale * scaleFactor;
             //Debug.Log($"Default imageSize is: {GameManager.Instance.GetUIManager().ScaleFloat(_defaultSize.x)}");
-            //image.rectTransform.localScale = _defaultImageScale;
+            image.rectTransform.localScale = _defaultImageScale;
 
             AssignedId = assignedId;
         }
@@ -54,14 +54,15 @@ namespace UI
         public void SetSizeToDefault() 
         {
             _rectTransform.sizeDelta = _defaultSize;
-            //image.rectTransform.localScale = _defaultImageScale;
+            image.rectTransform.localScale = _defaultImageScale;
         }
 
         public void SetSizeToCellSize(float zoomFactor)
         {
             _rectTransform.sizeDelta = _defaultSize * zoomFactor;
-            //image.rectTransform.localScale = _defaultImageScale * zoomFactor;
+            image.rectTransform.localScale = _defaultImageScale * zoomFactor;
         }
+        
         public void SetupEmptySlots()
         {
             connectedTransitionPlugs = new TransitionPlug[12];

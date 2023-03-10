@@ -56,8 +56,8 @@ namespace UI
         public void ZoomChart(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
         {
             var zoomCenterDifference = zoomCenter - (Vector2)_rectTransform.position;
-            var zoomOffset = - zoomCenterDifference * zoomDelta;
-            _rectTransform.position += (Vector3)zoomOffset;
+            Vector3 zoomOffset = zoomCenterDifference * zoomDelta;
+            _rectTransform.position -= zoomOffset;
             _rectTransform.sizeDelta = _defaultScale * zoomFactor;
             _scaledPadding = _uiManager.ScaleFloat(padding) * _scaleFactor * zoomFactor; 
             CalculateGridValues();

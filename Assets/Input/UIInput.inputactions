@@ -88,6 +88,82 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "MouseZoom",
+            "id": "967676d8-a0b6-473b-84ee-9c53e6fbccc2",
+            "actions": [
+                {
+                    "name": "Zoom",
+                    "type": "Value",
+                    "id": "31daed2f-4804-427a-9d40-e5652eac7bba",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MousePosition",
+                    "type": "Value",
+                    "id": "cfd01534-22f6-410d-9804-f8c914cbfe11",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "27bad8fd-d9e8-4174-a5b2-47432a6af401",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1d1e7344-9989-4b61-86a4-1aa656d2dfac",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "TouchZoom",
+            "id": "966bde99-81a3-46ba-9b63-2364fc5d683b",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "62bbac97-e196-4aba-a388-1467ebe816d5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f0c6b527-f1fe-44dc-85eb-4f4fdb4787cb",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
