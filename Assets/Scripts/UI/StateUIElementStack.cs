@@ -15,6 +15,8 @@ namespace UI
         {
             _stateElements = new List<StateUIPlaceElement>();
             ((RectTransform)transform).sizeDelta *= gridScaleFactor;
+            stateElementPlaceOffset *= gridScaleFactor;
+            Debug.Log($"StatePlaceElementOffset: {stateElementPlaceOffset}");
             for (var i = 0; i < numberOfStates; i++)
             {
                 AddState(gridScaleFactor);
@@ -37,9 +39,9 @@ namespace UI
             
             var newStateTransform = newState.GetComponent<RectTransform>();
             newStateTransform.SetSiblingIndex(numOfStates);
-            
+
             var newStatePosition = newStateTransform.localPosition;
-            newStatePosition.y = stateElementPlaceOffset * numOfStates;
+            newStatePosition.y = stateElementPlaceOffset * numOfStates - newStateTransform.sizeDelta.y * 0.5f;
             newStateTransform.localPosition = newStatePosition;
             _stateElements.Add(newState);
         }

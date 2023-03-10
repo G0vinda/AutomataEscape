@@ -1707,7 +1707,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridTestPrefab: {fileID: 2639917824283387851, guid: 876590f601734e343a515cb7bc49a2a5, type: 3}
   numberOfRows: 7
-  drawTestGrid: 0
+  drawTestGrid: 1
 --- !u!1001 &1221022762
 PrefabInstance:
   m_ObjectHideFlags: 0

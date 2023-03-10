@@ -220,7 +220,7 @@ namespace UI
                         Debug.Log("State moved on Grid");
                         _statePlaceElement.SwitchAppearanceToOnGrid(_zoomFactor);
                     }
-                    _statePlaceElement.SetPosition(cellPosition);
+                    _statePlaceElement.transform.position = cellPosition;
                     wasOnGrid = true;
                 }
                 else
@@ -230,7 +230,7 @@ namespace UI
                         Debug.Log("State moved off Grid");  
                         _statePlaceElement.SwitchAppearanceToOffGrid();
                     }
-                    _statePlaceElement.SetPosition(inputPosition);
+                    _statePlaceElement.transform.position = inputPosition;
                     wasOnGrid = false;
                 }
 

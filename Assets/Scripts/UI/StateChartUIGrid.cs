@@ -22,6 +22,7 @@ namespace UI
         [SerializeField] private int numberOfRows;
         [SerializeField] private bool drawTestGrid;
 
+        private List<GameObject> _gridTestObjects = new ();
         private bool _initialized;
         private Dictionary<ByteCoordinates, StateChartCell> _gridCells = new ();
         private float _cellSize;
@@ -42,7 +43,7 @@ namespace UI
             }
             
             if(drawTestGrid)
-                DrawGrid();
+                DrawGrid(1);
         }
 
         private void SetGridValues(float gridHeight, Vector2 bottomLeftPosition)
@@ -63,16 +64,13 @@ namespace UI
                     continue;
 
                 var newStatePosition = CellToScreenCoordinates(stateChartCell.Key);
-                if (connectedStateElement.TryGetComponent<StateUIPlaceElement>(out var connectedStatePlaceElement))
-                {
-                    connectedStatePlaceElement.SetPosition(newStatePosition);
-                }
-                else
-                {
-                    connectedStateElement.transform.position = newStatePosition;   
-                }
+                
+                connectedStateElement.transform.position = newStatePosition;
                 connectedStateElement.SetSizeToCellSize(zoomFactor);
             }
+            
+            if(drawTestGrid)
+                DrawGrid(zoomFactor);
         }
 
         private Vector3 CellToScreenCoordinates(ByteCoordinates cellCoordinates)
@@ -90,13 +88,23 @@ namespace UI
             return new ByteCoordinates(xCoordinate, yCoordinate);
         }
 
-        private void DrawGrid()
+        private void DrawGrid(float zoomFactor)
         {
-            var testScaleFactor = GetComponentInParent<StateChartPanel>().GetScaleFactor();
+            if (_gridTestObjects.Count != 0)
+            {
+                foreach (var gridTestObject in _gridTestObjects)
+                {
+                    Destroy(gridTestObject.gameObject);
+                }
+                _gridTestObjects.Clear();
+            }
+            
+            var testScaleFactor = GetComponentInParent<StateChartPanel>().GetScaleFactor() * zoomFactor;
             foreach (var stateChartCell in _gridCells)
             {
                 var gridTest = Instantiate(gridTestPrefab, CellToScreenCoordinates(stateChartCell.Key), Quaternion.identity, transform);
                 gridTest.transform.localScale *= testScaleFactor;
+                _gridTestObjects.Add(gridTest);
             }
         }
 

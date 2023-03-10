@@ -16,19 +16,15 @@ namespace UI
 
         private StateChartCell _connectedCell;
         private Mode _currentMode;
-        private Vector3 _dragOffset;
         private StateUIData _data;
         private UIManager _uiManager;
         private StateUIElement _uiElement;
-        private Vector3 _defaultDragOffset = new (0f, 75f, 2f);
 
         public void Initialize(StateUIData stateUIData, float gridScaleFactor)
         {
             _uiManager = GameManager.Instance.GetUIManager();
             _uiElement = GetComponent<StateUIElement>();
             _uiElement.Initialize(gridScaleFactor, -1);
-            _defaultDragOffset.y = _uiManager.ScaleFloat(_defaultDragOffset.y) * gridScaleFactor;
-            _dragOffset = _defaultDragOffset;
             _data = stateUIData;
             _uiElement.SetupEmptySlots();
             _uiElement.SetText(_data.text);
@@ -149,11 +145,6 @@ namespace UI
         {
             _uiElement.SetSizeToDefault();
             SetColorsToDisabled();
-        }
-
-        public void SetPosition(Vector3 newPosition)
-        {
-            transform.position = newPosition + _dragOffset;
         }
 
         public bool IsPositionInRangeOfState(Vector3 pos)
