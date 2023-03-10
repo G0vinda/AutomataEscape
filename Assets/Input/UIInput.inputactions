@@ -31,15 +31,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "Zoom",
-                    "type": "Value",
-                    "id": "613f70f3-020b-4cc0-95d5-11fe97474a7f",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -73,17 +64,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "PositionDelta",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "36c596ef-899d-47aa-8591-67372b2b0a3f",
-                    "path": "<Mouse>/scroll/y",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Zoom",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

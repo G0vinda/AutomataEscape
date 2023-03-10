@@ -43,11 +43,17 @@ namespace UI
 
         private void OnEnable()
         {
+            _input.Input.Enable();
             if (!_setupUIOnEnable) return;
 
             SetupStateChartUI();
             EnableAvailableUIElements();
             _setupUIOnEnable = false;
+        }
+
+        private void OnDisable()
+        {
+            _input.Input.Disable();
         }
 
         public void ProcessZoom(float zoomFactorChange, Vector2 zoomCenter)
@@ -179,6 +185,7 @@ namespace UI
         private void StatePlaceElementClicked()
         {
             _inputReleased = false;
+            _input.Input.PressRelease.performed -= OnInputRelease;
         }
 
         private IEnumerator DragStatePlaceElement()
@@ -233,11 +240,12 @@ namespace UI
             }
 
             _inputReleased = false;
-            _input.Input.PressRelease.performed += OnInputRelease;
+            _input.Input.PressRelease.performed -= OnInputRelease;
         }
-        
-        private void OnInputRelease(InputAction.CallbackContext obj)
+
+        private void OnInputRelease(InputAction.CallbackContext context)
         {
+            Debug.Log("Input was released.");
             _inputReleased = true;
         }
         

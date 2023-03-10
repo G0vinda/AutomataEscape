@@ -24,14 +24,14 @@ public class ZoomInputHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        _uiInput.Enable();
+        _uiInput.MouseZoom.Enable();
         if (!useTouch)
             _uiInput.MouseZoom.Zoom.performed += HandleMouseZoom;
     }
 
     private void OnDisable()
     {
-        _uiInput.Disable();
+        _uiInput.MouseZoom.Disable();
         if (!useTouch)
             _uiInput.MouseZoom.Zoom.performed -= HandleMouseZoom;
     }
