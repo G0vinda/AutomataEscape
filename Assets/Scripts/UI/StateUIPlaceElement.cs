@@ -37,6 +37,11 @@ namespace UI
             return _uiElement.AssignedId;
         }
 
+        public StateChartCell GetConnectedCell()
+        {
+            return _connectedCell;
+        }
+
         public StateChartManager.StateAction GetAction()
         {
             return _data.action;
@@ -62,7 +67,6 @@ namespace UI
             if(_currentMode == Mode.IsInSelectionUnavailable)
                 return;
             
-            _uiManager.HandleStatePlaceElementClicked(this, _connectedCell);
             _currentMode = Mode.IsBeingDragged;
         }
 
@@ -86,13 +90,10 @@ namespace UI
             _uiElement.textElement.color = textColor;
         }
         
-        public void PlaceState(StateChartCell cellToPlaceOn)
+        public void PlaceState(StateChartCell cellToPlaceOn, Transform newParent)
         {
             _connectedCell = cellToPlaceOn;
-            _currentMode = Mode.IsPlaced;
-            var placePosition = transform.position;
-            placePosition.z= 1f;
-            transform.position = placePosition;
+            transform.SetParent(newParent);
             _uiElement.SetupEmptySlots();
             //_uiElement.AddDefaultTransitionPlugToState();
         }

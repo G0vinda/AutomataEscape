@@ -1,17 +1,14 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Helper;
-using UnityEngine.InputSystem;
 
 namespace UI
 {
     public class UIManager : MonoBehaviour
     {
         [SerializeField] private List<StateUIElementStack> stateUIElementStacks;
-        [SerializeField] private StateUIPlaceElement statePlaceElementPrefab;
         [SerializeField] private List<TransitionSelectElement> transitionSelectElements;
         [SerializeField] private TransitionPlaceElement transitionPlaceElementPrefab;
         [SerializeField] private StartStateUIElement startStateUIElement;
@@ -25,25 +22,25 @@ namespace UI
         private TransitionPlaceElement _transitionPlaceElement;
         private List<LevelData.AvailableStateInfo> _availableStateInfo;
         private List<StateChartManager.TransitionCondition> _availableTransitionConditions;
-        private UIInput _input;
+        private InputManager _inputManager;
         private float _zoomFactor;
-        private bool _inputReleased;
+        private bool _dragEnded;
 
         private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionPlug> _connectedTransitions = new();
         private Canvas _canvas;
 
-        private WaitForEndOfFrame _nextFrame;
-
         private void Awake()
         {
             _canvas = GetComponent<Canvas>();
-            _input = new UIInput();
-            _nextFrame = new WaitForEndOfFrame();
         }
 
         private void OnEnable()
         {
-            _input.Input.Enable();
+            InputManager.StateElementTapped += HandleStatePlaceElementTapped;
+            InputManager.StateChartPanelTapped += HandleStateChartPanelTapped;
+            InputManager.StateElementDragStarted += HandleStatePlaceElementDragStart;
+            InputManager.StateChartPanelDragStarted += HandleStateChartPanelDragStart;
+            
             if (!_setupUIOnEnable) return;
 
             SetupStateChartUI();
@@ -53,9 +50,22 @@ namespace UI
 
         private void OnDisable()
         {
-            _input.Input.Disable();
+            InputManager.StateElementTapped -= HandleStatePlaceElementTapped;
+            InputManager.StateChartPanelTapped -= HandleStateChartPanelTapped;
+            InputManager.StateElementDragStarted -= HandleStatePlaceElementDragStart;
+            InputManager.StateChartPanelDragStarted -= HandleStateChartPanelDragStart;
         }
 
+        private void Start()
+        {
+            _stateChartManager = GameManager.Instance.GetStateChartManager();
+            _inputManager = GameManager.Instance.GetInputManager();
+            _placedStateElements = new List<StateUIPlaceElement>();
+            stateChartPanel.Initialize();
+            _stateChartUIGrid = stateChartPanel.GetComponent<StateChartUIGrid>();
+            _zoomFactor = 1f;
+        }
+        
         public void ProcessZoom(float zoomFactorChange, Vector2 zoomCenter)
         {
             const float minZoomFactor = 1f;
@@ -67,15 +77,6 @@ namespace UI
             _zoomFactor += zoomFactorChange;
             _zoomFactor = Mathf.Clamp(_zoomFactor, minZoomFactor, maxZoomFactor);
             stateChartPanel.ZoomChart(_zoomFactor, zoomDelta, zoomCenter);
-        }
-
-        private void Start()
-        {
-            _stateChartManager = GameManager.Instance.GetStateChartManager();
-            _placedStateElements = new List<StateUIPlaceElement>();
-            stateChartPanel.Initialize();
-            _stateChartUIGrid = stateChartPanel.GetComponent<StateChartUIGrid>();
-            _zoomFactor = 1f;
         }
 
         public void SetupUI(List<LevelData.AvailableStateInfo> availableStateInfo,
@@ -144,48 +145,46 @@ namespace UI
             _transitionPlaceElement.Initialize(this, transitionUIData);
         }
 
-        public void HandleStatePlaceElementClicked(StateUIPlaceElement clickedElement, StateChartCell connectedCell)
+        private void HandleStatePlaceElementTapped(StateUIPlaceElement stateElement)
         {
-            StartCoroutine(ProcessPlayerInput(clickedElement, connectedCell));
+            // Todo: highlight connected transitions
         }
 
-        private IEnumerator ProcessPlayerInput(StateUIPlaceElement clickedElement, StateChartCell connectedCell)
+        private void HandleStateChartPanelTapped()
         {
-            _input.Input.PressRelease.performed += OnInputRelease;
-            while (true)
+            // Todo: reset transition highlighting
+        }
+
+        private void HandleStatePlaceElementDragStart(StateUIPlaceElement stateElement)
+        {
+            InputManager.DragEnded += HandleDragEnded;
+            _statePlaceElement = stateElement;
+            
+            var connectedCell = _statePlaceElement.GetConnectedCell();
+            if (connectedCell != null)
             {
-                if (_inputReleased) // Player input was click
-                {
-                    StatePlaceElementClicked();
-                    _input.Input.PressRelease.performed -= OnInputRelease;
-                    break;
-                }
-
-                if (_input.Input.PositionDelta.ReadValue<Vector2>() != Vector2.zero) // Player input is drag
-                {
-                    _statePlaceElement = clickedElement;
-
-                    if (connectedCell != null)
-                    {
-                        RemoveStatePlaceElement(clickedElement);
-                        connectedCell.RemoveStateElement();
-                    }
-                    else
-                    {
-                        stateUIElementStacks.First(s => s.GetAction() == clickedElement.GetAction()).RemoveState(clickedElement);
-                    }
-
-                    StartCoroutine(DragStatePlaceElement());
-                    break;
-                }
-                yield return _nextFrame;
+                RemoveStatePlaceElement(_statePlaceElement);
+                connectedCell.RemoveStateElement();
             }
+            else
+            {
+                stateUIElementStacks.First(stack => stack.GetAction() == _statePlaceElement.GetAction()).RemoveState(_statePlaceElement);
+            }
+            
+            StartCoroutine(DragStatePlaceElement());
         }
 
-        private void StatePlaceElementClicked()
+        private void HandleStateChartPanelDragStart()
         {
-            _inputReleased = false;
-            _input.Input.PressRelease.performed -= OnInputRelease;
+            InputManager.DragEnded += HandleDragEnded;
+            StartCoroutine(DragStateChartPanel());
+        }
+        
+        private void HandleDragEnded()
+        {
+            InputManager.DragEnded -= HandleDragEnded;
+            Debug.Log("Input was released.");
+            _dragEnded = true;
         }
 
         private IEnumerator DragStatePlaceElement()
@@ -197,7 +196,8 @@ namespace UI
 
             do
             {
-                Vector3 inputPosition = _input.Input.Position.ReadValue<Vector2>();
+                Vector3 inputPosition = _inputManager.GetPointerPosition();
+                var stateElementTransform = _statePlaceElement.transform;
                 currentCell = _stateChartUIGrid.TryGetEmptyCellOnPosition(inputPosition, out var cellPosition);
                 if (currentCell != null)
                 {
@@ -205,7 +205,7 @@ namespace UI
                     {
                         _statePlaceElement.SwitchAppearanceToOnGrid(_zoomFactor);
                     }
-                    _statePlaceElement.transform.position = cellPosition;
+                    stateElementTransform.position = cellPosition;
                     wasOnGrid = true;
                 }
                 else
@@ -214,17 +214,17 @@ namespace UI
                     {
                         _statePlaceElement.SwitchAppearanceToOffGrid();
                     }
-                    _statePlaceElement.transform.position = inputPosition;
+                    stateElementTransform.position = inputPosition;
                     wasOnGrid = false;
                 }
 
-                yield return _nextFrame;
-            } while (!_inputReleased);
+                yield return null;
+            } while (!_dragEnded);
 
             if (wasOnGrid)
             {
                 currentCell.PlaceStateElement(_statePlaceElement);
-                _statePlaceElement.PlaceState(currentCell);
+                _statePlaceElement.PlaceState(currentCell, stateChartPanel.transform);
                 
                 var assignedId = _stateChartManager.AddState(_statePlaceElement.GetAction());
                 _statePlaceElement.SetAssignedId(assignedId);
@@ -239,16 +239,24 @@ namespace UI
                 Destroy(_statePlaceElement.gameObject);
             }
 
-            _inputReleased = false;
-            _input.Input.PressRelease.performed -= OnInputRelease;
+            _dragEnded = false;
         }
 
-        private void OnInputRelease(InputAction.CallbackContext context)
+        private IEnumerator DragStateChartPanel()
         {
-            Debug.Log("Input was released.");
-            _inputReleased = true;
+            Vector3 previousInputPosition = _inputManager.GetPointerPosition();
+            do
+            {
+                Vector3 currentInputPosition = _inputManager.GetPointerPosition();
+                var inputDifference = currentInputPosition - previousInputPosition;
+                stateChartPanel.MoveByVector(inputDifference);
+                previousInputPosition = currentInputPosition;
+                yield return null;
+            } while (!_dragEnded);
+
+            _dragEnded = false;
         }
-        
+
         private void RemoveStatePlaceElement(StateUIPlaceElement placeElement)
         {
             for (int i = 0; i < _connectedTransitions.Count; i++)

@@ -693,7 +693,7 @@ GameObject:
   - component: {fileID: 590796217757801763}
   m_Layer: 5
   m_Name: Image
-  m_TagString: Untagged
+  m_TagString: StateUIElement
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

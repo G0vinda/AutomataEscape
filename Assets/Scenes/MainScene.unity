@@ -774,7 +774,6 @@ GameObject:
   - component: {fileID: 654531685}
   - component: {fileID: 654531684}
   - component: {fileID: 654531688}
-  - component: {fileID: 654531689}
   m_Layer: 5
   m_Name: StateChartCanvas
   m_TagString: Untagged
@@ -883,26 +882,12 @@ MonoBehaviour:
   - {fileID: 2084451392}
   - {fileID: 1920748758}
   - {fileID: 1427781921}
-  statePlaceElementPrefab: {fileID: -1798996941539083538, guid: c940ff228ce3eff48a78774608fd049c, type: 3}
   transitionSelectElements:
   - {fileID: 4465618212596284173}
   - {fileID: 1221022764}
   transitionPlaceElementPrefab: {fileID: -2691666547749979907, guid: c92c1c8e99840af488bab7404d5af30e, type: 3}
   startStateUIElement: {fileID: 714388723}
   stateChartPanel: {fileID: 1189406611}
---- !u!114 &654531689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 654531683}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bdbf564326b9d249833b8287d3d5acf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  useTouch: 0
 --- !u!1001 &670139516
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1148,50 +1133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91fba40d49b67484f8247764d52b6aa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &775759258
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 775759260}
-  - component: {fileID: 775759259}
-  m_Layer: 0
-  m_Name: MouseReleaseTester
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &775759259
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 775759258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92d709c98da61604a98532fa121895b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &775759260
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 775759258}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 98.97086, y: 354.66714, z: -10.357604}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &868897335
 GameObject:
   m_ObjectHideFlags: 0
@@ -1203,6 +1144,7 @@ GameObject:
   - component: {fileID: 868897336}
   - component: {fileID: 868897337}
   - component: {fileID: 868897338}
+  - component: {fileID: 868897339}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1241,6 +1183,7 @@ MonoBehaviour:
   cameraController: {fileID: 519420033}
   stateChartManager: {fileID: 868897338}
   uiManager: {fileID: 654531688}
+  inputManager: {fileID: 868897339}
   robotStateChartRunnerPrefab: {fileID: 5906237375931738515, guid: 4e1cc2fbe5a373345aea51e3bbf8a233, type: 3}
   keyObject: {fileID: 8136169380437567612, guid: 0cf3fc4228cd19144b0ee149455fb0b8, type: 3}
 --- !u!114 &868897338
@@ -1255,6 +1198,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64505c956996a3545879771c32fe5667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &868897339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 868897335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bdbf564326b9d249833b8287d3d5acf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useTouch: 0
 --- !u!1001 &1009848778
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1765,7 +1721,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridTestPrefab: {fileID: 2639917824283387851, guid: 876590f601734e343a515cb7bc49a2a5, type: 3}
   numberOfRows: 7
-  drawTestGrid: 1
+  drawTestGrid: 0
 --- !u!1001 &1221022762
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2132,7 +2088,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2017979759
 GameObject:

@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CameraController cameraController;
     [SerializeField] private StateChartManager stateChartManager;
     [SerializeField] private UIManager uiManager;
+    [SerializeField] private InputManager inputManager;
     [SerializeField] private StateChartRunner robotStateChartRunnerPrefab;
     [SerializeField] private GameObject keyObject;
 
@@ -92,6 +93,11 @@ public class GameManager : MonoBehaviour
     public UIManager GetUIManager()
     {
         return uiManager;
+    }
+
+    public InputManager GetInputManager()
+    {
+        return inputManager;
     }
 
     public StateChartManager GetStateChartManager()

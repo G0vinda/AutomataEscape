@@ -10,6 +10,8 @@ TagManager:
   - StateChartDropZone
   - StateSelectionDropZone
   - Blocker
+  - TransitionLineBlocker
+  - StateUIElement
   layers:
   - Default
   - TransparentFX
