@@ -4,12 +4,6 @@ using UnityEngine;
 
 public static class Utils 
 {
-
-    public static float ToRadians(float angleInDeg)
-    {
-        return (Mathf.PI / 180) * angleInDeg;
-    }
-
     public static Vector2 GetNextFaceDirection(Vector2 currentFaceDirection, Vector3 directionToOtherState)
     {
         var xBiggerThanY = Mathf.Abs(directionToOtherState.x) > Mathf.Abs(directionToOtherState.y);
