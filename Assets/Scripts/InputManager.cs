@@ -61,6 +61,8 @@ public class InputManager : MonoBehaviour
         var eventSystem = EventSystem.current;
         var raycastResults = new List<RaycastResult>();
         var pointerEventData = new PointerEventData(eventSystem);
+
+        _inputReleased = false;
         
         pointerEventData.position = _uiInput.Input.Position.ReadValue<Vector2>();
         EventSystem.current.RaycastAll(pointerEventData, raycastResults);
@@ -104,8 +106,7 @@ public class InputManager : MonoBehaviour
                 {
                     StateChartPanelTapped?.Invoke();    
                 }
-
-                _inputReleased = false;
+                
                 break;
             }
 
@@ -131,7 +132,6 @@ public class InputManager : MonoBehaviour
     {
         if (DragEnded != null)
         {
-            _inputReleased = false;
             DragEnded.Invoke();
         }
         else
