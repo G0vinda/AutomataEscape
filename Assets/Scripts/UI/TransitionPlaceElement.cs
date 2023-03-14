@@ -10,6 +10,7 @@ namespace UI
         private UIManager _uiManager;
         private TransitionUIData _data;
         private Vector3 _dragZOffset = new (0f, 0f, 2f);
+        
         public void Initialize(UIManager uiManager, TransitionUIData transitionUIData)
         {
             _image = GetComponent<Image>();

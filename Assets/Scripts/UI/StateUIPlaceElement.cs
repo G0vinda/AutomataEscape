@@ -17,12 +17,10 @@ namespace UI
         private StateChartCell _connectedCell;
         private Mode _currentMode;
         private StateUIData _data;
-        private UIManager _uiManager;
         private StateUIElement _uiElement;
 
         public void Initialize(StateUIData stateUIData, float gridScaleFactor)
         {
-            _uiManager = GameManager.Instance.GetUIManager();
             _uiElement = GetComponent<StateUIElement>();
             _uiElement.Initialize(gridScaleFactor, -1);
             _data = stateUIData;

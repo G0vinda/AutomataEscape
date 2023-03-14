@@ -8,27 +8,28 @@ namespace UI
     {
         private StateUIElement _uiElement;
 
-        private void Start()
+        private void Awake()
         {
             _uiElement = GetComponent<StateUIElement>();
-            _uiElement.SetupEmptySlots();
             //_uiElement.AddDefaultTransitionPlugToState();
         }
 
         public void Initialize(float scaleFactor)
         {
             _uiElement.Initialize(scaleFactor, 0);
+            _uiElement.SetupEmptySlots();
         }
 
         public void ClearDefaultStateLine()
         {
-            foreach (var plug in _uiElement.connectedTransitionPlugs)
-            {
-                if (plug == null) continue;
-                
-                plug.DisconnectLine();
-                return;
-            }
+            // TODO: causes error on mobile, but will be most probably removed on the line drawing rework 
+            // foreach (var plug in _uiElement.connectedTransitionPlugs)
+            // {
+            //     if (plug == null) continue;
+            //     
+            //     plug.DisconnectLine();
+            //     return;
+            // }
         }
     }
 }

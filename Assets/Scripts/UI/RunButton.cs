@@ -9,10 +9,7 @@ namespace UI
 
         private void OnEnable()
         {
-            if(GameManager.Instance == null)
-                Invoke(nameof(ListenToGameManager), 0.1f);
-            else
-                ListenToGameManager();
+            ListenToGameManager();
         }
 
         private void ListenToGameManager()

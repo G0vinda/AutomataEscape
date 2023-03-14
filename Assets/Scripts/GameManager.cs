@@ -7,6 +7,7 @@ using UI;
 using UnityEngine;
 using TileType = Tiles.Tile.TileType;
 
+[DefaultExecutionOrder(-1)] // Game Manager will be executed before all other scripts
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        uiManager.Initialize();
         _levels = new[]
         {
             new LevelData(

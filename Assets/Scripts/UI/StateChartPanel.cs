@@ -19,14 +19,10 @@ namespace UI
         private Vector2 _bottomLeftGridPosition;
         private float _scaledPadding;
 
-        private void Awake()
+        public void Initialize()
         {
             _rectTransform = GetComponent<RectTransform>();
             _stateChartUIGrid = GetComponent<StateChartUIGrid>();
-        }
-
-        public void Initialize()
-        {
             _uiManager = GameManager.Instance.GetUIManager();
             ScaleChartToFitScreen();
             _zoomFactor = 1f;

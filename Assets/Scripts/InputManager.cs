@@ -5,6 +5,7 @@ using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using Helper;
 
 public class InputManager : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class InputManager : MonoBehaviour
     public static Action StateChartPanelDragStarted;
 
     public static Action DragEnded;
+    
+    public static Action<float, Vector2> ZoomInputChanged;
 
     private UIInput _uiInput;
     private UIManager _uiManager;
@@ -25,10 +28,6 @@ public class InputManager : MonoBehaviour
     private void Awake()
     {
         _uiInput = new UIInput();
-    }
-
-    private void Start()
-    {
         _uiManager = GameManager.Instance.GetUIManager();
     }
 
@@ -42,6 +41,11 @@ public class InputManager : MonoBehaviour
             _uiInput.MouseZoom.Enable();
             _uiInput.MouseZoom.Zoom.performed += HandleMouseZoom;   
         }
+        else
+        {
+            _uiInput.TouchZoom.Enable();
+            _uiInput.TouchZoom.SecondaryFingerPressed.performed += EnterZoomMode;
+        }
     }
 
     private void OnDisable()
@@ -54,42 +58,20 @@ public class InputManager : MonoBehaviour
             _uiInput.MouseZoom.Disable();
             _uiInput.MouseZoom.Zoom.performed -= HandleMouseZoom;
         }
+        else
+        {
+            _uiInput.TouchZoom.Disable();
+            _uiInput.TouchZoom.SecondaryFingerPressed.performed -= EnterZoomMode;
+        }
     }
 
     private void HandlePress(InputAction.CallbackContext context)
     {
-        var eventSystem = EventSystem.current;
-        var raycastResults = new List<RaycastResult>();
-        var pointerEventData = new PointerEventData(eventSystem);
-
         _inputReleased = false;
-        
-        pointerEventData.position = _uiInput.Input.Position.ReadValue<Vector2>();
-        EventSystem.current.RaycastAll(pointerEventData, raycastResults);
-        Debug.Log("Press detected!");
-
-        if (raycastResults.Count == 0)
-            return;
-
-        var pressWasOnPanel = false;
-        foreach (var raycastResult in raycastResults)
-        {
-            if(raycastResult.gameObject.CompareTag("StateUIElement"))
-            {
-                var stateUIPlaceElement = raycastResult.gameObject.GetComponentInParent<StateUIPlaceElement>();
-                if(stateUIPlaceElement != null)
-                    StartCoroutine(ProcessPressInput(stateUIPlaceElement));
-                return;
-            }
-
-            if (raycastResult.gameObject.GetComponent<StateChartPanel>() != null)
-            {
-                pressWasOnPanel = true;
-            }
-        }
-
-        if (pressWasOnPanel)
-            StartCoroutine(ProcessPressInput());
+        ProcessInputOverStateOrPanel(
+            _uiInput.Input.Position.ReadValue<Vector2>(), 
+            state => { StartCoroutine(ProcessPressInput(state)); }, 
+            () => { StartCoroutine(ProcessPressInput()); });
     }
 
     private IEnumerator ProcessPressInput(StateUIPlaceElement selectedStateElement = null)
@@ -145,14 +127,88 @@ public class InputManager : MonoBehaviour
         return _uiInput.Input.Position.ReadValue<Vector2>();
     }
 
-    private void HandleTouchZoom()
+    private void EnterZoomMode(InputAction.CallbackContext callbackContext)
     {
-        
+        Debug.Log("Second Finger detected");
+        _uiInput.Input.Disable();
+        _uiInput.Input.Press.started -= HandlePress;
+        _uiInput.Input.PressRelease.performed -= HandlePressRelease;
+
+        var fingerOnePosition = GetFingerOnePosition();
+        var fingerTwoPosition = GetFingerTwoPosition();
+        var midPoint = HelperFunctions.GetMidpointOfVectors(fingerOnePosition, fingerTwoPosition);
+        ProcessInputOverStateOrPanel(
+            midPoint, 
+            state => {}, 
+            () => { StartCoroutine(HandleTouchZoom(midPoint)); });
+    }
+
+    private void ExitZoomMode()
+    {
+        _uiInput.Input.Enable();
+        _uiInput.Input.Press.started += HandlePress;
+        _uiInput.Input.PressRelease.performed += HandlePressRelease;
+    }
+
+    private IEnumerator HandleTouchZoom(Vector2 zoomCenter)
+    {
+        float secondaryFingerPress;
+        Debug.Log($"will start to zoom around center: {zoomCenter}");
+        var previousFingerDistance = Vector2.Distance(GetFingerOnePosition(), GetFingerTwoPosition());
+        do
+        {
+            var currentFingerDistance = Vector2.Distance(GetFingerOnePosition(), GetFingerTwoPosition());
+            var zoomDistance = currentFingerDistance - previousFingerDistance;
+            if (Mathf.Abs(zoomDistance) > 0)
+                ZoomInputChanged(-zoomDistance * 0.01f, zoomCenter);
+
+            previousFingerDistance = currentFingerDistance;
+            yield return null;
+            secondaryFingerPress = _uiInput.TouchZoom.SecondaryFingerPressed.ReadValue<float>(); // If = 1, then secondary finger is pressed down
+        } while (Mathf.Approximately(secondaryFingerPress, 1f));
+        Debug.Log("Zoom canceled");
+        ExitZoomMode();
+    }
+
+    private Vector2 GetFingerOnePosition()
+    {
+        return _uiInput.TouchZoom.PrimaryFingerPosition.ReadValue<Vector2>();
+    }
+
+    private Vector2 GetFingerTwoPosition()
+    {
+        return _uiInput.TouchZoom.SecondaryFingerPosition.ReadValue<Vector2>();
     }
 
     private void HandleMouseZoom(InputAction.CallbackContext context)
     {
         var zoomDelta = context.ReadValue<float>() > 0 ? 0.15f : -0.15f;
         _uiManager.ProcessZoom(zoomDelta, _uiInput.MouseZoom.MousePosition.ReadValue<Vector2>());
+    }
+
+    private void ProcessInputOverStateOrPanel(Vector2 inputPosition, Action<StateUIPlaceElement> inputOverStateAction,
+        Action inputOverPanelAction)
+    {
+        var raycastResults = HelperFunctions.GetRaycastResultsOnPosition(inputPosition);
+        var inputWasOnPanel = false;
+        
+        foreach (var raycastResult in raycastResults)
+        {
+            if(raycastResult.gameObject.CompareTag("StateUIElement"))
+            {
+                var stateUIPlaceElement = raycastResult.gameObject.GetComponentInParent<StateUIPlaceElement>();
+                if (stateUIPlaceElement != null)
+                    inputOverStateAction(stateUIPlaceElement);
+                return;
+            }
+
+            if (raycastResult.gameObject.GetComponent<StateChartPanel>() != null)
+            {
+                inputWasOnPanel = true;
+            }
+        }
+
+        if (inputWasOnPanel)
+            inputOverPanelAction();
     }
 }

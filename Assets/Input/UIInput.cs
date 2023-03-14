@@ -208,12 +208,30 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
             ""id"": ""966bde99-81a3-46ba-9b63-2364fc5d683b"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
-                    ""type"": ""Button"",
+                    ""name"": ""PrimaryFingerPosition"",
+                    ""type"": ""Value"",
                     ""id"": ""62bbac97-e196-4aba-a388-1467ebe816d5"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SecondaryFingerPosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""e6681bc9-0dd2-4c2c-ad6e-f71149b8fe42"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SecondaryFingerPressed"",
+                    ""type"": ""Button"",
+                    ""id"": ""da8f7bd5-6621-4c7e-bbcb-8444792c88a9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -221,11 +239,33 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""f0c6b527-f1fe-44dc-85eb-4f4fdb4787cb"",
-                    ""path"": """",
+                    ""path"": ""<Touchscreen>/touch0/position"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""PrimaryFingerPosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""268d26ae-d7ed-4661-94d0-4a1fde370e8a"",
+                    ""path"": ""<Touchscreen>/touch1/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SecondaryFingerPosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f7c62a6e-8baf-4c16-9990-136604e5a994"",
+                    ""path"": ""<Touchscreen>/touch1/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SecondaryFingerPressed"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -246,7 +286,9 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
         m_MouseZoom_MousePosition = m_MouseZoom.FindAction("MousePosition", throwIfNotFound: true);
         // TouchZoom
         m_TouchZoom = asset.FindActionMap("TouchZoom", throwIfNotFound: true);
-        m_TouchZoom_Newaction = m_TouchZoom.FindAction("New action", throwIfNotFound: true);
+        m_TouchZoom_PrimaryFingerPosition = m_TouchZoom.FindAction("PrimaryFingerPosition", throwIfNotFound: true);
+        m_TouchZoom_SecondaryFingerPosition = m_TouchZoom.FindAction("SecondaryFingerPosition", throwIfNotFound: true);
+        m_TouchZoom_SecondaryFingerPressed = m_TouchZoom.FindAction("SecondaryFingerPressed", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -404,12 +446,16 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
     // TouchZoom
     private readonly InputActionMap m_TouchZoom;
     private ITouchZoomActions m_TouchZoomActionsCallbackInterface;
-    private readonly InputAction m_TouchZoom_Newaction;
+    private readonly InputAction m_TouchZoom_PrimaryFingerPosition;
+    private readonly InputAction m_TouchZoom_SecondaryFingerPosition;
+    private readonly InputAction m_TouchZoom_SecondaryFingerPressed;
     public struct TouchZoomActions
     {
         private @UIInput m_Wrapper;
         public TouchZoomActions(@UIInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_TouchZoom_Newaction;
+        public InputAction @PrimaryFingerPosition => m_Wrapper.m_TouchZoom_PrimaryFingerPosition;
+        public InputAction @SecondaryFingerPosition => m_Wrapper.m_TouchZoom_SecondaryFingerPosition;
+        public InputAction @SecondaryFingerPressed => m_Wrapper.m_TouchZoom_SecondaryFingerPressed;
         public InputActionMap Get() { return m_Wrapper.m_TouchZoom; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -419,16 +465,28 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
         {
             if (m_Wrapper.m_TouchZoomActionsCallbackInterface != null)
             {
-                @Newaction.started -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnNewaction;
-                @Newaction.performed -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnNewaction;
-                @Newaction.canceled -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnNewaction;
+                @PrimaryFingerPosition.started -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnPrimaryFingerPosition;
+                @PrimaryFingerPosition.performed -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnPrimaryFingerPosition;
+                @PrimaryFingerPosition.canceled -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnPrimaryFingerPosition;
+                @SecondaryFingerPosition.started -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnSecondaryFingerPosition;
+                @SecondaryFingerPosition.performed -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnSecondaryFingerPosition;
+                @SecondaryFingerPosition.canceled -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnSecondaryFingerPosition;
+                @SecondaryFingerPressed.started -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnSecondaryFingerPressed;
+                @SecondaryFingerPressed.performed -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnSecondaryFingerPressed;
+                @SecondaryFingerPressed.canceled -= m_Wrapper.m_TouchZoomActionsCallbackInterface.OnSecondaryFingerPressed;
             }
             m_Wrapper.m_TouchZoomActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Newaction.started += instance.OnNewaction;
-                @Newaction.performed += instance.OnNewaction;
-                @Newaction.canceled += instance.OnNewaction;
+                @PrimaryFingerPosition.started += instance.OnPrimaryFingerPosition;
+                @PrimaryFingerPosition.performed += instance.OnPrimaryFingerPosition;
+                @PrimaryFingerPosition.canceled += instance.OnPrimaryFingerPosition;
+                @SecondaryFingerPosition.started += instance.OnSecondaryFingerPosition;
+                @SecondaryFingerPosition.performed += instance.OnSecondaryFingerPosition;
+                @SecondaryFingerPosition.canceled += instance.OnSecondaryFingerPosition;
+                @SecondaryFingerPressed.started += instance.OnSecondaryFingerPressed;
+                @SecondaryFingerPressed.performed += instance.OnSecondaryFingerPressed;
+                @SecondaryFingerPressed.canceled += instance.OnSecondaryFingerPressed;
             }
         }
     }
@@ -447,6 +505,8 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
     }
     public interface ITouchZoomActions
     {
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnPrimaryFingerPosition(InputAction.CallbackContext context);
+        void OnSecondaryFingerPosition(InputAction.CallbackContext context);
+        void OnSecondaryFingerPressed(InputAction.CallbackContext context);
     }
 }

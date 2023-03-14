@@ -27,19 +27,20 @@ namespace UI
         private float _scaledSlotAreaWidth;
         private float _scaledSlotAreaHeight;
 
+        private UIManager _uiManager;
         private RectTransform _rectTransform;
         private Vector2 _defaultSize;
         private Vector3 _defaultImageScale;
 
-        private void Start()
+        private void Awake()
         {
-            var uiManager = GameManager.Instance.GetUIManager();
-            _scaledSlotAreaWidth = uiManager.ScaleFloat(slotAreaWidth);
-            _scaledSlotAreaHeight = uiManager.ScaleFloat(slotAreaHeight);
+            _uiManager = GameManager.Instance.GetUIManager();
         }
 
         public void Initialize(float scaleFactor, int assignedId)
         {
+            _scaledSlotAreaWidth = _uiManager.ScaleFloat(slotAreaWidth);
+            _scaledSlotAreaHeight = _uiManager.ScaleFloat(slotAreaHeight);
             _rectTransform = GetComponent<RectTransform>();
             _defaultSize = _rectTransform.sizeDelta * scaleFactor;
             Debug.Log($"Default size is: {GameManager.Instance.GetUIManager().ScaleFloat(_defaultSize.x)}");

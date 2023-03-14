@@ -25,14 +25,10 @@ namespace UI
         private InputManager _inputManager;
         private float _zoomFactor;
         private bool _dragEnded;
+        private bool _stateChartUIInitialized;
 
         private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionPlug> _connectedTransitions = new();
         private Canvas _canvas;
-
-        private void Awake()
-        {
-            _canvas = GetComponent<Canvas>();
-        }
 
         private void OnEnable()
         {
@@ -40,6 +36,7 @@ namespace UI
             InputManager.StateChartPanelTapped += HandleStateChartPanelTapped;
             InputManager.StateElementDragStarted += HandleStatePlaceElementDragStart;
             InputManager.StateChartPanelDragStarted += HandleStateChartPanelDragStart;
+            InputManager.ZoomInputChanged += ProcessZoom;
             
             if (!_setupUIOnEnable) return;
 
@@ -54,18 +51,19 @@ namespace UI
             InputManager.StateChartPanelTapped -= HandleStateChartPanelTapped;
             InputManager.StateElementDragStarted -= HandleStatePlaceElementDragStart;
             InputManager.StateChartPanelDragStarted -= HandleStateChartPanelDragStart;
+            InputManager.ZoomInputChanged -= ProcessZoom;
         }
 
-        private void Start()
+        public void Initialize()
         {
+            _canvas = GetComponent<Canvas>();
             _stateChartManager = GameManager.Instance.GetStateChartManager();
             _inputManager = GameManager.Instance.GetInputManager();
-            _placedStateElements = new List<StateUIPlaceElement>();
-            stateChartPanel.Initialize();
             _stateChartUIGrid = stateChartPanel.GetComponent<StateChartUIGrid>();
+            _placedStateElements = new List<StateUIPlaceElement>();
             _zoomFactor = 1f;
         }
-        
+
         public void ProcessZoom(float zoomFactorChange, Vector2 zoomCenter)
         {
             const float minZoomFactor = 1f;
@@ -99,6 +97,12 @@ namespace UI
 
         private void SetupStateChartUI()
         {
+            if (!_stateChartUIInitialized)
+            {
+                stateChartPanel.Initialize();
+                _stateChartUIInitialized = true;
+            }
+            
             var startCell = _stateChartUIGrid.GetCellOnCoordinates(new ByteCoordinates(0, 3), out var cellPosition);
             startCell.PlaceStateElement(startStateUIElement);
             startStateUIElement.Initialize(stateChartPanel.GetScaleFactor());
@@ -107,6 +111,8 @@ namespace UI
 
         private void EnableAvailableUIElements()
         {
+            Debug.Log("EnableAvailableUIElements is called");
+            Debug.Log($"List of available stacks has {_availableStateInfo.Count} elements");
             var stateChartPanelScaleFactor = stateChartPanel.GetScaleFactor();
             foreach (var availableStateInfo in _availableStateInfo)
             {
