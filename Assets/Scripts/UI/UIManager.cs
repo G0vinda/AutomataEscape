@@ -68,13 +68,24 @@ namespace UI
         {
             const float minZoomFactor = 1f;
             const float maxZoomFactor = 2f;
-            if (_zoomFactor == minZoomFactor  && zoomFactorChange < 0 || _zoomFactor == maxZoomFactor && zoomFactorChange > 0)
+            Debug.Log($"ProcessZoom got called with factorChange of: {zoomFactorChange}");
+            if (Mathf.Approximately(_zoomFactor, minZoomFactor)  && zoomFactorChange < 0 || Mathf.Approximately(_zoomFactor, maxZoomFactor) && zoomFactorChange > 0)
                 return;
 
             var zoomDelta = zoomFactorChange / _zoomFactor;
             _zoomFactor += zoomFactorChange;
             _zoomFactor = Mathf.Clamp(_zoomFactor, minZoomFactor, maxZoomFactor);
+            Debug.Log($"Zoom Factor is {_zoomFactor}");
+            LogStateChartPanelTransform();
             stateChartPanel.ZoomChart(_zoomFactor, zoomDelta, zoomCenter);
+            LogStateChartPanelTransform();
+        }
+
+        private void LogStateChartPanelTransform()
+        {
+            var sTransform = stateChartPanel.transform;
+            Debug.Log($"Panel Position is {sTransform.position}");
+            Debug.Log($"Panel Scale is {((RectTransform)transform).sizeDelta}");
         }
 
         public void SetupUI(List<LevelData.AvailableStateInfo> availableStateInfo,
@@ -203,6 +214,7 @@ namespace UI
             do
             {
                 Vector3 inputPosition = _inputManager.GetPointerPosition();
+                Debug.Log($"Will drag panel to this position: {inputPosition}");
                 var stateElementTransform = _statePlaceElement.transform;
                 currentCell = _stateChartUIGrid.TryGetEmptyCellOnPosition(inputPosition, out var cellPosition);
                 if (currentCell != null)

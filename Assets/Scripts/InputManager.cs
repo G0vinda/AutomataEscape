@@ -130,6 +130,7 @@ public class InputManager : MonoBehaviour
     private void EnterZoomMode(InputAction.CallbackContext callbackContext)
     {
         Debug.Log("Second Finger detected");
+        DragEnded?.Invoke();
         _uiInput.Input.Disable();
         _uiInput.Input.Press.started -= HandlePress;
         _uiInput.Input.PressRelease.performed -= HandlePressRelease;
@@ -159,8 +160,11 @@ public class InputManager : MonoBehaviour
         {
             var currentFingerDistance = Vector2.Distance(GetFingerOnePosition(), GetFingerTwoPosition());
             var zoomDistance = currentFingerDistance - previousFingerDistance;
-            if (Mathf.Abs(zoomDistance) > 0)
-                ZoomInputChanged(-zoomDistance * 0.01f, zoomCenter);
+
+            var zoomInputThreshold = 1f;
+            var zoomSpeedModifier = 0.005f;
+            if (Mathf.Abs(zoomDistance) > zoomInputThreshold)
+                ZoomInputChanged?.Invoke(zoomDistance * zoomSpeedModifier, zoomCenter);
 
             previousFingerDistance = currentFingerDistance;
             yield return null;
