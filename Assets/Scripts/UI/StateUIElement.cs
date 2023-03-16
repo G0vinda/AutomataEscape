@@ -18,6 +18,7 @@ namespace UI
         [SerializeField] public float stateBufferSpace;
 
         public int AssignedId { get; set; }
+        public StateChartCell ConnectedCell { get; set; }
         
         [HideInInspector]
         public List<int> emptySlotIds;
@@ -32,13 +33,9 @@ namespace UI
         private Vector2 _defaultSize;
         private Vector3 _defaultImageScale;
 
-        private void Awake()
-        {
-            _uiManager = GameManager.Instance.GetUIManager();
-        }
-
         public void Initialize(float scaleFactor, int assignedId)
         {
+            _uiManager = GameManager.Instance.GetUIManager();
             _scaledSlotAreaWidth = _uiManager.ScaleFloat(slotAreaWidth);
             _scaledSlotAreaHeight = _uiManager.ScaleFloat(slotAreaHeight);
             _rectTransform = GetComponent<RectTransform>();
@@ -58,7 +55,7 @@ namespace UI
             image.rectTransform.localScale = _defaultImageScale;
         }
 
-        public void SetSizeToCellSize(float zoomFactor)
+        public void ApplyZoomFactor(float zoomFactor)
         {
             _rectTransform.sizeDelta = _defaultSize * zoomFactor;
             image.rectTransform.localScale = _defaultImageScale * zoomFactor;

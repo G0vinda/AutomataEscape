@@ -10,6 +10,10 @@ namespace UI
 
         public StateChartCell()
         {
+            /* 0 1 2
+             * 3 4 5
+             * 6 7 8
+             */
             _subCells = new StateChartSubCell[9];
             
             for (var i = 0; i < 3; i++) // Rows
@@ -17,7 +21,7 @@ namespace UI
                 for (var j = 0; j < 3; j++) // Columns
                 {
                     _subCells[(i + 1) * (j + 1) - 1] =
-                        new StateChartSubCell(this, new ByteCoordinates((byte)(-1 + j), (byte)(-1 + i)));
+                        new StateChartSubCell(this, new Vector2Int(-1 + j, -1 + i));
                 }
             }
         }

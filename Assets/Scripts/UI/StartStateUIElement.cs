@@ -8,14 +8,9 @@ namespace UI
     {
         private StateUIElement _uiElement;
 
-        private void Awake()
-        {
-            _uiElement = GetComponent<StateUIElement>();
-            //_uiElement.AddDefaultTransitionPlugToState();
-        }
-
         public void Initialize(float scaleFactor)
         {
+            _uiElement = GetComponent<StateUIElement>();
             _uiElement.Initialize(scaleFactor, 0);
             _uiElement.SetupEmptySlots();
         }

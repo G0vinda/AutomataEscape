@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class TransitionSelectElement : MonoBehaviour, IPointerDownHandler
+    public class TransitionSelectElement : MonoBehaviour
     {
         [SerializeField] private TransitionUIData data;
         
@@ -18,11 +18,6 @@ namespace UI
             _image = GetComponent<Image>();
             _image.color = data.color;
             Condition = data.condition;
-        }
-
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            GameManager.Instance.GetUIManager().HandleTransitionSelectElementClicked(data);
         }
     }
 }

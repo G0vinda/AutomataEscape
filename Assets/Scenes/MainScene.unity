@@ -885,7 +885,6 @@ MonoBehaviour:
   transitionSelectElements:
   - {fileID: 4465618212596284173}
   - {fileID: 1221022764}
-  transitionPlaceElementPrefab: {fileID: -2691666547749979907, guid: c92c1c8e99840af488bab7404d5af30e, type: 3}
   startStateUIElement: {fileID: 714388723}
   stateChartPanel: {fileID: 1189406611}
 --- !u!1001 &670139516
@@ -1210,7 +1209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bdbf564326b9d249833b8287d3d5acf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useTouch: 1
+  useTouch: 0
 --- !u!1001 &1009848778
 PrefabInstance:
   m_ObjectHideFlags: 0

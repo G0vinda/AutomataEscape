@@ -13,8 +13,7 @@ namespace UI
             IsBeingDragged,
             IsPlaced
         }
-
-        private StateChartCell _connectedCell;
+        
         private Mode _currentMode;
         private StateUIData _data;
         private StateUIElement _uiElement;
@@ -37,7 +36,7 @@ namespace UI
 
         public StateChartCell GetConnectedCell()
         {
-            return _connectedCell;
+            return _uiElement.ConnectedCell;
         }
 
         public StateChartManager.StateAction GetAction()
@@ -90,9 +89,9 @@ namespace UI
         
         public void PlaceState(StateChartCell cellToPlaceOn, Transform newParent)
         {
-            _connectedCell = cellToPlaceOn;
             transform.SetParent(newParent);
             _uiElement.SetupEmptySlots();
+            _uiElement.ConnectedCell = cellToPlaceOn;
             //_uiElement.AddDefaultTransitionPlugToState();
         }
 
@@ -136,7 +135,7 @@ namespace UI
 
         public void SwitchAppearanceToOnGrid(float zoomFactor)
         {
-            _uiElement.SetSizeToCellSize(zoomFactor);
+            _uiElement.ApplyZoomFactor(zoomFactor);
             SetColorsToDefault();
         }
 

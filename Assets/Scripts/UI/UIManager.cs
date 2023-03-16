@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using Helper;
+using static StateChartManager;
 
 namespace UI
 {
@@ -10,7 +12,6 @@ namespace UI
     {
         [SerializeField] private List<StateUIElementStack> stateUIElementStacks;
         [SerializeField] private List<TransitionSelectElement> transitionSelectElements;
-        [SerializeField] private TransitionPlaceElement transitionPlaceElementPrefab;
         [SerializeField] private StartStateUIElement startStateUIElement;
         [SerializeField] private StateChartPanel stateChartPanel;
 
@@ -18,10 +19,10 @@ namespace UI
         private StateChartUIGrid _stateChartUIGrid;
         private bool _setupUIOnEnable;
         private StateUIPlaceElement _statePlaceElement;
+        private TransitionCondition? _selectedTransitionCondition = null;
         private List<StateUIPlaceElement> _placedStateElements;
-        private TransitionPlaceElement _transitionPlaceElement;
         private List<LevelData.AvailableStateInfo> _availableStateInfo;
-        private List<StateChartManager.TransitionCondition> _availableTransitionConditions;
+        private List<TransitionCondition> _availableTransitionConditions;
         private InputManager _inputManager;
         private float _zoomFactor;
         private bool _dragEnded;
@@ -76,20 +77,11 @@ namespace UI
             _zoomFactor += zoomFactorChange;
             _zoomFactor = Mathf.Clamp(_zoomFactor, minZoomFactor, maxZoomFactor);
             Debug.Log($"Zoom Factor is {_zoomFactor}");
-            LogStateChartPanelTransform();
             stateChartPanel.ZoomChart(_zoomFactor, zoomDelta, zoomCenter);
-            LogStateChartPanelTransform();
-        }
-
-        private void LogStateChartPanelTransform()
-        {
-            var sTransform = stateChartPanel.transform;
-            Debug.Log($"Panel Position is {sTransform.position}");
-            Debug.Log($"Panel Scale is {((RectTransform)transform).sizeDelta}");
         }
 
         public void SetupUI(List<LevelData.AvailableStateInfo> availableStateInfo,
-            List<StateChartManager.TransitionCondition> availableTransitionConditions)
+            List<TransitionCondition> availableTransitionConditions)
         {
             ClearStateChartUI();
             _availableStateInfo = availableStateInfo;
@@ -113,11 +105,13 @@ namespace UI
                 stateChartPanel.Initialize();
                 _stateChartUIInitialized = true;
             }
-            
-            var startCell = _stateChartUIGrid.GetCellOnCoordinates(new ByteCoordinates(0, 3), out var cellPosition);
-            startCell.PlaceStateElement(startStateUIElement);
+
+            var startCoordinates = new Vector2Int(0, 3);
+            var startCell = _stateChartUIGrid.GetCellOnCoordinates(startCoordinates);
+            var startCellPosition = _stateChartUIGrid.CellToScreenCoordinates(startCoordinates);
+            startCell.PlaceStateElement(startStateUIElement); // TODO: connect cell to startstate
             startStateUIElement.Initialize(stateChartPanel.GetScaleFactor());
-            startStateUIElement.transform.position = cellPosition;
+            startStateUIElement.transform.position = startCellPosition;
         }
 
         private void EnableAvailableUIElements()
@@ -155,13 +149,6 @@ namespace UI
             _connectedTransitions.Clear();
         }
 
-        public void HandleTransitionSelectElementClicked(TransitionUIData transitionUIData)
-        {
-            _transitionPlaceElement = Instantiate(transitionPlaceElementPrefab, Input.mousePosition,
-                Quaternion.identity, transform);
-            _transitionPlaceElement.Initialize(this, transitionUIData);
-        }
-
         private void HandleStatePlaceElementTapped(StateUIPlaceElement stateElement)
         {
             // Todo: highlight connected transitions
@@ -180,11 +167,21 @@ namespace UI
             var connectedCell = _statePlaceElement.GetConnectedCell();
             if (connectedCell != null)
             {
-                RemoveStatePlaceElement(_statePlaceElement);
-                connectedCell.RemoveStateElement();
+                if (_selectedTransitionCondition != null)
+                {
+                    // Start line drawing    
+                    StartCoroutine(StartDrawTransitionLine(_statePlaceElement.GetComponent<StateUIElement>()));
+                    _statePlaceElement = null;
+                }
+                else
+                {
+                    RemoveStatePlaceElement(_statePlaceElement);
+                    connectedCell.RemoveStateElement();
+                }
             }
             else
             {
+                _selectedTransitionCondition = null; // TODO: unhighlight transitionSelectElement 
                 stateUIElementStacks.First(stack => stack.GetAction() == _statePlaceElement.GetAction()).RemoveState(_statePlaceElement);
             }
             
@@ -202,6 +199,39 @@ namespace UI
             InputManager.DragEnded -= HandleDragEnded;
             Debug.Log("Input was released.");
             _dragEnded = true;
+        }
+
+        private IEnumerator StartDrawTransitionLine(StateUIElement transitionSourceState)
+        {
+            // Todo: Highlight State
+            var sourceCell = transitionSourceState.ConnectedCell;
+            var sourceCellCoordinates = _stateChartUIGrid.GetCoordinatesFromCell(sourceCell);
+            var previousCellCoordinates = sourceCellCoordinates; 
+            do
+            {
+                Vector3 inputPosition = _inputManager.GetPointerPosition();
+                var currentCellCoordinates = _stateChartUIGrid.ScreenToCellCoordinates(inputPosition);
+                if (currentCellCoordinates != previousCellCoordinates)
+                {
+                    Debug.Log("New Cell on Drawing detected!");
+                    if (!Mathf.Approximately(Vector2Int.Distance(sourceCellCoordinates, currentCellCoordinates),1))
+                    {
+                        Debug.Log("New Cell was not adjacent. Draw will be stopped.");
+                        break;
+                    }
+
+                    var newCell = _stateChartUIGrid.GetCellOnCoordinates(currentCellCoordinates);
+                    if (newCell.PlacedStateElement == null)
+                    {
+                        // Get state facing row of subcells
+                        // Check if Input is over on of these subcells
+                        // If this subcell is empty in this direction call DrawTransitionLine 
+                    }
+                    previousCellCoordinates = currentCellCoordinates;
+                }
+                yield return null;
+            } while (!_dragEnded);
+            _dragEnded = false;
         }
 
         private IEnumerator DragStatePlaceElement()
@@ -298,7 +328,7 @@ namespace UI
         {
             var transitionCondition = plug.transitionCondition;
             var fromState = plug.connectedState;
-            if (transitionCondition == StateChartManager.TransitionCondition.Default)
+            if (transitionCondition == TransitionCondition.Default)
             {
                 _stateChartManager.RemoveDefaultTransition(fromState.AssignedId);
             }
@@ -319,22 +349,11 @@ namespace UI
             plug.DisconnectLine();
         }
         
-        public void HandleTransitionPlaceElementReleased(TransitionUIData transitionUIData)
-        {
-            var mouseOverState = HelperFunctions.CheckIfMouseIsOverObjectWithComponent<StateUIPlaceElement>();
-            if (mouseOverState == null)
-            {
-                return;
-            }
-
-            mouseOverState.AddTransitionPlugToState(transitionUIData);
-        }
-
         public void HandleNewTransitionConnected(StateUIElement state1, StateUIPlaceElement state2,
             TransitionPlug plug)
         {
             _connectedTransitions.Add((state1, state2), plug);
-            if (plug.transitionCondition == StateChartManager.TransitionCondition.Default)
+            if (plug.transitionCondition == TransitionCondition.Default)
             {
                 _stateChartManager.AddDefaultTransition(state1.AssignedId, state2.GetAssignedId());
             }

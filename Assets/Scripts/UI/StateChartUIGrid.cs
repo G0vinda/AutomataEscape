@@ -1,21 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Helper;
 using UnityEngine;
 
 namespace UI
 {
-    public struct ByteCoordinates
-    {
-        public ByteCoordinates(byte x, byte y)
-        {
-            X = x;
-            Y = y;
-        }
-            
-        public byte X { get; set; }
-        public byte Y { get; set; }
-    }
     public class StateChartUIGrid : MonoBehaviour
     {
         [SerializeField] private GameObject gridTestPrefab;
@@ -24,7 +14,7 @@ namespace UI
 
         private List<GameObject> _gridTestObjects = new ();
         private bool _initialized;
-        private Dictionary<ByteCoordinates, StateChartCell> _gridCells = new ();
+        private Dictionary<Vector2Int, StateChartCell> _gridCells = new ();
         private float _cellSize;
         private float _gridHeight;
         private Vector2 _bottomLeftPosition;
@@ -37,7 +27,7 @@ namespace UI
             {
                 for (byte y = 0; y < numberOfRows; y++)
                 {
-                    var cellCoordinates = new ByteCoordinates(x, y); 
+                    var cellCoordinates = new Vector2Int(x, y); 
                     _gridCells[cellCoordinates] = new StateChartCell();
                 }
             }
@@ -66,26 +56,31 @@ namespace UI
                 var newStatePosition = CellToScreenCoordinates(stateChartCell.Key);
                 
                 connectedStateElement.transform.position = newStatePosition;
-                connectedStateElement.SetSizeToCellSize(zoomFactor);
+                connectedStateElement.ApplyZoomFactor(zoomFactor);
             }
             
             if(drawTestGrid)
                 DrawGrid(zoomFactor);
         }
 
-        private Vector3 CellToScreenCoordinates(ByteCoordinates cellCoordinates)
+        public Vector3 CellToScreenCoordinates(Vector2Int cellCoordinates)
         {
             var positionOffset = new Vector2(_cellSize * 0.5f, _cellSize * 0.5f);
-            return new Vector2(cellCoordinates.X * _cellSize, cellCoordinates.Y * _cellSize) + _bottomLeftPosition + positionOffset;
+            return new Vector2(cellCoordinates.x * _cellSize, cellCoordinates.x * _cellSize) + _bottomLeftPosition + positionOffset;
         }
         
         // Check if screenPosition is inside grid before!
-        private ByteCoordinates ScreenToCellCoordinates(Vector2 screenPosition)
+        public Vector2Int ScreenToCellCoordinates(Vector2 screenPosition)
         {
             var screenPositionInGrid = screenPosition - _bottomLeftPosition;
             var xCoordinate = (byte)Mathf.Floor(screenPositionInGrid.x / _cellSize);
             var yCoordinate = (byte)Mathf.Floor(screenPositionInGrid.y / _cellSize);
-            return new ByteCoordinates(xCoordinate, yCoordinate);
+            return new Vector2Int(xCoordinate, yCoordinate);
+        }
+
+        public Vector2Int GetCoordinatesFromCell(StateChartCell cell)
+        {
+            return _gridCells.First(gridCell => gridCell.Value == cell).Key;
         }
 
         private void DrawGrid(float zoomFactor)
@@ -131,9 +126,8 @@ namespace UI
             return null;
         }
 
-        public StateChartCell GetCellOnCoordinates(ByteCoordinates cellCoordinates, out Vector3 cellPosition)
+        public StateChartCell GetCellOnCoordinates(Vector2Int cellCoordinates)
         {
-            cellPosition = CellToScreenCoordinates(cellCoordinates);
             return _gridCells[cellCoordinates];
         }
 
