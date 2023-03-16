@@ -5,6 +5,15 @@ using UnityEngine.UI;
 
 namespace UI
 {
+
+    public enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+    
     public class TransitionLine : Graphic
     {
         private class LineElement

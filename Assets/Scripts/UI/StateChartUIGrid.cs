@@ -63,24 +63,120 @@ namespace UI
                 DrawGrid(zoomFactor);
         }
 
-        public Vector3 CellToScreenCoordinates(Vector2Int cellCoordinates)
+        public Vector2 CellToScreenCoordinates(Vector2Int cellCoordinates)
         {
             var positionOffset = new Vector2(_cellSize * 0.5f, _cellSize * 0.5f);
-            return new Vector2(cellCoordinates.x * _cellSize, cellCoordinates.x * _cellSize) + _bottomLeftPosition + positionOffset;
+            return new Vector2(cellCoordinates.x * _cellSize, cellCoordinates.y * _cellSize) + _bottomLeftPosition + positionOffset;
         }
         
         // Check if screenPosition is inside grid before!
         public Vector2Int ScreenToCellCoordinates(Vector2 screenPosition)
         {
             var screenPositionInGrid = screenPosition - _bottomLeftPosition;
-            var xCoordinate = (byte)Mathf.Floor(screenPositionInGrid.x / _cellSize);
-            var yCoordinate = (byte)Mathf.Floor(screenPositionInGrid.y / _cellSize);
+            var xCoordinate = (int)Mathf.Floor(screenPositionInGrid.x / _cellSize);
+            var yCoordinate = (int)Mathf.Floor(screenPositionInGrid.y / _cellSize);
             return new Vector2Int(xCoordinate, yCoordinate);
         }
 
         public Vector2Int GetCoordinatesFromCell(StateChartCell cell)
         {
             return _gridCells.First(gridCell => gridCell.Value == cell).Key;
+        }
+        
+        public StateChartCell GetCellOnCoordinates(Vector2Int cellCoordinates)
+        {
+            return _gridCells[cellCoordinates];
+        }
+
+        public StateChartCell.SubCell? GetSubCellOnPosition(Vector2 position)
+        {
+            if(!IsPositionInsideGrid(position))
+                return null;
+
+            var parentCellCoordinates = ScreenToCellCoordinates(position);
+            var parentCell = _gridCells[parentCellCoordinates];
+            var parentCellPosition = CellToScreenCoordinates(parentCellCoordinates);
+
+            var positionDifference = position - parentCellPosition;
+            var cellSizeDividedBy6 = _cellSize / 6;
+            
+            var subCellCoordinates = new Vector2Int(0,0);
+            if (positionDifference.x > cellSizeDividedBy6)
+            {
+                subCellCoordinates.x = 1;
+            }else if (positionDifference.x < -cellSizeDividedBy6)
+            {
+                subCellCoordinates.x = -1;
+            }
+            
+            if (positionDifference.y > cellSizeDividedBy6)
+            {
+                subCellCoordinates.y = 1;
+            }else if (positionDifference.y < -cellSizeDividedBy6)
+            {
+                subCellCoordinates.y = -1;
+            }
+
+            Debug.Log($"The subCoordinates are {subCellCoordinates}");
+            return parentCell.GetSubCellOnCoordinates(subCellCoordinates);
+        }
+        
+        public Vector2 GetTransitionDrawStartPosition(Vector2 statePosition, Vector2 inputPosition, Direction drawDirection)
+        {
+            float xValue, yValue;
+            switch (drawDirection)
+            {
+                case Direction.Up:
+                    xValue = 0f;
+                    yValue = _cellSize * 0.5f;
+                    if (inputPosition.x > statePosition.x + _cellSize / 6)
+                    {
+                        xValue = _cellSize / 3f;
+                    }
+                    else if (inputPosition.x < statePosition.x - _cellSize / 6)
+                    {
+                        xValue = -_cellSize / 3f;
+                    }
+                    return statePosition + new Vector2(xValue, yValue);
+                case Direction.Down:
+                    xValue = 0f;
+                    yValue = -_cellSize * 0.5f;
+                    if (inputPosition.x > statePosition.x + _cellSize / 6)
+                    {
+                        xValue = _cellSize / 3f;
+                    }
+                    else if (inputPosition.x < statePosition.x - _cellSize / 6)
+                    {
+                        xValue = -_cellSize / 3f;
+                    }
+                    return statePosition + new Vector2(xValue, yValue);
+                case Direction.Left:
+                    xValue = -_cellSize * 0.5f;
+                    yValue = 0f;
+                    if (inputPosition.y > statePosition.y + _cellSize / 6)
+                    {
+                        yValue = _cellSize / 3f;
+                    }
+                    else if (inputPosition.y < statePosition.y - _cellSize / 6)
+                    {
+                        yValue = -_cellSize / 3f;
+                    }
+                    return statePosition + new Vector2(xValue, yValue);
+                case Direction.Right:
+                    xValue = _cellSize * 0.5f;
+                    yValue = 0f;
+                    if (inputPosition.y > statePosition.y + _cellSize / 6)
+                    {
+                        yValue = _cellSize / 3f;
+                    }
+                    else if (inputPosition.y < statePosition.y - _cellSize / 6)
+                    {
+                        yValue = -_cellSize / 3f;
+                    }
+                    return statePosition + new Vector2(xValue, yValue);
+                default:
+                    throw new ArgumentException("Parameter has to equal a direction vector.");
+            }
         }
 
         private void DrawGrid(float zoomFactor)
@@ -124,11 +220,6 @@ namespace UI
             
             cellPosition = Vector3.zero;
             return null;
-        }
-
-        public StateChartCell GetCellOnCoordinates(Vector2Int cellCoordinates)
-        {
-            return _gridCells[cellCoordinates];
         }
 
         public void ClearGridCells()

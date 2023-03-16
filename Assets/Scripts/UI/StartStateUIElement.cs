@@ -8,11 +8,12 @@ namespace UI
     {
         private StateUIElement _uiElement;
 
-        public void Initialize(float scaleFactor)
+        public void Initialize(float scaleFactor, StateChartCell connectedCell)
         {
             _uiElement = GetComponent<StateUIElement>();
             _uiElement.Initialize(scaleFactor, 0);
             _uiElement.SetupEmptySlots();
+            _uiElement.ConnectedCell = connectedCell;
         }
 
         public void ClearDefaultStateLine()

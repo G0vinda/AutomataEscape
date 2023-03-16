@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace UI
         private StateChartUIGrid _stateChartUIGrid;
         private bool _setupUIOnEnable;
         private StateUIPlaceElement _statePlaceElement;
-        private TransitionCondition? _selectedTransitionCondition = null;
+        private TransitionCondition? _selectedTransitionCondition = TransitionCondition.Default; // TODO: change to null when finished with testing
         private List<StateUIPlaceElement> _placedStateElements;
         private List<LevelData.AvailableStateInfo> _availableStateInfo;
         private List<TransitionCondition> _availableTransitionConditions;
@@ -110,7 +111,7 @@ namespace UI
             var startCell = _stateChartUIGrid.GetCellOnCoordinates(startCoordinates);
             var startCellPosition = _stateChartUIGrid.CellToScreenCoordinates(startCoordinates);
             startCell.PlaceStateElement(startStateUIElement); // TODO: connect cell to startstate
-            startStateUIElement.Initialize(stateChartPanel.GetScaleFactor());
+            startStateUIElement.Initialize(stateChartPanel.GetScaleFactor(), startCell);
             startStateUIElement.transform.position = startCellPosition;
         }
 
@@ -149,7 +150,7 @@ namespace UI
             _connectedTransitions.Clear();
         }
 
-        private void HandleStatePlaceElementTapped(StateUIPlaceElement stateElement)
+        private void HandleStatePlaceElementTapped(StateUIElement stateElement)
         {
             // Todo: highlight connected transitions
         }
@@ -159,28 +160,31 @@ namespace UI
             // Todo: reset transition highlighting
         }
 
-        private void HandleStatePlaceElementDragStart(StateUIPlaceElement stateElement)
+        private void HandleStatePlaceElementDragStart(StateUIElement stateElement)
         {
             InputManager.DragEnded += HandleDragEnded;
-            _statePlaceElement = stateElement;
-            
-            var connectedCell = _statePlaceElement.GetConnectedCell();
-            if (connectedCell != null)
+            if (stateElement.ConnectedCell != null)
             {
                 if (_selectedTransitionCondition != null)
                 {
                     // Start line drawing    
-                    StartCoroutine(StartDrawTransitionLine(_statePlaceElement.GetComponent<StateUIElement>()));
+                    StartCoroutine(StartDrawTransitionLine(stateElement.GetComponent<StateUIElement>()));
                     _statePlaceElement = null;
+                    return;
                 }
-                else
+                
+                if(!stateElement.TryGetComponent(out _statePlaceElement))
                 {
-                    RemoveStatePlaceElement(_statePlaceElement);
-                    connectedCell.RemoveStateElement();
+                    InputManager.DragEnded -= HandleDragEnded;
+                    return;
                 }
+                
+                RemoveStatePlaceElement(_statePlaceElement);
+                stateElement.ConnectedCell.RemoveStateElement();
             }
             else
             {
+                _statePlaceElement = stateElement.GetComponent<StateUIPlaceElement>();
                 _selectedTransitionCondition = null; // TODO: unhighlight transitionSelectElement 
                 stateUIElementStacks.First(stack => stack.GetAction() == _statePlaceElement.GetAction()).RemoveState(_statePlaceElement);
             }
@@ -206,29 +210,46 @@ namespace UI
             // Todo: Highlight State
             var sourceCell = transitionSourceState.ConnectedCell;
             var sourceCellCoordinates = _stateChartUIGrid.GetCoordinatesFromCell(sourceCell);
-            var previousCellCoordinates = sourceCellCoordinates; 
+            var previousCellCoordinates = sourceCellCoordinates;
+            var currentCellCoordinates = new Vector2Int();
             do
             {
-                Vector3 inputPosition = _inputManager.GetPointerPosition();
-                var currentCellCoordinates = _stateChartUIGrid.ScreenToCellCoordinates(inputPosition);
-                if (currentCellCoordinates != previousCellCoordinates)
+                var inputPosition = _inputManager.GetPointerPosition();
+                if(_stateChartUIGrid.IsPositionInsideGrid(inputPosition))
+                    currentCellCoordinates = _stateChartUIGrid.ScreenToCellCoordinates(inputPosition);
+                if (currentCellCoordinates == previousCellCoordinates)
                 {
-                    Debug.Log("New Cell on Drawing detected!");
-                    if (!Mathf.Approximately(Vector2Int.Distance(sourceCellCoordinates, currentCellCoordinates),1))
-                    {
-                        Debug.Log("New Cell was not adjacent. Draw will be stopped.");
-                        break;
-                    }
-
-                    var newCell = _stateChartUIGrid.GetCellOnCoordinates(currentCellCoordinates);
-                    if (newCell.PlacedStateElement == null)
-                    {
-                        // Get state facing row of subcells
-                        // Check if Input is over on of these subcells
-                        // If this subcell is empty in this direction call DrawTransitionLine 
-                    }
-                    previousCellCoordinates = currentCellCoordinates;
+                    yield return null;
+                    continue;
                 }
+
+                Debug.Log("New Cell on Drawing detected!");
+                var coordinateDifference = currentCellCoordinates - sourceCellCoordinates;
+                if (!Mathf.Approximately(coordinateDifference.magnitude, 1))
+                {
+                    Debug.Log("New Cell was not adjacent. Draw will be stopped.");
+                    break;
+                }
+
+                var newCell = _stateChartUIGrid.GetCellOnCoordinates(currentCellCoordinates);
+                if (newCell.PlacedStateElement == null)
+                {
+                    var hoveredSubCell = _stateChartUIGrid.GetSubCellOnPosition(inputPosition);
+
+                    var inputIsHorizontal = coordinateDifference.x != 0;
+                    if (inputIsHorizontal && !hoveredSubCell.Value.BlockedHorizontally || 
+                        !inputIsHorizontal && !hoveredSubCell.Value.BlockedVertically)
+                    {
+                        // StartDrawing
+                        Debug.Log($"Would draw in this direction: {coordinateDifference.ToDirection()}");
+                        var drawDirection = coordinateDifference.ToDirection();
+                        var drawStartPosition = _stateChartUIGrid.GetTransitionDrawStartPosition(
+                            transitionSourceState.transform.position, inputPosition, drawDirection);
+                        Debug.Log($"StatePosition is at {transitionSourceState.transform.position} drawStartPosition will be {drawStartPosition}");
+                    }    
+                }
+                previousCellCoordinates = currentCellCoordinates;
+                
                 yield return null;
             } while (!_dragEnded);
             _dragEnded = false;

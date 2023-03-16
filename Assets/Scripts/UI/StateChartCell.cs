@@ -4,26 +4,35 @@ namespace UI
 {
     public class StateChartCell
     {
+        public struct SubCell
+        {
+            public bool BlockedHorizontally { get; set; }
+            public bool BlockedVertically { get; set; }
+        }
+        
         public StateUIElement PlacedStateElement { get; private set; }
 
-        private StateChartSubCell[] _subCells;
+        private SubCell[] _subCells;
 
         public StateChartCell()
         {
-            /* 0 1 2
-             * 3 4 5
+            /* The SubCells are positioned like this:
              * 6 7 8
+             * 3 4 5
+             * 0 1 2
              */
-            _subCells = new StateChartSubCell[9];
-            
-            for (var i = 0; i < 3; i++) // Rows
+            _subCells = new SubCell[9];
+
+            for (var i = 0; i < _subCells.Length; i++)
             {
-                for (var j = 0; j < 3; j++) // Columns
-                {
-                    _subCells[(i + 1) * (j + 1) - 1] =
-                        new StateChartSubCell(this, new Vector2Int(-1 + j, -1 + i));
-                }
+                _subCells[i] = new SubCell();
             }
+        }
+
+        public SubCell GetSubCellOnCoordinates(Vector2Int subCoordinates)
+        {
+            var subCellId = (subCoordinates.y + 1) * 3 + (subCoordinates.x + 1);
+            return _subCells[subCellId];
         }
 
         public void RemoveStateElement()

@@ -9,6 +9,40 @@ namespace Helper
 {
     public static class ExtensionMethods 
     {
+        public static Vector2Int ToVector2Int(this Direction direction)
+        {
+            return direction switch
+            {
+                Direction.Up => Vector2Int.up,
+                Direction.Down => Vector2Int.down,
+                Direction.Left => Vector2Int.left,
+                Direction.Right => Vector2Int.right,
+                _ => throw new ArgumentException()
+            };
+        }
+
+        public static Direction ToDirection(this Vector2Int vector)
+        {
+            if (vector == Vector2Int.up)
+            {
+                return Direction.Up;
+            }
+            if (vector == Vector2Int.down)
+            {
+                return Direction.Down;
+            }
+            if (vector == Vector2Int.left)
+            {
+                return Direction.Left;
+            }
+            if (vector == Vector2Int.right)
+            {
+                return Direction.Right;
+            }
+
+            throw new ArgumentException("Parameter has to equal a direction vector.");
+        }
+        
         public static Vector2 ZRotToDir(this RectTransform transform)
         {
             var rotation = transform.eulerAngles.z;
@@ -53,17 +87,6 @@ namespace Helper
         public static float SumOfElements(this Vector2 vector)
         {
             return Vector2.Dot(vector, Vector2.one);
-        }
-
-        public static List<GameObject> ToGameObjects(this List<RaycastResult> raycastResults)
-        {
-            var gameObjectList = new List<GameObject>();
-            foreach (var raycastResult in raycastResults)
-            {
-                gameObjectList.Add(raycastResult.gameObject);
-            }
-
-            return gameObjectList;
         }
 
         public static bool IsInsideSquare(this Vector2 position, Vector2 squareBottomLeft, float squareSize)

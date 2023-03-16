@@ -11,10 +11,10 @@ public class InputManager : MonoBehaviour
 {
     [SerializeField] private bool useTouch;
 
-    public static Action<StateUIPlaceElement> StateElementTapped;
+    public static Action<StateUIElement> StateElementTapped;
     public static Action StateChartPanelTapped;
 
-    public static Action<StateUIPlaceElement> StateElementDragStarted;
+    public static Action<StateUIElement> StateElementDragStarted;
     public static Action StateChartPanelDragStarted;
 
     public static Action DragEnded;
@@ -74,7 +74,7 @@ public class InputManager : MonoBehaviour
             () => { StartCoroutine(ProcessPressInput()); });
     }
 
-    private IEnumerator ProcessPressInput(StateUIPlaceElement selectedStateElement = null)
+    private IEnumerator ProcessPressInput(StateUIElement selectedStateElement = null)
     {
         while (true)
         {
@@ -190,7 +190,7 @@ public class InputManager : MonoBehaviour
         _uiManager.ProcessZoom(zoomDelta, _uiInput.MouseZoom.MousePosition.ReadValue<Vector2>());
     }
 
-    private void ProcessInputOverStateOrPanel(Vector2 inputPosition, Action<StateUIPlaceElement> inputOverStateAction,
+    private void ProcessInputOverStateOrPanel(Vector2 inputPosition, Action<StateUIElement> inputOverStateAction,
         Action inputOverPanelAction)
     {
         var raycastResults = HelperFunctions.GetRaycastResultsOnPosition(inputPosition);
@@ -200,9 +200,8 @@ public class InputManager : MonoBehaviour
         {
             if(raycastResult.gameObject.CompareTag("StateUIElement"))
             {
-                var stateUIPlaceElement = raycastResult.gameObject.GetComponentInParent<StateUIPlaceElement>();
-                if (stateUIPlaceElement != null)
-                    inputOverStateAction(stateUIPlaceElement);
+                var stateUIElement = raycastResult.gameObject.GetComponentInParent<StateUIElement>();
+                inputOverStateAction(stateUIElement);
                 return;
             }
 
