@@ -94,16 +94,16 @@ namespace UI
 
         public bool StartDrawingIfInRange(float distance, Vector2 direction)
         {
-            if (_isDrawing || distance < lineElementLength * drawingThreshold)
-                return false;
-            
-            var lineScaleFactor = 1f / transform.parent.localScale.x;
-            transitionLine.Initialize(_scaledLineElementLength, lineElementWidth, direction, lineScaleFactor);
-            var transitionLinePosition = transitionLine.transform.position;
-            _inputs.Add(new DrawInput(transitionLinePosition + (Vector3)direction * lineElementLength, direction));
-            _placedStates = _uiManager.GetPlacedStates();
-            CheckIfStateIsInRange();
-            _isDrawing = true;
+            // if (_isDrawing || distance < lineElementLength * drawingThreshold)
+            //     return false;
+            //
+            // var lineScaleFactor = 1f / transform.parent.localScale.x;
+            // transitionLine.Initialize(_scaledLineElementLength, lineElementWidth, direction, lineScaleFactor);
+            // var transitionLinePosition = transitionLine.transform.position;
+            // _inputs.Add(new DrawInput(transitionLinePosition + (Vector3)direction * lineElementLength, direction));
+            // _placedStates = _uiManager.GetPlacedStates();
+            // CheckIfStateIsInRange();
+            // _isDrawing = true;
             return true;
         }
 
@@ -120,15 +120,15 @@ namespace UI
 
             if (diffVectorAbs.x > diffVectorAbs.y)
             {
-                var direction = diffVector.x > 0 ? Vector2.right : Vector2.left;
-                transitionLine.DrawLineElement(direction);
-                CalculateLastInput(direction);
+                // var direction = diffVector.x > 0 ? Vector2.right : Vector2.left;
+                // transitionLine.DrawLineElement(direction);
+                // CalculateLastInput(direction);
             }
             else
             {
-                var direction = diffVector.y > 0 ? Vector2.up : Vector2.down; 
-                transitionLine.DrawLineElement(direction);
-                CalculateLastInput(direction);
+                // var direction = diffVector.y > 0 ? Vector2.up : Vector2.down; 
+                // transitionLine.DrawLineElement(direction);
+                // CalculateLastInput(direction);
             }
 
             if (_currentUiGizmo != null)
@@ -221,12 +221,12 @@ namespace UI
             
             if (_slotInRangeId >= 0)
             {
-                var slotPosition = _stateInRange.GetSlotPosition(_slotInRangeId);
-                var slotDirection = _stateInRange.GetSlotDirection(_slotInRangeId);
-                GetComponent<TransitionPlug>().OnTransitionConnected(_stateInRange, _slotInRangeId);
-                _stateInRange.SetSlotToOccupied(_slotInRangeId);
-                //_stateInRange.SetSizeToDefault();
-                transitionLine.DrawLineToSlot(_inputs[^1].Position, slotPosition, slotDirection);
+                // var slotPosition = _stateInRange.GetSlotPosition(_slotInRangeId);
+                // var slotDirection = _stateInRange.GetSlotDirection(_slotInRangeId);
+                // GetComponent<TransitionPlug>().OnTransitionConnected(_stateInRange, _slotInRangeId);
+                // _stateInRange.SetSlotToOccupied(_slotInRangeId);
+                // //_stateInRange.SetSizeToDefault();
+                // transitionLine.DrawLineToSlot(_inputs[^1].Position, slotPosition, slotDirection);
             }
             else
             {

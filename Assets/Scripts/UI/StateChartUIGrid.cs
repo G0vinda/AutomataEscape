@@ -43,7 +43,7 @@ namespace UI
             _bottomLeftPosition = bottomLeftPosition;
         }
 
-        public void UpdateGrid(float gridHeight, Vector2 bottomLeftPosition, float zoomFactor)
+        public void UpdateGrid(float gridHeight, Vector2 bottomLeftPosition)
         {
             SetGridValues(gridHeight, bottomLeftPosition);
 
@@ -56,11 +56,11 @@ namespace UI
                 var newStatePosition = CellToScreenCoordinates(stateChartCell.Key);
                 
                 connectedStateElement.transform.position = newStatePosition;
-                connectedStateElement.ApplyZoomFactor(zoomFactor);
+                connectedStateElement.UpdateScaling();
             }
             
-            if(drawTestGrid)
-                DrawGrid(zoomFactor);
+            // if(drawTestGrid)
+            //     DrawGrid(zoomFactor);
         }
 
         public Vector2 CellToScreenCoordinates(Vector2Int cellCoordinates)
@@ -175,7 +175,7 @@ namespace UI
                     }
                     return statePosition + new Vector2(xValue, yValue);
                 default:
-                    throw new ArgumentException("Parameter has to equal a direction vector.");
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

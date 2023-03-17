@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Tiles;
+using UI;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -59,16 +60,16 @@ public class GridManager : MonoBehaviour
         switch (type)
         {
             case Tile.TileType.GateUp:
-                newGateTile.SetDirection(Vector2.up);
+                newGateTile.SetDirection(Direction.Up);
                 break;
             case Tile.TileType.GateDown:
-                newGateTile.SetDirection(Vector2.down);
+                newGateTile.SetDirection(Direction.Down);
                 break;
             case Tile.TileType.GateRight:
-                newGateTile.SetDirection(Vector2.right);
+                newGateTile.SetDirection(Direction.Right);
                 break;
             case Tile.TileType.GateLeft:
-                newGateTile.SetDirection(Vector2.left);
+                newGateTile.SetDirection(Direction.Left);
                 break;
         }
 

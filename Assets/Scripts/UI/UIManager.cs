@@ -111,7 +111,7 @@ namespace UI
             var startCell = _stateChartUIGrid.GetCellOnCoordinates(startCoordinates);
             var startCellPosition = _stateChartUIGrid.CellToScreenCoordinates(startCoordinates);
             startCell.PlaceStateElement(startStateUIElement); // TODO: connect cell to startstate
-            startStateUIElement.Initialize(stateChartPanel.GetScaleFactor(), startCell);
+            startStateUIElement.Initialize(startCell);
             startStateUIElement.transform.position = startCellPosition;
         }
 
@@ -246,6 +246,7 @@ namespace UI
                         var drawStartPosition = _stateChartUIGrid.GetTransitionDrawStartPosition(
                             transitionSourceState.transform.position, inputPosition, drawDirection);
                         Debug.Log($"StatePosition is at {transitionSourceState.transform.position} drawStartPosition will be {drawStartPosition}");
+                        transitionSourceState.StartTransitionLineDraw(drawStartPosition, drawDirection);
                     }    
                 }
                 previousCellCoordinates = currentCellCoordinates;
@@ -272,7 +273,7 @@ namespace UI
                 {
                     if (!wasOnGrid)
                     {
-                        _statePlaceElement.SwitchAppearanceToOnGrid(_zoomFactor);
+                        _statePlaceElement.SwitchAppearanceToOnGrid();
                     }
                     stateElementTransform.position = cellPosition;
                     wasOnGrid = true;
@@ -304,7 +305,7 @@ namespace UI
             else
             {
                 stateUIElementStacks.First(s => s.GetAction() == _statePlaceElement.GetAction())
-                    .AddState(stateChartPanel.GetScaleFactor());
+                    .AddState();
                 Destroy(_statePlaceElement.gameObject);
             }
 

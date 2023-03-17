@@ -18,10 +18,10 @@ namespace UI
         private StateUIData _data;
         private StateUIElement _uiElement;
 
-        public void Initialize(StateUIData stateUIData, float gridScaleFactor)
+        public void Initialize(StateUIData stateUIData)
         {
             _uiElement = GetComponent<StateUIElement>();
-            _uiElement.Initialize(gridScaleFactor, -1);
+            _uiElement.Initialize(-1);
             _data = stateUIData;
             _uiElement.SetupEmptySlots();
             _uiElement.SetText(_data.text);
@@ -32,11 +32,6 @@ namespace UI
         public int GetAssignedId()
         {
             return _uiElement.AssignedId;
-        }
-
-        public StateChartCell GetConnectedCell()
-        {
-            return _uiElement.ConnectedCell;
         }
 
         public StateChartManager.StateAction GetAction()
@@ -133,9 +128,9 @@ namespace UI
             }
         }
 
-        public void SwitchAppearanceToOnGrid(float zoomFactor)
+        public void SwitchAppearanceToOnGrid()
         {
-            _uiElement.ApplyZoomFactor(zoomFactor);
+            _uiElement.UpdateScaling();
             SetColorsToDefault();
         }
 

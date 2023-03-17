@@ -18,7 +18,7 @@ namespace UI
             stateElementPlaceOffset *= gridScaleFactor;
             for (var i = 0; i < numberOfStates; i++)
             {
-                AddState(gridScaleFactor);
+                AddState();
             }
         }
 
@@ -27,10 +27,10 @@ namespace UI
             return stateData.action;
         }
 
-        public void AddState(float gridScaleFactor)
+        public void AddState()
         {
             var newState = Instantiate(stateElementPrefab, transform);
-            newState.Initialize(stateData, gridScaleFactor);
+            newState.Initialize(stateData);
             newState.SetToAvailable();
             var numOfStates = _stateElements.Count;
             if(numOfStates > 0)

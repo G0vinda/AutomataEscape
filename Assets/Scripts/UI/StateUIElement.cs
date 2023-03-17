@@ -9,6 +9,41 @@ namespace UI
 {
     public class StateUIElement : MonoBehaviour
     {
+        public struct SizeAttributes
+        {
+            public Vector2 StateSize { get; private set; }
+            
+            public Vector3 StateImageScale { get; private set; }
+            public float LineElementLength { get; private set; }
+            public float FirstLineElementLength { get; private set;}
+            public float LineWidth { get; private set;}
+            public Vector2 DefaultStateSize { get; private set;}
+            public Vector3 DefaultStateImageScale { get; private set;}
+            
+            private float _defaultLineElementLength;
+            private float _defaultFirstLineElementLength;
+            private float _defaultLineWidth;
+
+            public void SetDefaults(float oneDimensionalStateSize, float oneDimensionalImageScale, float lineWidth)
+            {
+                DefaultStateSize = oneDimensionalStateSize * Vector2.one;
+                DefaultStateImageScale = oneDimensionalImageScale * Vector3.one;
+                _defaultLineElementLength = oneDimensionalStateSize / 3;
+                _defaultLineWidth = lineWidth;
+                _defaultFirstLineElementLength = _defaultLineElementLength * 0.5f + _defaultLineWidth;
+                SetScaling(1);
+            }
+
+            public void SetScaling(float scaleFactor)
+            {
+                StateSize = DefaultStateSize * scaleFactor;
+                StateImageScale = DefaultStateImageScale * scaleFactor;
+                LineElementLength = _defaultLineElementLength * scaleFactor;
+                FirstLineElementLength = _defaultFirstLineElementLength * scaleFactor;
+                LineWidth = _defaultLineWidth * scaleFactor;
+            }
+        }
+        
         [SerializeField] public TransitionPlug defaultTransitionPlugPrefab;
         [SerializeField] public RectTransform[] transitionSlotTransforms;
         [SerializeField] public Image image;
@@ -16,7 +51,10 @@ namespace UI
         [SerializeField] public float slotAreaWidth;
         [SerializeField] public float slotAreaHeight;
         [SerializeField] public float stateBufferSpace;
-
+        [SerializeField] private TransitionLine transitionLinePrefab;
+        
+        public static SizeAttributes StateSizeAttributes;
+        
         public int AssignedId { get; set; }
         public StateChartCell ConnectedCell { get; set; }
         
@@ -30,42 +68,58 @@ namespace UI
 
         private UIManager _uiManager;
         private RectTransform _rectTransform;
-        private Vector2 _defaultSize;
-        private Vector3 _defaultImageScale;
+        private List<TransitionLine> _outgoingTransitionLines = new ();
 
-        public void Initialize(float scaleFactor, int assignedId)
+        public void Initialize(int assignedId)
         {
             _uiManager = GameManager.Instance.GetUIManager();
             _scaledSlotAreaWidth = _uiManager.ScaleFloat(slotAreaWidth);
             _scaledSlotAreaHeight = _uiManager.ScaleFloat(slotAreaHeight);
             _rectTransform = GetComponent<RectTransform>();
-            _defaultSize = _rectTransform.sizeDelta * scaleFactor;
-            Debug.Log($"Default size is: {GameManager.Instance.GetUIManager().ScaleFloat(_defaultSize.x)}");
-            _rectTransform.sizeDelta = _defaultSize; 
-            _defaultImageScale = image.rectTransform.localScale * scaleFactor;
+            _rectTransform.sizeDelta = StateSizeAttributes.StateSize;
+            image.rectTransform.localScale = StateSizeAttributes.StateImageScale;
             //Debug.Log($"Default imageSize is: {GameManager.Instance.GetUIManager().ScaleFloat(_defaultSize.x)}");
-            image.rectTransform.localScale = _defaultImageScale;
 
             AssignedId = assignedId;
         }
 
         public void SetSizeToDefault() 
         {
-            _rectTransform.sizeDelta = _defaultSize;
-            image.rectTransform.localScale = _defaultImageScale;
+            _rectTransform.sizeDelta = StateSizeAttributes.DefaultStateSize;
+            image.rectTransform.localScale = StateSizeAttributes.DefaultStateImageScale;
         }
 
-        public void ApplyZoomFactor(float zoomFactor)
+        public void UpdateScaling()
         {
-            _rectTransform.sizeDelta = _defaultSize * zoomFactor;
-            image.rectTransform.localScale = _defaultImageScale * zoomFactor;
+            var scaleDelta = StateSizeAttributes.StateSize.x / _rectTransform.sizeDelta.x;
+            _rectTransform.sizeDelta = StateSizeAttributes.StateSize;
+            image.rectTransform.localScale = StateSizeAttributes.StateImageScale;
+            UpdateTransitionLines(scaleDelta);
+        }
+        
+        private void UpdateTransitionLines(float scaleDelta)
+        {
+            // Calculate new position
+            
+            foreach (var outgoingTransitionLine in _outgoingTransitionLines)
+            {
+                //Calculate new position
+                var positionDelta = outgoingTransitionLine.transform.position - transform.position;
+                positionDelta *= scaleDelta;
+                outgoingTransitionLine.transform.position = transform.position + new Vector3(StateSizeAttributes.StateSize.x * 0.5f, 0, 0);
+                
+                outgoingTransitionLine.UpdateSize(
+                    StateSizeAttributes.FirstLineElementLength, 
+                    StateSizeAttributes.LineElementLength, 
+                    StateSizeAttributes.LineWidth);
+            }
         }
         
         public void SetupEmptySlots()
         {
             connectedTransitionPlugs = new TransitionPlug[12];
             emptySlotIds = new List<int>();
-            for (int i = 0; i < 12; i++)
+            for (var i = 0; i < 12; i++)
             {
                 emptySlotIds.Add(i);    
             }
@@ -81,13 +135,14 @@ namespace UI
             image.color = color;
         }
 
-        public void AddDefaultTransitionPlugToState()
+        public void StartTransitionLineDraw(Vector2 position, Direction direction)
         {
-            var defaultSlotId = transitionSlotTransforms.Length - 1;
-            var defaultPlug = InstantiateTransitionPlug(transitionSlotTransforms[defaultSlotId].position,
-                transitionSlotTransforms[defaultSlotId].rotation, defaultSlotId);
-            defaultPlug.GetLineTransform().rotation = Quaternion.identity;
-            emptySlotIds.Remove(defaultSlotId);
+            var lineElementLength = _rectTransform.sizeDelta.x / 3;
+            var lineWidth = 10f; // TODO: this will have to be adjusted
+            var firstLineElementLength = lineElementLength * 0.5f + lineWidth;
+            var newTransitionLine = Instantiate(transitionLinePrefab, position, Quaternion.identity, transform);
+            newTransitionLine.Initialize(firstLineElementLength, lineElementLength, lineWidth, direction);
+            _outgoingTransitionLines.Add(newTransitionLine);
         }
 
         public TransitionPlug InstantiateTransitionPlug(Vector3 position, Quaternion rotation, int slotId)

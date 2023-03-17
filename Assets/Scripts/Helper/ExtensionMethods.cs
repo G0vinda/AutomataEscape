@@ -66,22 +66,16 @@ namespace Helper
             return Vector2.zero;
         }
 
-        public static Quaternion DirToZRot(this Vector2 direction)
+        public static Quaternion ToZRotation(this Direction direction)
         {
-            if (direction == Vector2.up)
-                return Quaternion.identity;
-            
-            if(direction == Vector2.down)
-                return Quaternion.Euler(0, 0, 180);
-            
-            if(direction == Vector2.right)
-                return Quaternion.Euler(0, 0, -90);
-            
-            if(direction == Vector2.left)
-                return Quaternion.Euler(0, 0, 90);
-
-            Debug.LogError("Invalid direction input on DirToZRot");
-            return Quaternion.identity;
+            return direction switch
+            {
+                Direction.Up => Quaternion.identity, // Object are rotated upwards by default
+                Direction.Down => Quaternion.Euler(0, 0, 180),
+                Direction.Left => Quaternion.Euler(0, 0, 90),
+                Direction.Right => Quaternion.Euler(0, 0, -90),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         public static float SumOfElements(this Vector2 vector)

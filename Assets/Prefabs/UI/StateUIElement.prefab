@@ -228,6 +228,7 @@ MonoBehaviour:
   slotAreaWidth: 50
   slotAreaHeight: 40
   stateBufferSpace: 60
+  transitionLinePrefab: {fileID: 3460206341188733528, guid: d0c76a2c42b1b8e44812e81c52d52c21, type: 3}
   emptySlotIds: 
   connectedTransitionPlugs: []
 --- !u!1 &2915738242533621414

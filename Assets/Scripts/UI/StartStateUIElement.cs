@@ -8,10 +8,10 @@ namespace UI
     {
         private StateUIElement _uiElement;
 
-        public void Initialize(float scaleFactor, StateChartCell connectedCell)
+        public void Initialize(StateChartCell connectedCell)
         {
             _uiElement = GetComponent<StateUIElement>();
-            _uiElement.Initialize(scaleFactor, 0);
+            _uiElement.Initialize(0);
             _uiElement.SetupEmptySlots();
             _uiElement.ConnectedCell = connectedCell;
         }

@@ -1,4 +1,5 @@
 using Helper;
+using UI;
 using UnityEngine;
 
 namespace Tiles
@@ -7,13 +8,13 @@ namespace Tiles
     {
         [SerializeField] private GameObject gate;
 
-        private Vector2 _gateDirection;
+        private Direction _gateDirection;
         private bool _locked = true;
 
-        public void SetDirection(Vector2 newDirection)
+        public void SetDirection(Direction newDirection)
         {
             _gateDirection = newDirection;
-            transform.rotation = newDirection.DirToZRot();
+            transform.rotation = newDirection.ToZRotation();
         }
         
         public void Unlock()
@@ -24,7 +25,7 @@ namespace Tiles
 
         public bool IsBlockingWay(Vector2 direction)
         {
-            return direction == _gateDirection && _locked;
+            return true; // Todo: this will need to be handled: direction == _gateDirection && _locked;
         }
     }
 }

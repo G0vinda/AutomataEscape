@@ -19,6 +19,9 @@ namespace UI
         private Vector2 _bottomLeftGridPosition;
         private float _scaledPadding;
 
+        private float _defaultStateSize = 130;
+        private float _defaultLineWidth = 20;
+
         public void Initialize()
         {
             _rectTransform = GetComponent<RectTransform>();
@@ -40,7 +43,7 @@ namespace UI
         {
             transform.position += moveVector;
             CalculateGridValues();
-            _stateChartUIGrid.UpdateGrid(_gridHeight, _bottomLeftGridPosition, _zoomFactor);
+            _stateChartUIGrid.UpdateGrid(_gridHeight, _bottomLeftGridPosition);
         }
 
         private void CalculateGridValues()
@@ -57,6 +60,10 @@ namespace UI
             
             _rectTransform.sizeDelta *= _scaleFactor;
             _defaultScale = _rectTransform.sizeDelta;
+            StateUIElement.StateSizeAttributes.SetDefaults(
+                _defaultStateSize * _scaleFactor, 
+                _scaleFactor,
+                _defaultLineWidth * _scaleFactor);
         }
 
         public void ZoomChart(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
@@ -68,7 +75,8 @@ namespace UI
             _rectTransform.sizeDelta = _defaultScale * _zoomFactor;
             _scaledPadding = _uiManager.ScaleFloat(padding) * _scaleFactor * _zoomFactor; 
             CalculateGridValues();
-            _stateChartUIGrid.UpdateGrid(_gridHeight,_bottomLeftGridPosition,_zoomFactor);
+            StateUIElement.StateSizeAttributes.SetScaling(zoomFactor);
+            _stateChartUIGrid.UpdateGrid(_gridHeight,_bottomLeftGridPosition);
         }
     }
 }
