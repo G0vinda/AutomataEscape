@@ -61,8 +61,7 @@ namespace UI
             _rectTransform.sizeDelta *= _scaleFactor;
             _defaultScale = _rectTransform.sizeDelta;
             StateUIElement.StateSizeAttributes.SetDefaults(
-                _defaultStateSize * _scaleFactor, 
-                _scaleFactor,
+                _defaultStateSize * _scaleFactor,
                 _defaultLineWidth * _scaleFactor);
         }
 

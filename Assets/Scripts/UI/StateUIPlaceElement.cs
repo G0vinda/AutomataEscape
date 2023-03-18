@@ -97,23 +97,23 @@ namespace UI
 
         public void AddTransitionPlugToState(TransitionUIData data)
         {
-            var transitionSlotTransforms = _uiElement.transitionSlotTransforms;
-            var emptySlotIds = _uiElement.emptySlotIds;
-            for (int i = transitionSlotTransforms.Length - 1; i >= 0; i--)
-            {
-                if (!emptySlotIds.Contains(i))
-                    continue;
-
-                var newPlug = _uiElement.InstantiateTransitionPlug(transitionSlotTransforms[i].position,
-                    transitionSlotTransforms[i].rotation, i);
-                
-                newPlug.GetLineTransform().rotation = Quaternion.identity;
-                emptySlotIds.Remove(i);
-                
-                newPlug.Initialize(data);
-                
-                return;
-            }
+            // var transitionSlotTransforms = _uiElement.transitionSlotTransforms;
+            // var emptySlotIds = _uiElement.emptySlotIds;
+            // for (int i = transitionSlotTransforms.Length - 1; i >= 0; i--)
+            // {
+            //     if (!emptySlotIds.Contains(i))
+            //         continue;
+            //
+            //     var newPlug = _uiElement.InstantiateTransitionPlug(transitionSlotTransforms[i].position,
+            //         transitionSlotTransforms[i].rotation, i);
+            //     
+            //     newPlug.GetLineTransform().rotation = Quaternion.identity;
+            //     emptySlotIds.Remove(i);
+            //     
+            //     newPlug.Initialize(data);
+            //     
+            //     return;
+            // }
         }
         
         private void RemoveAllTransitionPlugs()
@@ -155,16 +155,6 @@ namespace UI
             _uiElement.emptySlotIds.Add(index);
         }
         
-        public Vector3 GetSlotPosition(int slotId)
-        {
-            return _uiElement.transitionSlotTransforms[slotId].position;
-        }
-
-        public Vector2 GetSlotDirection(int slotId)
-        {
-            return _uiElement.transitionSlotTransforms[slotId].ZRotToDir();
-        }
-
         public void SetSizeToBig()
         {
             _uiElement.image.rectTransform.localScale = new Vector2(1.15f, 1.15f);
