@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using PlasticGui.WorkspaceWindow.PendingChanges;
 using Tiles;
 using UI;
 using UnityEngine;
@@ -61,6 +62,9 @@ public class GameManager : MonoBehaviour
                     new (StateChartManager.StateAction.TurnRight, 1)
                 },
                 new List<StateChartManager.TransitionCondition>()
+                {
+                    StateChartManager.TransitionCondition.Default
+                }
             ),
             new LevelWithKeyData(
                 (4, 0),
@@ -83,6 +87,7 @@ public class GameManager : MonoBehaviour
                 },
                 new List<StateChartManager.TransitionCondition>()
                 {
+                    StateChartManager.TransitionCondition.Default,
                     StateChartManager.TransitionCondition.IsInFrontOfWall,
                     StateChartManager.TransitionCondition.StandsOnKey
                 }

@@ -38,7 +38,6 @@ namespace UI
 
         public void Initialize(float firstElementLength, float elementLength, float width, Direction startDirection)
         {
-            transform.rotation = startDirection.ToZRotation();
             _elementLength = elementLength;
             _firstElementLength = firstElementLength;
             _width = width;
@@ -52,11 +51,23 @@ namespace UI
             _firstElementLength = firstElementLength;
             _width = width;
 
-            if (_lineElements.Count > 0) // is this if clause needed?
+            _lineElements[0] = CreateFirstElement(_lineElements[0].Direction);
+            for (var i = 1; i < _lineElements.Count; i++)
             {
-                _lineElements[0] = CreateFirstElement(_lineElements[0].Direction);
-                SetAllDirty();   
+                _lineElements[i] = CreateLineElement(_lineElements[i].Direction, _lineElements[i - 1]);
             }
+            
+            SetAllDirty();
+        }
+
+        public bool TryGetLastElementDirection(out Direction lastElementDirection) // Should not be called if _lineElements is empty
+        {
+            lastElementDirection = 0; // Is invalid if returns false
+            if (_lineElements.Count == 0)
+                return false;
+            
+            lastElementDirection = _lineElements[^1].Direction;
+            return true;
         }
 
         protected override void OnPopulateMesh(VertexHelper vh)
@@ -90,8 +101,7 @@ namespace UI
         private LineElement CreateFirstElement(Direction startDirection)
         {
             var vertexPositions = new Vector3[4];
-            startDirection = Direction.Up;
-            
+
             switch (startDirection)
             {
                 case Direction.Up:
@@ -125,46 +135,27 @@ namespace UI
             return new LineElement(startDirection, vertexPositions);
         }
 
+        public void RemoveLastElement()
+        {
+            _lineElements.RemoveAt(_lineElements.Count - 1);
+        }
+
         public void DrawLineElement(Direction direction)
         {
-            var lastLineElement = _lineElements.ElementAt(_lineElements.Count - 1);
-            var lastDrawDirection = lastLineElement.Direction;
-
-            if (false)// Todo: this needs to be reworked direction == -lastDrawDirection)
-            {
-                _lineElements.Remove(lastLineElement);
-                Debug.Log($"Line removed, {_lineElements.Count} left");
-                SetAllDirty();
-                return;
-            }
-            
-            LineElement newLineElement;
-            switch (direction)
-            {
-                case Direction.Up:
-                    newLineElement = CreateUpElement(lastLineElement, _elementLength);
-                    break;
-                case Direction.Down:
-                    newLineElement = CreateDownElement(lastLineElement, _elementLength);
-                    break;
-                case Direction.Left:
-                    newLineElement = CreateLeftElement(lastLineElement, _elementLength);
-                    break;
-                case Direction.Right:
-                    newLineElement = CreateRightElement(lastLineElement, _elementLength);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
+            var newLineElement = CreateLineElement(direction, _lineElements[^1]);
             _lineElements.Add(newLineElement);
             SetAllDirty();
         }
-
-        public void Clear()
+        private LineElement CreateLineElement(Direction direction, LineElement lastLineElement)
         {
-            _lineElements.Clear();
-            SetAllDirty();
+            return direction switch
+            {
+                Direction.Up => CreateUpElement(lastLineElement, _elementLength),
+                Direction.Down => CreateDownElement(lastLineElement, _elementLength),
+                Direction.Left => CreateLeftElement(lastLineElement, _elementLength),
+                Direction.Right => CreateRightElement(lastLineElement, _elementLength),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         private LineElement CreateUpElement(LineElement lastElement, float length)

@@ -16,6 +16,7 @@ namespace UI
         private bool _initialized;
         private Dictionary<Vector2Int, StateChartCell> _gridCells = new ();
         private float _cellSize;
+        private float _subCellSize;
         private float _gridHeight;
         private Vector2 _bottomLeftPosition;
 
@@ -40,6 +41,7 @@ namespace UI
         {
             _gridHeight = gridHeight;
             _cellSize = _gridHeight / numberOfRows;
+            _subCellSize = _cellSize / 3;
             _bottomLeftPosition = bottomLeftPosition;
         }
 
@@ -69,8 +71,7 @@ namespace UI
             return new Vector2(cellCoordinates.x * _cellSize, cellCoordinates.y * _cellSize) + _bottomLeftPosition + positionOffset;
         }
         
-        // Check if screenPosition is inside grid before!
-        public Vector2Int ScreenToCellCoordinates(Vector2 screenPosition)
+        public Vector2Int ScreenToCellCoordinates(Vector2 screenPosition) // Check if screenPosition is inside grid before!
         {
             var screenPositionInGrid = screenPosition - _bottomLeftPosition;
             var xCoordinate = (int)Mathf.Floor(screenPositionInGrid.x / _cellSize);
@@ -88,11 +89,8 @@ namespace UI
             return _gridCells[cellCoordinates];
         }
 
-        public StateChartCell.SubCell? GetSubCellOnPosition(Vector2 position)
+        public StateChartCell.SubCell GetSubCellOnPosition(Vector2 position) // Check if position is inside grid before!
         {
-            if(!IsPositionInsideGrid(position))
-                return null;
-
             var parentCellCoordinates = ScreenToCellCoordinates(position);
             var parentCell = _gridCells[parentCellCoordinates];
             var parentCellPosition = CellToScreenCoordinates(parentCellCoordinates);
@@ -120,6 +118,117 @@ namespace UI
             Debug.Log($"The subCoordinates are {subCellCoordinates}");
             return parentCell.GetSubCellOnCoordinates(subCellCoordinates);
         }
+
+        public bool CheckIfSubCellIsAdjacentToCell(Vector2 positionOnSubCell, StateChartCell sourceCell)
+        {
+            var hoveredCellCoordinates = ScreenToCellCoordinates(positionOnSubCell);
+            var sourceCellCoordinates = GetCoordinatesFromCell(sourceCell);
+            var coordinateDifference = hoveredCellCoordinates - sourceCellCoordinates;
+
+            if (!Mathf.Approximately(coordinateDifference.magnitude, 1f)) // Cells are not adjacent
+                return false;
+
+            var sourceCellPosition = CellToScreenCoordinates(sourceCellCoordinates);
+
+            if (coordinateDifference.x != 0)
+            {
+                float cellXBorderPosition;
+                if (coordinateDifference.x > 0)
+                {
+                    cellXBorderPosition = sourceCellPosition.x + _cellSize * 0.5f;
+                    return positionOnSubCell.x > cellXBorderPosition &&
+                           positionOnSubCell.x < cellXBorderPosition + _subCellSize;
+                }
+                
+                cellXBorderPosition = sourceCellPosition.x - _cellSize * 0.5f;
+                return positionOnSubCell.x < cellXBorderPosition &&
+                       positionOnSubCell.x > cellXBorderPosition - _subCellSize;
+            }
+            
+            float cellYBorderPosition;
+            if (coordinateDifference.y > 0)
+            {
+                cellYBorderPosition = sourceCellPosition.y + _cellSize * 0.5f;
+                return positionOnSubCell.y > cellYBorderPosition &&
+                       positionOnSubCell.y < cellYBorderPosition + _subCellSize;
+            }
+                
+            cellYBorderPosition = sourceCellPosition.y - _cellSize * 0.5f;
+            return positionOnSubCell.y < cellYBorderPosition &&
+                   positionOnSubCell.y > cellYBorderPosition - _subCellSize;
+        }
+
+        public bool IsPositionInsideSubCell(Vector2 subCellPosition, Vector2 checkPosition)
+        {
+            var halfSubCellSize = _subCellSize * 0.5f;
+            return checkPosition.x > subCellPosition.x - halfSubCellSize &&
+                   checkPosition.x < subCellPosition.x + halfSubCellSize &&
+                   checkPosition.y > subCellPosition.y - halfSubCellSize &&
+                   checkPosition.y < subCellPosition.y + halfSubCellSize;
+        }
+        
+        public bool CheckIfSubCellIsAdjacentToSubCell(Vector2 subCellPosition, Vector2 positionOnOtherSubCell, out Direction direction)
+        {
+            var halfSubCellSize = _subCellSize * 0.5f;
+            var sameColumnAsSubCell = positionOnOtherSubCell.x > subCellPosition.x - halfSubCellSize &&
+                                      positionOnOtherSubCell.x < subCellPosition.x + halfSubCellSize;
+            var sameRowAsSubCell = positionOnOtherSubCell.y > subCellPosition.y - halfSubCellSize &&
+                                   positionOnOtherSubCell.y < subCellPosition.y + halfSubCellSize;
+            direction = 0; // Is invalid if returns false
+
+            if (sameColumnAsSubCell)
+            {
+                if (positionOnOtherSubCell.y > subCellPosition.y &&
+                    positionOnOtherSubCell.y < subCellPosition.y + _subCellSize * 1.5f)
+                {
+                    direction = Direction.Up;
+                    return true;
+                }
+
+                if (positionOnOtherSubCell.y < subCellPosition.y &&
+                    positionOnOtherSubCell.y > subCellPosition.y - _subCellSize * 1.5f)
+                {
+                    direction = Direction.Down;
+                    return true;
+                }
+                
+                return false;
+            }
+            
+            if (sameRowAsSubCell)
+            {
+                if (positionOnOtherSubCell.x > subCellPosition.x &&
+                    positionOnOtherSubCell.x < subCellPosition.x + _subCellSize * 1.5f)
+                {
+                    direction = Direction.Right;
+                    return true;
+                }
+
+                if (positionOnOtherSubCell.x < subCellPosition.x &&
+                    positionOnOtherSubCell.x > subCellPosition.x - _subCellSize * 1.5f)
+                {
+                    direction = Direction.Left;
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+        public Vector2 GetNextSubCellPositionInDirection(Vector2 startPosition, Direction direction, bool fromBorder = false)
+        {
+            var distanceFactor = fromBorder ? 0.5f : 1;
+            return direction switch
+            {
+                Direction.Up => startPosition + Vector2.up * _subCellSize * distanceFactor,
+                Direction.Down => startPosition + Vector2.down * _subCellSize * distanceFactor,
+                Direction.Left => startPosition + Vector2.left * _subCellSize * distanceFactor,
+                Direction.Right => startPosition + Vector2.right * _subCellSize * distanceFactor,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
         
         public Vector2 GetTransitionDrawStartPosition(Vector2 statePosition, Vector2 inputPosition, Direction drawDirection)
         {
@@ -129,49 +238,49 @@ namespace UI
                 case Direction.Up:
                     xValue = 0f;
                     yValue = _cellSize * 0.5f;
-                    if (inputPosition.x > statePosition.x + _cellSize / 6)
+                    if (inputPosition.x > statePosition.x + _subCellSize * 0.5f)
                     {
-                        xValue = _cellSize / 3f;
+                        xValue = _subCellSize;
                     }
-                    else if (inputPosition.x < statePosition.x - _cellSize / 6)
+                    else if (inputPosition.x < statePosition.x - _subCellSize * 0.5f)
                     {
-                        xValue = -_cellSize / 3f;
+                        xValue = -_subCellSize;
                     }
                     return statePosition + new Vector2(xValue, yValue);
                 case Direction.Down:
                     xValue = 0f;
                     yValue = -_cellSize * 0.5f;
-                    if (inputPosition.x > statePosition.x + _cellSize / 6)
+                    if (inputPosition.x > statePosition.x + _subCellSize * 0.5f)
                     {
-                        xValue = _cellSize / 3f;
+                        xValue = _subCellSize;
                     }
-                    else if (inputPosition.x < statePosition.x - _cellSize / 6)
+                    else if (inputPosition.x < statePosition.x - _subCellSize * 0.5f)
                     {
-                        xValue = -_cellSize / 3f;
+                        xValue = -_subCellSize;
                     }
                     return statePosition + new Vector2(xValue, yValue);
                 case Direction.Left:
                     xValue = -_cellSize * 0.5f;
                     yValue = 0f;
-                    if (inputPosition.y > statePosition.y + _cellSize / 6)
+                    if (inputPosition.y > statePosition.y + _subCellSize * 0.5f)
                     {
-                        yValue = _cellSize / 3f;
+                        yValue = _subCellSize;
                     }
-                    else if (inputPosition.y < statePosition.y - _cellSize / 6)
+                    else if (inputPosition.y < statePosition.y - _subCellSize * 0.5f)
                     {
-                        yValue = -_cellSize / 3f;
+                        yValue = -_subCellSize;
                     }
                     return statePosition + new Vector2(xValue, yValue);
                 case Direction.Right:
                     xValue = _cellSize * 0.5f;
                     yValue = 0f;
-                    if (inputPosition.y > statePosition.y + _cellSize / 6)
+                    if (inputPosition.y > statePosition.y + _subCellSize * 0.5f)
                     {
-                        yValue = _cellSize / 3f;
+                        yValue = _subCellSize;
                     }
-                    else if (inputPosition.y < statePosition.y - _cellSize / 6)
+                    else if (inputPosition.y < statePosition.y - _subCellSize * 0.5f)
                     {
-                        yValue = -_cellSize / 3f;
+                        yValue = -_subCellSize;
                     }
                     return statePosition + new Vector2(xValue, yValue);
                 default:

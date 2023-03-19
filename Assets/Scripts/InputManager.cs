@@ -187,7 +187,7 @@ public class InputManager : MonoBehaviour
     private void HandleMouseZoom(InputAction.CallbackContext context)
     {
         var zoomDelta = context.ReadValue<float>() > 0 ? 0.15f : -0.15f;
-        _uiManager.ProcessZoom(zoomDelta, _uiInput.MouseZoom.MousePosition.ReadValue<Vector2>());
+        ZoomInputChanged?.Invoke(zoomDelta, _uiInput.MouseZoom.MousePosition.ReadValue<Vector2>());
     }
 
     private void ProcessInputOverStateOrPanel(Vector2 inputPosition, Action<StateUIElement> inputOverStateAction,

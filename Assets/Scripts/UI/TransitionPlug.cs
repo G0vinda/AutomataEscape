@@ -9,8 +9,6 @@ namespace UI
 {
     public class TransitionPlug : MonoBehaviour, IPointerDownHandler
     {
-        [SerializeField] private TransitionLineInput transitionLineInput;
-
         public StateChartManager.TransitionCondition transitionCondition;
         public StateUIElement connectedState;
         
@@ -50,37 +48,37 @@ namespace UI
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            Debug.Log("Transition plug is clicked");
-            _isBeingDragged = true;
-            if (_isConnectedToOtherState)
-            {
-                GameManager.Instance.GetUIManager().RemoveTransitionByPlug(this);
-                transitionLineInput.ClearLine();
-                _isConnectedToOtherState = false;
-            }
+            // Debug.Log("Transition plug is clicked");
+            // _isBeingDragged = true;
+            // if (_isConnectedToOtherState)
+            // {
+            //     GameManager.Instance.GetUIManager().RemoveTransitionByPlug(this);
+            //     transitionLineDrawer.ClearLine();
+            //     _isConnectedToOtherState = false;
+            // }
         }
 
         private void Update()
         {
-            if (!_isBeingDragged)
-                return;
-
-            if (Input.GetMouseButtonUp(0))
-            {
-                _isBeingDragged = false;
-                return;
-            }
-
-            _mousePosition = Input.mousePosition;
-            if(MovePlugIfEmptySlotInRange())
-                return;
-            
-            var posDiff = _mousePosition - _plugOuterPos;
-            var distance = (posDiff * _plugDir).SumOfElements();
-            if (transitionLineInput.StartDrawingIfInRange(distance, _plugDir))
-            {
-                _isBeingDragged = false;
-            }
+            // if (!_isBeingDragged)
+            //     return;
+            //
+            // if (Input.GetMouseButtonUp(0))
+            // {
+            //     _isBeingDragged = false;
+            //     return;
+            // }
+            //
+            // _mousePosition = Input.mousePosition;
+            // if(MovePlugIfEmptySlotInRange())
+            //     return;
+            //
+            // var posDiff = _mousePosition - _plugOuterPos;
+            // var distance = (posDiff * _plugDir).SumOfElements();
+            // if (transitionLineDrawer.StartDrawingIfInRange(distance, _plugDir))
+            // {
+            //     _isBeingDragged = false;
+            // }
         }
 
         private bool MovePlugIfEmptySlotInRange()
@@ -109,8 +107,8 @@ namespace UI
 
         public void DisconnectLine()
         {
-            _isConnectedToOtherState = false;
-            transitionLineInput.ClearLine();
+            // _isConnectedToOtherState = false;
+            // transitionLineDrawer.ClearLine();
         }
 
         public void OnTransitionConnected(StateUIPlaceElement otherState, int connectedSlotId)

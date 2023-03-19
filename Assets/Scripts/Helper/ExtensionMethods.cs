@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UI;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Helper
 {
@@ -40,9 +37,48 @@ namespace Helper
                 return Direction.Right;
             }
 
-            throw new ArgumentException("Parameter has to equal a direction vector.");
+            throw new ArgumentException();
         }
-        
+
+        public static Direction ToDirection(this Vector2 vector)
+        {
+            if (Mathf.Approximately(vector.y, 0))
+            {
+                switch (vector.x)
+                {
+                    case > 0 :
+                        return Direction.Right;
+                    case < 0 :
+                        return Direction.Left;
+                    default:
+                        throw new ArgumentException();
+                }   
+            }
+            
+            if (Mathf.Approximately(vector.x, 0))
+            {
+                switch (vector.y)
+                {
+                    case > 0 :
+                        return Direction.Up;
+                    case < 0 :
+                        return Direction.Down;
+                    default:
+                        throw new ArgumentException();
+                }   
+            }
+            
+            throw new ArgumentException();
+        }
+
+        public static bool IsOpposite(this Direction dirA, Direction dirB)
+        {
+            return dirA == Direction.Up && dirB == Direction.Down ||
+                   dirA == Direction.Down && dirB == Direction.Up ||
+                   dirA == Direction.Left && dirB == Direction.Right ||
+                   dirA == Direction.Right && dirB == Direction.Left;
+        }
+
         public static Vector2 ZRotToDir(this RectTransform transform)
         {
             var rotation = transform.eulerAngles.z;

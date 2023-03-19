@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
-using Helper;
 using static StateChartManager;
 
 namespace UI
@@ -18,28 +14,19 @@ namespace UI
 
         private StateChartManager _stateChartManager;
         private StateChartUIGrid _stateChartUIGrid;
-        private bool _setupUIOnEnable;
-        private StateUIPlaceElement _statePlaceElement;
-        private TransitionCondition? _selectedTransitionCondition = TransitionCondition.Default; // TODO: change to null when finished with testing
+        private UIInputProcess _inputProcess;
+        private Canvas _canvas;
+        
         private List<StateUIPlaceElement> _placedStateElements;
         private List<LevelData.AvailableStateInfo> _availableStateInfo;
         private List<TransitionCondition> _availableTransitionConditions;
-        private InputManager _inputManager;
-        private float _zoomFactor;
-        private bool _dragEnded;
         private bool _stateChartUIInitialized;
+        private bool _setupUIOnEnable;
 
         private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionPlug> _connectedTransitions = new();
-        private Canvas _canvas;
 
         private void OnEnable()
         {
-            InputManager.StateElementTapped += HandleStatePlaceElementTapped;
-            InputManager.StateChartPanelTapped += HandleStateChartPanelTapped;
-            InputManager.StateElementDragStarted += HandleStatePlaceElementDragStart;
-            InputManager.StateChartPanelDragStarted += HandleStateChartPanelDragStart;
-            InputManager.ZoomInputChanged += ProcessZoom;
-            
             if (!_setupUIOnEnable) return;
 
             SetupStateChartUI();
@@ -47,40 +34,17 @@ namespace UI
             _setupUIOnEnable = false;
         }
 
-        private void OnDisable()
-        {
-            InputManager.StateElementTapped -= HandleStatePlaceElementTapped;
-            InputManager.StateChartPanelTapped -= HandleStateChartPanelTapped;
-            InputManager.StateElementDragStarted -= HandleStatePlaceElementDragStart;
-            InputManager.StateChartPanelDragStarted -= HandleStateChartPanelDragStart;
-            InputManager.ZoomInputChanged -= ProcessZoom;
-        }
-
         public void Initialize()
         {
             _canvas = GetComponent<Canvas>();
+            _inputProcess = GetComponent<UIInputProcess>();
+            _inputProcess.Initialize(stateChartPanel);
             _stateChartManager = GameManager.Instance.GetStateChartManager();
-            _inputManager = GameManager.Instance.GetInputManager();
             _stateChartUIGrid = stateChartPanel.GetComponent<StateChartUIGrid>();
+            TransitionLineDrawer.StateChartUIGrid = _stateChartUIGrid;
             _placedStateElements = new List<StateUIPlaceElement>();
-            _zoomFactor = 1f;
         }
-
-        public void ProcessZoom(float zoomFactorChange, Vector2 zoomCenter)
-        {
-            const float minZoomFactor = 1f;
-            const float maxZoomFactor = 2f;
-            Debug.Log($"ProcessZoom got called with factorChange of: {zoomFactorChange}");
-            if (Mathf.Approximately(_zoomFactor, minZoomFactor)  && zoomFactorChange < 0 || Mathf.Approximately(_zoomFactor, maxZoomFactor) && zoomFactorChange > 0)
-                return;
-
-            var zoomDelta = zoomFactorChange / _zoomFactor;
-            _zoomFactor += zoomFactorChange;
-            _zoomFactor = Mathf.Clamp(_zoomFactor, minZoomFactor, maxZoomFactor);
-            Debug.Log($"Zoom Factor is {_zoomFactor}");
-            stateChartPanel.ZoomChart(_zoomFactor, zoomDelta, zoomCenter);
-        }
-
+        
         public void SetupUI(List<LevelData.AvailableStateInfo> availableStateInfo,
             List<TransitionCondition> availableTransitionConditions)
         {
@@ -98,7 +62,7 @@ namespace UI
                 _setupUIOnEnable = true;
             }
         }
-
+        
         private void SetupStateChartUI()
         {
             if (!_stateChartUIInitialized)
@@ -150,186 +114,29 @@ namespace UI
             _connectedTransitions.Clear();
         }
 
-        private void HandleStatePlaceElementTapped(StateUIElement stateElement)
+        public void ZoomStateChartPanel(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
         {
-            // Todo: highlight connected transitions
+            stateChartPanel.ZoomChart(zoomFactor, zoomDelta, zoomCenter);
         }
 
-        private void HandleStateChartPanelTapped()
+        public void PlaceStateElementOnGrid(StateUIPlaceElement placeElement, StateChartCell connectedCell)
         {
-            // Todo: reset transition highlighting
-        }
-
-        private void HandleStatePlaceElementDragStart(StateUIElement stateElement)
-        {
-            InputManager.DragEnded += HandleDragEnded;
-            if (stateElement.ConnectedCell != null)
-            {
-                if (_selectedTransitionCondition != null)
-                {
-                    // Start line drawing    
-                    StartCoroutine(StartDrawTransitionLine(stateElement.GetComponent<StateUIElement>()));
-                    _statePlaceElement = null;
-                    return;
-                }
+            connectedCell.PlaceStateElement(placeElement);
+            placeElement.PlaceState(connectedCell, stateChartPanel.transform);
                 
-                if(!stateElement.TryGetComponent(out _statePlaceElement))
-                {
-                    InputManager.DragEnded -= HandleDragEnded;
-                    return;
-                }
-                
-                RemoveStatePlaceElement(_statePlaceElement);
-                stateElement.ConnectedCell.RemoveStateElement();
-            }
-            else
-            {
-                _statePlaceElement = stateElement.GetComponent<StateUIPlaceElement>();
-                _selectedTransitionCondition = null; // TODO: unhighlight transitionSelectElement 
-                stateUIElementStacks.First(stack => stack.GetAction() == _statePlaceElement.GetAction()).RemoveState(_statePlaceElement);
-            }
-            
-            StartCoroutine(DragStatePlaceElement());
+            var assignedId = _stateChartManager.AddState(placeElement.GetAction());
+            placeElement.SetAssignedId(assignedId);
         }
 
-        private void HandleStateChartPanelDragStart()
+        public void PlaceStateElementOnStack(StateUIPlaceElement placeElement)
         {
-            InputManager.DragEnded += HandleDragEnded;
-            StartCoroutine(DragStateChartPanel());
-        }
-        
-        private void HandleDragEnded()
-        {
-            InputManager.DragEnded -= HandleDragEnded;
-            Debug.Log("Input was released.");
-            _dragEnded = true;
+            stateUIElementStacks.First(s => s.GetAction() == placeElement.GetAction())
+                .AddState();
         }
 
-        private IEnumerator StartDrawTransitionLine(StateUIElement transitionSourceState)
+        public void RemoveStateElementFromGrid(StateUIPlaceElement placeElement)
         {
-            // Todo: Highlight State
-            var sourceCell = transitionSourceState.ConnectedCell;
-            var sourceCellCoordinates = _stateChartUIGrid.GetCoordinatesFromCell(sourceCell);
-            var previousCellCoordinates = sourceCellCoordinates;
-            var currentCellCoordinates = new Vector2Int();
-            do
-            {
-                var inputPosition = _inputManager.GetPointerPosition();
-                if(_stateChartUIGrid.IsPositionInsideGrid(inputPosition))
-                    currentCellCoordinates = _stateChartUIGrid.ScreenToCellCoordinates(inputPosition);
-                if (currentCellCoordinates == previousCellCoordinates)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                Debug.Log("New Cell on Drawing detected!");
-                var coordinateDifference = currentCellCoordinates - sourceCellCoordinates;
-                if (!Mathf.Approximately(coordinateDifference.magnitude, 1))
-                {
-                    Debug.Log("New Cell was not adjacent. Draw will be stopped.");
-                    break;
-                }
-
-                var newCell = _stateChartUIGrid.GetCellOnCoordinates(currentCellCoordinates);
-                if (newCell.PlacedStateElement == null)
-                {
-                    var hoveredSubCell = _stateChartUIGrid.GetSubCellOnPosition(inputPosition);
-
-                    var inputIsHorizontal = coordinateDifference.x != 0;
-                    if (inputIsHorizontal && !hoveredSubCell.Value.BlockedHorizontally || 
-                        !inputIsHorizontal && !hoveredSubCell.Value.BlockedVertically)
-                    {
-                        // StartDrawing
-                        Debug.Log($"Would draw in this direction: {coordinateDifference.ToDirection()}");
-                        var drawDirection = coordinateDifference.ToDirection();
-                        var drawStartPosition = _stateChartUIGrid.GetTransitionDrawStartPosition(
-                            transitionSourceState.transform.position, inputPosition, drawDirection);
-                        Debug.Log($"StatePosition is at {transitionSourceState.transform.position} drawStartPosition will be {drawStartPosition}");
-                        transitionSourceState.StartTransitionLineDraw(drawStartPosition, drawDirection);
-                    }    
-                }
-                previousCellCoordinates = currentCellCoordinates;
-                
-                yield return null;
-            } while (!_dragEnded);
-            _dragEnded = false;
-        }
-
-        private IEnumerator DragStatePlaceElement()
-        {
-            var wasOnGrid = false;
-            _statePlaceElement.SwitchAppearanceToOffGrid();
-            _statePlaceElement.transform.SetAsLastSibling();
-            StateChartCell currentCell;
-
-            do
-            {
-                Vector3 inputPosition = _inputManager.GetPointerPosition();
-                Debug.Log($"Will drag panel to this position: {inputPosition}");
-                var stateElementTransform = _statePlaceElement.transform;
-                currentCell = _stateChartUIGrid.TryGetEmptyCellOnPosition(inputPosition, out var cellPosition);
-                if (currentCell != null)
-                {
-                    if (!wasOnGrid)
-                    {
-                        _statePlaceElement.SwitchAppearanceToOnGrid();
-                    }
-                    stateElementTransform.position = cellPosition;
-                    wasOnGrid = true;
-                }
-                else
-                {
-                    if (wasOnGrid)
-                    {
-                        _statePlaceElement.SwitchAppearanceToOffGrid();
-                    }
-                    stateElementTransform.position = inputPosition;
-                    wasOnGrid = false;
-                }
-
-                yield return null;
-            } while (!_dragEnded);
-
-            if (wasOnGrid)
-            {
-                currentCell.PlaceStateElement(_statePlaceElement);
-                _statePlaceElement.PlaceState(currentCell, stateChartPanel.transform);
-                
-                var assignedId = _stateChartManager.AddState(_statePlaceElement.GetAction());
-                _statePlaceElement.SetAssignedId(assignedId);
-                _placedStateElements.Add(_statePlaceElement);
-                _statePlaceElement = null;
-                
-            }
-            else
-            {
-                stateUIElementStacks.First(s => s.GetAction() == _statePlaceElement.GetAction())
-                    .AddState();
-                Destroy(_statePlaceElement.gameObject);
-            }
-
-            _dragEnded = false;
-        }
-
-        private IEnumerator DragStateChartPanel()
-        {
-            Vector3 previousInputPosition = _inputManager.GetPointerPosition();
-            do
-            {
-                Vector3 currentInputPosition = _inputManager.GetPointerPosition();
-                var inputDifference = currentInputPosition - previousInputPosition;
-                stateChartPanel.MoveByVector(inputDifference);
-                previousInputPosition = currentInputPosition;
-                yield return null;
-            } while (!_dragEnded);
-
-            _dragEnded = false;
-        }
-
-        private void RemoveStatePlaceElement(StateUIPlaceElement placeElement)
-        {
-            for (int i = 0; i < _connectedTransitions.Count; i++)
+            for (var i = 0; i < _connectedTransitions.Count; i++)
             {
                 var connectedTransition = _connectedTransitions.ElementAt(i);
                 if (connectedTransition.Key.Item2 != placeElement &&
@@ -341,9 +148,14 @@ namespace UI
                 i--;
             }
 
-            _stateChartManager.RemoveState(_statePlaceElement.GetAssignedId());
+            _stateChartManager.RemoveState(placeElement.GetAssignedId());
             _placedStateElements.Remove(placeElement);
-            _statePlaceElement.SetAssignedId(-1);
+            placeElement.SetAssignedId(-1);
+        }
+
+        public void RemoveStateElementFromStack(StateUIPlaceElement placeElement)
+        {
+            stateUIElementStacks.First(stack => stack.GetAction() == placeElement.GetAction()).RemoveState(placeElement);
         }
 
         public void RemoveTransitionByPlug(TransitionPlug plug, bool destinationStateWillBeRemoved = false)
@@ -384,11 +196,6 @@ namespace UI
                 _stateChartManager.AddTransition(plug.transitionCondition, state1.AssignedId,
                     state2.GetAssignedId());
             }
-        }
-
-        public List<StateUIPlaceElement> GetPlacedStates()
-        {
-            return _placedStateElements;
         }
 
         public float UnscaleFloat(float downscaledFloat)

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Helper;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,8 +41,6 @@ namespace UI
         [SerializeField] public TransitionPlug defaultTransitionPlugPrefab;
         [SerializeField] public Image image;
         [SerializeField] public TextMeshProUGUI textElement;
-        [SerializeField] public float slotAreaWidth;
-        [SerializeField] public float slotAreaHeight;
         [SerializeField] public float stateBufferSpace;
         [SerializeField] private TransitionLine transitionLinePrefab;
         
@@ -116,12 +113,14 @@ namespace UI
             image.color = color;
         }
 
-        public void StartTransitionLineDraw(Vector2 position, Direction direction)
+        public TransitionLine DrawFirstTransitionLine(Vector2 position, Direction direction)
         {
             var newTransitionLine = Instantiate(transitionLinePrefab, position, Quaternion.identity, transform);
             newTransitionLine.Initialize(StateSizeAttributes.FirstLineElementLength,
                 StateSizeAttributes.LineElementLength, StateSizeAttributes.LineWidth, direction);
             _outgoingTransitionLines.Add(newTransitionLine);
+
+            return newTransitionLine;
         }
 
         public TransitionPlug InstantiateTransitionPlug(Vector3 position, Quaternion rotation, int slotId)
