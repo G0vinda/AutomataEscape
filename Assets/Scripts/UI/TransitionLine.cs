@@ -36,11 +36,12 @@ namespace UI
         private float _width;
 
 
-        public void Initialize(float firstElementLength, float elementLength, float width, Direction startDirection)
+        public void Initialize(float firstElementLength, float elementLength, float width, Color lineColor, Direction startDirection)
         {
             _elementLength = elementLength;
             _firstElementLength = firstElementLength;
             _width = width;
+            color = lineColor;
             _lineElements.Add(CreateFirstElement(startDirection));
             SetAllDirty();
         }

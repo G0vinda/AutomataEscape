@@ -113,11 +113,15 @@ namespace UI
             image.color = color;
         }
 
-        public TransitionLine DrawFirstTransitionLine(Vector2 position, Direction direction)
+        public TransitionLine DrawFirstTransitionLine(Vector2 position, Direction direction, Color lineColor)
         {
             var newTransitionLine = Instantiate(transitionLinePrefab, position, Quaternion.identity, transform);
-            newTransitionLine.Initialize(StateSizeAttributes.FirstLineElementLength,
-                StateSizeAttributes.LineElementLength, StateSizeAttributes.LineWidth, direction);
+            newTransitionLine.Initialize(
+                StateSizeAttributes.FirstLineElementLength,
+                StateSizeAttributes.LineElementLength, 
+                StateSizeAttributes.LineWidth, 
+                lineColor,
+                direction);
             _outgoingTransitionLines.Add(newTransitionLine);
 
             return newTransitionLine;

@@ -12,13 +12,15 @@ public class InputManager : MonoBehaviour
     [SerializeField] private bool useTouch;
 
     public static Action<StateUIElement> StateElementTapped;
-    public static Action StateChartPanelTapped;
-
     public static Action<StateUIElement> StateElementDragStarted;
+
+    public static Action StateChartPanelTapped;
     public static Action StateChartPanelDragStarted;
 
+    public static Action<StateChartManager.TransitionCondition> TransitionElementSelected;
+
     public static Action DragEnded;
-    
+
     public static Action<float, Vector2> ZoomInputChanged;
 
     private UIInput _uiInput;
@@ -39,7 +41,7 @@ public class InputManager : MonoBehaviour
         if (!useTouch)
         {
             _uiInput.MouseZoom.Enable();
-            _uiInput.MouseZoom.Zoom.performed += HandleMouseZoom;   
+            _uiInput.MouseZoom.Zoom.performed += HandleMouseZoom;
         }
         else
         {
@@ -68,9 +70,10 @@ public class InputManager : MonoBehaviour
     private void HandlePress(InputAction.CallbackContext context)
     {
         _inputReleased = false;
-        ProcessInputOverStateOrPanel(
-            _uiInput.Input.Position.ReadValue<Vector2>(), 
-            state => { StartCoroutine(ProcessPressInput(state)); }, 
+        ProcessInputOverElement(
+            _uiInput.Input.Position.ReadValue<Vector2>(),
+            state => { StartCoroutine(ProcessPressInput(state)); },
+            condition => { TransitionElementSelected?.Invoke(condition); },
             () => { StartCoroutine(ProcessPressInput()); });
     }
 
@@ -86,9 +89,9 @@ public class InputManager : MonoBehaviour
                 }
                 else
                 {
-                    StateChartPanelTapped?.Invoke();    
+                    StateChartPanelTapped?.Invoke();
                 }
-                
+
                 break;
             }
 
@@ -100,12 +103,12 @@ public class InputManager : MonoBehaviour
                 }
                 else
                 {
-                    StateChartPanelDragStarted?.Invoke();    
+                    StateChartPanelDragStarted?.Invoke();
                 }
-                
+
                 break;
             }
-            
+
             yield return null;
         }
     }
@@ -118,7 +121,7 @@ public class InputManager : MonoBehaviour
         }
         else
         {
-            _inputReleased = true;       
+            _inputReleased = true;
         }
     }
 
@@ -138,9 +141,10 @@ public class InputManager : MonoBehaviour
         var fingerOnePosition = GetFingerOnePosition();
         var fingerTwoPosition = GetFingerTwoPosition();
         var midPoint = HelperFunctions.GetMidpointOfVectors(fingerOnePosition, fingerTwoPosition);
-        ProcessInputOverStateOrPanel(
-            midPoint, 
-            state => {}, 
+        ProcessInputOverElement(
+            midPoint,
+            state => { },
+            transition => { },
             () => { StartCoroutine(HandleTouchZoom(midPoint)); });
     }
 
@@ -168,8 +172,11 @@ public class InputManager : MonoBehaviour
 
             previousFingerDistance = currentFingerDistance;
             yield return null;
-            secondaryFingerPress = _uiInput.TouchZoom.SecondaryFingerPressed.ReadValue<float>(); // If = 1, then secondary finger is pressed down
+            secondaryFingerPress =
+                _uiInput.TouchZoom.SecondaryFingerPressed
+                    .ReadValue<float>(); // If = 1, then secondary finger is pressed down
         } while (Mathf.Approximately(secondaryFingerPress, 1f));
+
         Debug.Log("Zoom canceled");
         ExitZoomMode();
     }
@@ -190,18 +197,27 @@ public class InputManager : MonoBehaviour
         ZoomInputChanged?.Invoke(zoomDelta, _uiInput.MouseZoom.MousePosition.ReadValue<Vector2>());
     }
 
-    private void ProcessInputOverStateOrPanel(Vector2 inputPosition, Action<StateUIElement> inputOverStateAction,
+    private void ProcessInputOverElement(
+        Vector2 inputPosition,
+        Action<StateUIElement> inputOverStateAction,
+        Action<StateChartManager.TransitionCondition> inputOverTransitionAction,
         Action inputOverPanelAction)
     {
         var raycastResults = HelperFunctions.GetRaycastResultsOnPosition(inputPosition);
         var inputWasOnPanel = false;
-        
+
         foreach (var raycastResult in raycastResults)
         {
-            if(raycastResult.gameObject.CompareTag("StateUIElement"))
+            if (raycastResult.gameObject.CompareTag("StateUIElement"))
             {
                 var stateUIElement = raycastResult.gameObject.GetComponentInParent<StateUIElement>();
                 inputOverStateAction(stateUIElement);
+                return;
+            }
+
+            if (raycastResult.gameObject.TryGetComponent<TransitionSelectElement>(out var transitionSelectElement))
+            {
+                inputOverTransitionAction(transitionSelectElement.Condition);
                 return;
             }
 

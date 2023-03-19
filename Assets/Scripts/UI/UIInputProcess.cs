@@ -23,7 +23,7 @@ public class UIInputProcess : MonoBehaviour
 
 
     // Variables for drawing transition line
-    private TransitionCondition? _selectedTransitionCondition = TransitionCondition.Default; // Set to null after testing
+    private TransitionCondition? _selectedTransitionCondition;
     private StateUIElement _selectedDrawStateElement;
     private StateChartCell _selectedDrawStateCell;
     private Vector2Int _selectedDrawStateCellCoordinates;
@@ -38,6 +38,7 @@ public class UIInputProcess : MonoBehaviour
         InputManager.StateChartPanelTapped += HandleStateChartPanelTapped;
         InputManager.StateElementDragStarted += HandleStatePlaceElementDragStart;
         InputManager.StateChartPanelDragStarted += HandleStateChartPanelDragStart;
+        InputManager.TransitionElementSelected += HandleTransitionSelected;
         InputManager.ZoomInputChanged += ProcessZoom;
 
         _inputState = UIInputState.WaitingForInput;
@@ -49,6 +50,7 @@ public class UIInputProcess : MonoBehaviour
         InputManager.StateChartPanelTapped -= HandleStateChartPanelTapped;
         InputManager.StateElementDragStarted -= HandleStatePlaceElementDragStart;
         InputManager.StateChartPanelDragStarted -= HandleStateChartPanelDragStart;
+        InputManager.TransitionElementSelected -= HandleTransitionSelected;
         InputManager.ZoomInputChanged -= ProcessZoom;
     }
 
@@ -194,6 +196,13 @@ public class UIInputProcess : MonoBehaviour
     {
         InputManager.DragEnded += HandleDragEnded;
         _inputState = UIInputState.DraggingStateChart;
+    }
+
+    private void HandleTransitionSelected(TransitionCondition condition)
+    {
+        Debug.Log($"New TransitionCondition is now {condition}");
+        _selectedTransitionCondition = condition;
+        TransitionLineDrawer.CurrentTransitionCondition = condition;
     }
 
     private bool StartDrawTransitionLine(Vector2 inputPosition)
