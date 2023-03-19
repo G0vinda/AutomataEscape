@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,7 +38,6 @@ namespace UI
             }
         }
         
-        [SerializeField] public TransitionPlug defaultTransitionPlugPrefab;
         [SerializeField] public Image image;
         [SerializeField] public TextMeshProUGUI textElement;
         [SerializeField] public float stateBufferSpace;
@@ -48,12 +47,7 @@ namespace UI
         
         public int AssignedId { get; set; }
         public StateChartCell ConnectedCell { get; set; }
-        
-        [HideInInspector]
-        public List<int> emptySlotIds;
-        [HideInInspector]
-        public TransitionPlug[] connectedTransitionPlugs;
-        
+
         private RectTransform _imageTransform;
         private List<TransitionLine> _outgoingTransitionLines = new ();
 
@@ -63,6 +57,11 @@ namespace UI
             _imageTransform.sizeDelta = StateSizeAttributes.StateSize;
 
             AssignedId = assignedId;
+        }
+
+        public int GetNumberOfOutgoingTransitions()
+        {
+            return _outgoingTransitionLines.Count;
         }
 
         public void SetSizeToDefault() 
@@ -92,16 +91,6 @@ namespace UI
                     StateSizeAttributes.LineWidth);
             }
         }
-        
-        public void SetupEmptySlots()
-        {
-            connectedTransitionPlugs = new TransitionPlug[12];
-            emptySlotIds = new List<int>();
-            for (var i = 0; i < 12; i++)
-            {
-                emptySlotIds.Add(i);    
-            }
-        }
 
         public void SetText(string text)
         {
@@ -113,7 +102,7 @@ namespace UI
             image.color = color;
         }
 
-        public TransitionLine DrawFirstTransitionLine(Vector2 position, Direction direction, Color lineColor)
+        public TransitionLine DrawFirstTransitionLine(Vector2 position, Direction direction, Color lineColor, StateChartManager.TransitionCondition condition)
         {
             var newTransitionLine = Instantiate(transitionLinePrefab, position, Quaternion.identity, transform);
             newTransitionLine.Initialize(
@@ -121,102 +110,18 @@ namespace UI
                 StateSizeAttributes.LineElementLength, 
                 StateSizeAttributes.LineWidth, 
                 lineColor,
-                direction);
+                direction,
+                condition);
             _outgoingTransitionLines.Add(newTransitionLine);
 
             return newTransitionLine;
         }
 
-        public TransitionPlug InstantiateTransitionPlug(Vector3 position, Quaternion rotation, int slotId)
+        public void RemoveTransitionByCondition(StateChartManager.TransitionCondition condition)
         {
-            var newPlug = Instantiate(defaultTransitionPlugPrefab, position, rotation, transform);
-            connectedTransitionPlugs[slotId] = newPlug;
-            return newPlug;
-        }
-        
-        public void MoveTransitionPlugToSlot(TransitionPlug plug, int newSlotId)
-        {
-            // var plugTransform = plug.GetComponent<RectTransform>();
-            // plugTransform.position = transitionSlotTransforms[newSlotId].position;
-            // plugTransform.rotation = transitionSlotTransforms[newSlotId].rotation;
-            // plug.GetLineTransform().rotation = Quaternion.identity;
-            //
-            // RemoveTransitionPlugFromSlot(plug);
-            // connectedTransitionPlugs[newSlotId] = plug;
-            // emptySlotIds.Remove(newSlotId);
-        }
-
-        public void RemoveTransitionPlugFromSlot(TransitionPlug plug)
-        {
-            var oldSlotId = Array.IndexOf(connectedTransitionPlugs, plug);
-            connectedTransitionPlugs[oldSlotId] = null;
-            emptySlotIds.Add(oldSlotId);
-        }
-
-        public int IsPositionInRangeOfEmptySlot(Vector3 pos)
-        {
-            // foreach (var emptySlotId in emptySlotIds)
-            // {
-            //     var emptySlotTransform = transitionSlotTransforms[emptySlotId];
-            //     var emptySlotPos = emptySlotTransform.position;
-            //     if (Vector3.Distance(pos, emptySlotPos) > slotAreaWidth + slotAreaHeight)
-            //         continue;
-            //
-            //     var emptySlotDir = emptySlotTransform.ZRotToDir();
-            //
-            //     if (emptySlotDir.Equals(Vector2.zero))
-            //     {
-            //         Debug.LogError("Couldn't read direction of empty slot.");
-            //         return -1;
-            //     }
-            //
-            //     float xMin, xMax, yMin, yMax;
-            //     if (emptySlotDir.Equals(Vector2.left))
-            //     {
-            //         xMin = emptySlotPos.x - _scaledSlotAreaHeight;
-            //         xMax = emptySlotPos.x;
-            //         yMin = emptySlotPos.y - _scaledSlotAreaWidth * 0.5f;
-            //         yMax = emptySlotPos.y + _scaledSlotAreaWidth * 0.5f;
-            //     } else if (emptySlotDir.Equals(Vector2.right))
-            //     {
-            //         xMin = emptySlotPos.x;
-            //         xMax = emptySlotPos.x + _scaledSlotAreaHeight;
-            //         yMin = emptySlotPos.y - _scaledSlotAreaWidth * 0.5f;
-            //         yMax = emptySlotPos.y + _scaledSlotAreaWidth * 0.5f;
-            //     } else if (emptySlotDir.Equals(Vector2.down))
-            //     {
-            //         xMin = emptySlotPos.x - _scaledSlotAreaWidth * 0.5f;
-            //         xMax = emptySlotPos.x + _scaledSlotAreaWidth * 0.5f;
-            //         yMin = emptySlotPos.y - _scaledSlotAreaHeight;
-            //         yMax = emptySlotPos.y;
-            //     } else // Vector2.up
-            //     {
-            //         xMin = emptySlotPos.x - _scaledSlotAreaWidth * 0.5f;
-            //         xMax = emptySlotPos.x + _scaledSlotAreaWidth * 0.5f;
-            //         yMin = emptySlotPos.y;
-            //         yMax = emptySlotPos.y + _scaledSlotAreaHeight;;
-            //     }
-            //
-            //     if (IsPosInSquare(pos, xMin, yMin, xMax, yMax))
-            //         return emptySlotId;
-            // }
-
-            return -1;
-        }
-        
-        private bool IsPosInSquare(Vector3 pos, float xMin, float yMin, float xMax, float yMax)
-        {
-            var x = pos.x;
-            var y = pos.y;
-            if (x >= xMin && x <= xMax)
-            {
-                if (y >= yMin && y <= yMax)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            var transitionMatch = _outgoingTransitionLines.First(transition => transition.Condition == condition);
+            _outgoingTransitionLines.Remove(transitionMatch);
+            Destroy(transitionMatch.gameObject);
         }
     }
 }

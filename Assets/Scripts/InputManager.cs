@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UI;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using Helper;
 
@@ -18,6 +16,7 @@ public class InputManager : MonoBehaviour
     public static Action StateChartPanelDragStarted;
 
     public static Action<StateChartManager.TransitionCondition> TransitionElementSelected;
+    public static Action TransitionDeselected;
 
     public static Action DragEnded;
 
@@ -70,11 +69,26 @@ public class InputManager : MonoBehaviour
     private void HandlePress(InputAction.CallbackContext context)
     {
         _inputReleased = false;
+        var wasPossibleDrawInteraction = false;
         ProcessInputOverElement(
             _uiInput.Input.Position.ReadValue<Vector2>(),
-            state => { StartCoroutine(ProcessPressInput(state)); },
-            condition => { TransitionElementSelected?.Invoke(condition); },
-            () => { StartCoroutine(ProcessPressInput()); });
+            state =>
+            {
+                StartCoroutine(ProcessPressInput(state));
+                wasPossibleDrawInteraction = true;
+            },
+            condition =>
+            {
+                TransitionElementSelected?.Invoke(condition);
+                wasPossibleDrawInteraction = true;
+            },
+            () =>
+            {
+                StartCoroutine(ProcessPressInput());
+            });
+        
+        if(!wasPossibleDrawInteraction)
+            TransitionDeselected?.Invoke();
     }
 
     private IEnumerator ProcessPressInput(StateUIElement selectedStateElement = null)

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Helper;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,10 +8,10 @@ namespace UI
 
     public enum Direction
     {
-        Up,
+        Up = 0,
+        Right,
         Down,
-        Left,
-        Right
+        Left
     }
     
     public class TransitionLine : Graphic
@@ -30,34 +28,50 @@ namespace UI
             }
         }
 
+        [SerializeField] private Image plugPrefab;
+
+        public StateChartManager.TransitionCondition Condition { get; private set; }
+        
         private List<LineElement> _lineElements = new ();
         private float _elementLength;
         private float _firstElementLength;
         private float _width;
+        private RectTransform _plugTransform;
 
 
-        public void Initialize(float firstElementLength, float elementLength, float width, Color lineColor, Direction startDirection)
+        public void Initialize(float firstElementLength, float elementLength, float width, Color lineColor, Direction startDirection, StateChartManager.TransitionCondition condition)
         {
             _elementLength = elementLength;
             _firstElementLength = firstElementLength;
             _width = width;
             color = lineColor;
+            Condition = condition;
             _lineElements.Add(CreateFirstElement(startDirection));
             SetAllDirty();
         }
 
-        public void UpdateSize(float firstElementLength, float elementLength, float width)
+        public void UpdateSize(float newFirstElementLength, float newElementLength, float newWidth)
         {
-            _elementLength = elementLength;
-            _firstElementLength = firstElementLength;
-            _width = width;
+            var scaleFactor = newElementLength / _elementLength;
+            
+            _elementLength = newElementLength;
+            _firstElementLength = newFirstElementLength;
+            _width = newWidth;
 
             _lineElements[0] = CreateFirstElement(_lineElements[0].Direction);
             for (var i = 1; i < _lineElements.Count; i++)
             {
                 _lineElements[i] = CreateLineElement(_lineElements[i].Direction, _lineElements[i - 1]);
             }
-            
+
+            if (_plugTransform != null)
+            {
+                _plugTransform.sizeDelta *= scaleFactor;
+                var positionDeltaToLine = _plugTransform.position - transform.position;
+                positionDeltaToLine *= scaleFactor;
+                _plugTransform.position = transform.position + positionDeltaToLine;
+            }
+
             SetAllDirty();
         }
 
@@ -134,6 +148,12 @@ namespace UI
             }
 
             return new LineElement(startDirection, vertexPositions);
+        }
+
+        public void CreatePlug(Vector2 position, Quaternion rotation)
+        {
+            _plugTransform = Instantiate(plugPrefab, position, rotation, transform).rectTransform;
+            _plugTransform.sizeDelta = new Vector2(_width * 1.3f, _width * 1.5f);
         }
 
         public void RemoveLastElement()

@@ -1,8 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
+using Helper;
+using UI;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using static StateChartManager;
 
 
@@ -13,33 +12,15 @@ public class StateChartRunner : MonoBehaviour
     public bool IsRunning { get; private set; }
     
     private GridManager _gridManager;
-    private (int, int) _currentCoordinates;
-    private bool isCarryingKey = false;
+    private Vector2Int _currentCoordinates;
+    private Direction _currentDirection;
+    private bool isCarryingKey;
 
-    public void SetStartCoordinates((int, int) coordinates)
+    public void SetStartCoordinates(Vector2Int coordinates, Direction direction)
     {
         _currentCoordinates = coordinates;
+        _currentDirection = direction;
         _gridManager = FindObjectOfType<GridManager>();
-    }
-
-    private Vector2Int GetCurrentDirection()
-    {
-        var dirAngle = (int)transform.rotation.eulerAngles.z;
-        dirAngle = dirAngle > 180 ? dirAngle - 360 : dirAngle;
-        
-        switch(dirAngle)
-        {
-            case 0:
-                return new Vector2Int(0, -1);
-            case 90:
-                return new Vector2Int(1, 0);
-            case -90:
-                return new Vector2Int(-1, 0);
-            case 180:
-                return new Vector2Int(0, 1);
-            default:
-                return new Vector2Int(0, 0); // Invalid case
-        }
     }
 
     public void StartRun(StateChart stateChart)
@@ -69,13 +50,13 @@ public class StateChartRunner : MonoBehaviour
             case StateAction.None:
                 break;
             case StateAction.MoveForward:
-                Move(GetCurrentDirection());
+                Move(_currentDirection);
                 break;
             case StateAction.TurnLeft:
-                Turn(90);
+                Turn(false);
                 break;
             case StateAction.TurnRight:
-                Turn(-90);
+                Turn(true);
                 break;
             case StateAction.Grab:
                 Grab();
@@ -107,12 +88,12 @@ public class StateChartRunner : MonoBehaviour
         return state.DefaultTransitionDestinationId;
     }
 
-    private void Move(Vector2Int direction)
+    private void Move(Direction direction)
     {
         if(_gridManager.CheckIfWayIsBlocked(_currentCoordinates, direction))
             return;
         
-        var newCoordinates = (_currentCoordinates.Item1 + direction.x, _currentCoordinates.Item2 + direction.y);
+        var newCoordinates = _currentCoordinates + direction.ToVector2Int();
         
         transform.position = _gridManager.Grid[newCoordinates].transform.position;
         _currentCoordinates = newCoordinates;
@@ -124,10 +105,10 @@ public class StateChartRunner : MonoBehaviour
         }
     }
 
-    private void Turn(int degree)
+    private void Turn(bool turnClockwise)
     {
-        var currentAngle = transform.rotation.eulerAngles.z;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, currentAngle + degree));
+        _currentDirection = _currentDirection.Turn(turnClockwise);
+        transform.rotation = _currentDirection.ToZRotation();
     }
 
     private void Grab()
@@ -155,7 +136,7 @@ public class StateChartRunner : MonoBehaviour
 
     private bool CheckIfWayIsBlocked()
     {
-        return _gridManager.CheckIfWayIsBlocked(_currentCoordinates, GetCurrentDirection());
+        return _gridManager.CheckIfWayIsBlocked(_currentCoordinates, _currentDirection);
     }
 
     private bool CheckIfOnKey()

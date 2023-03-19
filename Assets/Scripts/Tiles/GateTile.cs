@@ -23,9 +23,9 @@ namespace Tiles
             gate.SetActive(false);
         }
 
-        public bool IsBlockingWay(Vector2 direction)
+        public bool IsBlockingWay(Direction direction)
         {
-            return true; // Todo: this will need to be handled: direction == _gateDirection && _locked;
+            return direction == _gateDirection && _locked;
         }
     }
 }

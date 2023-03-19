@@ -23,7 +23,7 @@ namespace UI
         private bool _stateChartUIInitialized;
         private bool _setupUIOnEnable;
 
-        private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionPlug> _connectedTransitions = new();
+        private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionCondition> _connectedTransitions = new();
 
         private void OnEnable()
         {
@@ -100,18 +100,10 @@ namespace UI
         
         private void ClearStateChartUI()
         {
-            foreach (var stateUIElementStack in stateUIElementStacks)
-            {
-                if(!stateUIElementStack.gameObject.activeSelf)
-                    continue;
-                
-                stateUIElementStack.DestroyStates();
-            }
-            
-            _stateChartUIGrid.ClearGridCells();
-            _placedStateElements.Clear();
-            startStateUIElement.ClearDefaultStateLine();
             _connectedTransitions.Clear();
+            _stateChartUIGrid.RemoveCellsFromGrid();
+            _placedStateElements.Clear();
+            startStateUIElement.RemoveDefaultTransitionLine();
         }
 
         public void ZoomStateChartPanel(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
@@ -143,8 +135,8 @@ namespace UI
                     connectedTransition.Key.Item1 != placeElement.GetComponent<StateUIElement>())
                     continue;
 
-                var plug = connectedTransition.Value;
-                RemoveTransitionByPlug(plug);
+                var condition = connectedTransition.Value;
+                RemoveTransition(connectedTransition.Key.Item1, condition);
                 i--;
             }
 
@@ -158,43 +150,34 @@ namespace UI
             stateUIElementStacks.First(stack => stack.GetAction() == placeElement.GetAction()).RemoveState(placeElement);
         }
 
-        public void RemoveTransitionByPlug(TransitionPlug plug, bool destinationStateWillBeRemoved = false)
+        public void AddTransition(StateUIElement sourceState, StateUIPlaceElement destinationState,
+            TransitionCondition condition)
         {
-            var transitionCondition = plug.transitionCondition;
-            var fromState = plug.connectedState;
-            if (transitionCondition == TransitionCondition.Default)
+            _connectedTransitions.Add((sourceState, destinationState), condition);
+            if (condition == TransitionCondition.Default)
             {
-                _stateChartManager.RemoveDefaultTransition(fromState.AssignedId);
+                _stateChartManager.AddDefaultTransition(sourceState.AssignedId, destinationState.GetAssignedId());
             }
             else
             {
-                _stateChartManager.RemoveTransition(plug.transitionCondition, fromState.AssignedId);
+                _stateChartManager.AddTransition(condition, sourceState.AssignedId, destinationState.GetAssignedId());
             }
-
-            var keyToRemove = _connectedTransitions.First(item => item.Value == plug).Key;
-            _connectedTransitions.Remove(keyToRemove);
-
-
-            if (!destinationStateWillBeRemoved)
-            {
-                keyToRemove.Item2.SetSlotToEmpty(plug.GetConnectedSlotId());
-            }
-
-            plug.DisconnectLine();
         }
-        
-        public void HandleNewTransitionConnected(StateUIElement state1, StateUIPlaceElement state2,
-            TransitionPlug plug)
+
+        public void RemoveTransition(StateUIElement sourceState, TransitionCondition condition)
         {
-            _connectedTransitions.Add((state1, state2), plug);
-            if (plug.transitionCondition == TransitionCondition.Default)
+            var  keyToRemove = _connectedTransitions.First(transition =>
+                transition.Key.Item1 == sourceState && transition.Value == condition).Key;
+            _connectedTransitions.Remove(keyToRemove);
+            
+            sourceState.RemoveTransitionByCondition(condition);
+            if (condition == TransitionCondition.Default)
             {
-                _stateChartManager.AddDefaultTransition(state1.AssignedId, state2.GetAssignedId());
+                _stateChartManager.RemoveDefaultTransition(sourceState.AssignedId);
             }
             else
             {
-                _stateChartManager.AddTransition(plug.transitionCondition, state1.AssignedId,
-                    state2.GetAssignedId());
+                _stateChartManager.RemoveTransition(condition, sourceState.AssignedId);
             }
         }
 

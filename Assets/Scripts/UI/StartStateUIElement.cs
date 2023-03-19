@@ -1,5 +1,3 @@
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace UI
@@ -12,20 +10,13 @@ namespace UI
         {
             _uiElement = GetComponent<StateUIElement>();
             _uiElement.Initialize(0);
-            _uiElement.SetupEmptySlots();
             _uiElement.ConnectedCell = connectedCell;
         }
 
-        public void ClearDefaultStateLine()
+        public void RemoveDefaultTransitionLine()
         {
-            // TODO: causes error on mobile, but will be most probably removed on the line drawing rework 
-            // foreach (var plug in _uiElement.connectedTransitionPlugs)
-            // {
-            //     if (plug == null) continue;
-            //     
-            //     plug.DisconnectLine();
-            //     return;
-            // }
+            if(_uiElement != null && _uiElement.GetNumberOfOutgoingTransitions() > 0)
+                _uiElement.RemoveTransitionByCondition(StateChartManager.TransitionCondition.Default);
         }
     }
 }

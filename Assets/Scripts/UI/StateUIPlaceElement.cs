@@ -1,4 +1,3 @@
-using Helper;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -23,7 +22,6 @@ namespace UI
             _uiElement = GetComponent<StateUIElement>();
             _uiElement.Initialize(-1);
             _data = stateUIData;
-            _uiElement.SetupEmptySlots();
             _uiElement.SetText(_data.text);
             _uiElement.SetImageColor(_data.color);
             SetToUnavailable();
@@ -85,47 +83,8 @@ namespace UI
         public void PlaceState(StateChartCell cellToPlaceOn, Transform newParent)
         {
             transform.SetParent(newParent);
-            _uiElement.SetupEmptySlots();
             _uiElement.ConnectedCell = cellToPlaceOn;
             //_uiElement.AddDefaultTransitionPlugToState();
-        }
-
-        public int IsPositionInRangeOfEmptySlot(Vector3 position)
-        {
-            return _uiElement.IsPositionInRangeOfEmptySlot(position);
-        }
-
-        public void AddTransitionPlugToState(TransitionUIData data)
-        {
-            // var transitionSlotTransforms = _uiElement.transitionSlotTransforms;
-            // var emptySlotIds = _uiElement.emptySlotIds;
-            // for (int i = transitionSlotTransforms.Length - 1; i >= 0; i--)
-            // {
-            //     if (!emptySlotIds.Contains(i))
-            //         continue;
-            //
-            //     var newPlug = _uiElement.InstantiateTransitionPlug(transitionSlotTransforms[i].position,
-            //         transitionSlotTransforms[i].rotation, i);
-            //     
-            //     newPlug.GetLineTransform().rotation = Quaternion.identity;
-            //     emptySlotIds.Remove(i);
-            //     
-            //     newPlug.Initialize(data);
-            //     
-            //     return;
-            // }
-        }
-        
-        private void RemoveAllTransitionPlugs()
-        {
-            foreach (var plug in _uiElement.connectedTransitionPlugs)
-            {
-                if (plug != null)
-                {
-                    _uiElement.RemoveTransitionPlugFromSlot(plug);
-                    Destroy(plug.gameObject);
-                }
-            }
         }
 
         public void SwitchAppearanceToOnGrid()
@@ -144,17 +103,7 @@ namespace UI
         {
             return Vector3.Distance(pos, transform.position) < _uiElement.stateBufferSpace;
         }
-        
-        public void SetSlotToOccupied(int index)
-        {
-            _uiElement.emptySlotIds.Remove(index);
-        }
 
-        public void SetSlotToEmpty(int index)
-        {
-            _uiElement.emptySlotIds.Add(index);
-        }
-        
         public void SetSizeToBig()
         {
             _uiElement.image.rectTransform.localScale = new Vector2(1.15f, 1.15f);

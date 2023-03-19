@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Tiles;
+using UI;
 using UnityEngine;
 
 public class LevelData
@@ -16,18 +17,18 @@ public class LevelData
         }
     }
     
-    public (int, int) RobotStartPosition { get; }
-    public Quaternion RobotStartRotation { get; }
+    public Vector2Int RobotStartPosition { get; }
+    public Direction RobotStartDirection { get; }
     public Tile.TileType[,] Grid { get; }
 
     public List<AvailableStateInfo> AvailableActions;
     public List<StateChartManager.TransitionCondition> AvailableTransitionConditions;
 
-    public LevelData((int, int) startPos, Quaternion startRot, Tile.TileType[,] grid,
+    public LevelData(Vector2Int startPos, Direction startDirection, Tile.TileType[,] grid,
         List<AvailableStateInfo> actions, List<StateChartManager.TransitionCondition> conditions)
     {
         RobotStartPosition = startPos;
-        RobotStartRotation = startRot;
+        RobotStartDirection = startDirection;
         Grid = grid;
         AvailableActions = actions;
         AvailableTransitionConditions = conditions;
@@ -36,11 +37,11 @@ public class LevelData
 
 public class LevelWithKeyData : LevelData
 {
-    public (int, int) KeyPosition { get; }
+    public Vector2Int KeyPosition { get; }
 
-    public LevelWithKeyData((int, int) startPos, (int, int) keyPos, Quaternion startRot,
+    public LevelWithKeyData(Vector2Int startPos, Vector2Int keyPos, Direction startDirection,
         Tile.TileType[,] grid, List<AvailableStateInfo> actions,
-        List<StateChartManager.TransitionCondition> conditions) : base(startPos, startRot, grid, actions, conditions)
+        List<StateChartManager.TransitionCondition> conditions) : base(startPos, startDirection, grid, actions, conditions)
     {
         KeyPosition = keyPos;
     }

@@ -39,6 +39,7 @@ public class UIInputProcess : MonoBehaviour
         InputManager.StateElementDragStarted += HandleStatePlaceElementDragStart;
         InputManager.StateChartPanelDragStarted += HandleStateChartPanelDragStart;
         InputManager.TransitionElementSelected += HandleTransitionSelected;
+        InputManager.TransitionDeselected += HandleTransitionDeselected;
         InputManager.ZoomInputChanged += ProcessZoom;
 
         _inputState = UIInputState.WaitingForInput;
@@ -51,6 +52,7 @@ public class UIInputProcess : MonoBehaviour
         InputManager.StateElementDragStarted -= HandleStatePlaceElementDragStart;
         InputManager.StateChartPanelDragStarted -= HandleStateChartPanelDragStart;
         InputManager.TransitionElementSelected -= HandleTransitionSelected;
+        InputManager.TransitionDeselected -= HandleTransitionDeselected;
         InputManager.ZoomInputChanged -= ProcessZoom;
     }
 
@@ -71,52 +73,42 @@ public class UIInputProcess : MonoBehaviour
         switch (_inputState)
         {
             case UIInputState.WaitingForInput:
+                _dragEnded = false;
                 break;
             case UIInputState.DraggingStateElement:
                 if (_dragEnded)
                 {
                     ReleaseStatePlaceElement();
                     _inputState = UIInputState.WaitingForInput;
-                    _dragEnded = false;
-                    return;
+                    break;
                 }
-
                 DragStatePlaceElement();
                 break;
             case UIInputState.DraggingStateChart:
                 if (_dragEnded)
                 {
                     _inputState = UIInputState.WaitingForInput;
-                    _dragEnded = false;
-                    return;
+                    break;
                 }
-
                 DragStateChartPanel(currentInputPosition);
                 break;
             case UIInputState.InitiateTransitionLineDraw:
                 if (!StartDrawTransitionLine(currentInputPosition) || _dragEnded)
                 {
                     _inputState = UIInputState.WaitingForInput;
-                    _dragEnded = false;
-                    return;
                 }
-
                 break;
             case UIInputState.DrawingTransitionLine:
                 if (!TransitionLineDrawer.DrawOnInput(_inputManager.GetPointerPosition()) || _dragEnded)
                 {
+                    ReleaseOnDrawing();
                     _inputState = UIInputState.WaitingForInput;
-                    _dragEnded = false;
-                    return;
                 }
-
-                break;
-            case UIInputState.ZoomingStateChart:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
+        
         _previousInputPosition = currentInputPosition;
     }
 
@@ -164,7 +156,6 @@ public class UIInputProcess : MonoBehaviour
                 _selectedDrawStateElement = stateElement;
                 _selectedDrawStateCell = _selectedDrawStateElement.ConnectedCell;
                 _selectedDrawStateCellCoordinates = _stateChartUIGrid.GetCoordinatesFromCell(_selectedDrawStateCell);
-                // Start line drawing    
 
                 _selectedDragStateElement = null;
                 return;
@@ -200,9 +191,16 @@ public class UIInputProcess : MonoBehaviour
 
     private void HandleTransitionSelected(TransitionCondition condition)
     {
+        // TODO: Highlight new transitionElement, Unhighlight old transitionElement
         Debug.Log($"New TransitionCondition is now {condition}");
         _selectedTransitionCondition = condition;
         TransitionLineDrawer.CurrentTransitionCondition = condition;
+    }
+    
+    private void HandleTransitionDeselected()
+    {
+        // TODO: Unhighlight transitionElement
+        _selectedTransitionCondition = null;
     }
 
     private bool StartDrawTransitionLine(Vector2 inputPosition)
@@ -224,7 +222,7 @@ public class UIInputProcess : MonoBehaviour
 
         var drawDirection = (currentCellCoordinates - _selectedDrawStateCellCoordinates).ToDirection();
 
-        if (!_stateChartUIGrid.CheckIfSubCellIsAdjacentToCell(inputPosition, _selectedDrawStateCell))
+        if (!_stateChartUIGrid.CheckIfSubCellIsAdjacentToCell(_selectedDrawStateCell, inputPosition))
         {
             Debug.Log("New Cell was not adjacent. Draw will be stopped.");
             return false;
@@ -243,7 +241,6 @@ public class UIInputProcess : MonoBehaviour
     private void DragStatePlaceElement()
     {
         Vector3 inputPosition = _inputManager.GetPointerPosition();
-        Debug.Log($"Will drag panel to this position: {inputPosition}");
         var stateElementTransform = _selectedDragStateElement.transform;
         _hoveredDragStateChartCell = _stateChartUIGrid.TryGetEmptyCellOnPosition(inputPosition, out var cellPosition);
         if (_hoveredDragStateChartCell != null)
@@ -281,6 +278,22 @@ public class UIInputProcess : MonoBehaviour
             Destroy(_selectedDragStateElement.gameObject);
         }
     }
+    
+    private void ReleaseOnDrawing()
+    {
+        var currentTransitionLine = TransitionLineDrawer.CurrentTransitionLine;
+        if (TransitionLineDrawer.DestinationStateElement != null)
+        {
+            var destinationState = TransitionLineDrawer.DestinationStateElement;
+            TransitionLineDrawer.FinishLine();
+            _uiManager.AddTransition(_selectedDrawStateElement, destinationState, _selectedTransitionCondition.Value);
+            Debug.Log("Transition would be created!");   
+        }
+        else
+        {
+            _selectedDrawStateElement.RemoveTransitionByCondition(currentTransitionLine.Condition);
+        }
+    }
 
     private void DragStateChartPanel(Vector2 currentInputPosition)
     {
@@ -296,6 +309,5 @@ public class UIInputProcess : MonoBehaviour
         DraggingStateChart,
         InitiateTransitionLineDraw,
         DrawingTransitionLine,
-        ZoomingStateChart
     }
 }

@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using Helper;
 using Tiles;
 using UI;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -15,9 +12,9 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Tile gateTilePrefab;
     [SerializeField] private GameObject keyPrefab;
 
-    public Dictionary<(int, int), Tile> Grid => _grid;
+    public Dictionary<Vector2Int, Tile> Grid => _grid;
 
-    private Dictionary<(int, int), Tile> _grid = new ();
+    private Dictionary<Vector2Int, Tile> _grid = new ();
 
     public void CreateLevelBasedOnGrid(Tile.TileType[,] gridSource)
     {
@@ -42,14 +39,14 @@ public class GridManager : MonoBehaviour
                     case Tile.TileType.GateDown:
                     case Tile.TileType.GateRight:
                     case Tile.TileType.GateLeft:
-                        _grid.Add((x,y), InstantiateGateTile(gridSource[-y, x], x, y));
+                        _grid.Add(new Vector2Int(x,y), InstantiateGateTile(gridSource[-y, x], x, y));
                         continue;
                     default:
                         Debug.LogError("Invalid tileType on level creation!");
                         return;
                 }
                 
-                _grid.Add((x,y), InstantiateTile(tileType, x, y));
+                _grid.Add(new Vector2Int(x,y), InstantiateTile(tileType, x, y));
             }
         }
     }
@@ -86,7 +83,7 @@ public class GridManager : MonoBehaviour
         return newTile;
     }
 
-    public void DropKey((int, int) dropCoordinates)
+    public void DropKey(Vector2Int dropCoordinates)
     {
         var tile = _grid[dropCoordinates];
         if (tile is GateTile)
@@ -99,25 +96,23 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public bool CheckIfWayIsBlocked((int, int) currentCoordinates, Vector2 moveDirection)
+    public bool CheckIfWayIsBlocked(Vector2Int currentCoordinates, Direction moveDirection)
     {
-        var nextCoordinates = (currentCoordinates.Item1 + (int)moveDirection.x, currentCoordinates.Item2 + (int)moveDirection.y);
+        var nextCoordinates = currentCoordinates + moveDirection.ToVector2Int();
         if (!_grid.ContainsKey(nextCoordinates))
             return true;
 
         var currentTile = _grid[currentCoordinates];
-        if (currentTile is GateTile && ((GateTile)currentTile).IsBlockingWay(moveDirection))
-            return true;
-
-        return false;
+        
+        return currentTile is GateTile && ((GateTile)currentTile).IsBlockingWay(moveDirection);
     }
 
-    public bool CheckIfTileIsGoal((int, int) tileCoordinates)
+    public bool CheckIfTileIsGoal(Vector2Int tileCoordinates)
     {
         return _grid[tileCoordinates].GetTileType() == Tile.TileType.Goal;
     }
 
-    public Vector3 GetTilePosition((int, int) tileCoordinates)
+    public Vector3 GetTilePosition(Vector2Int tileCoordinates)
     {
         return _grid[tileCoordinates].transform.position;
     }

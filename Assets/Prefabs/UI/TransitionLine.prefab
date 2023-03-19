@@ -62,3 +62,4 @@ MonoBehaviour:
   m_Color: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  plugPrefab: {fileID: 8179962833926871662, guid: 9770d4c1658db3d4893e7fca7db2bfac, type: 3}

@@ -16,6 +16,7 @@ namespace UI
             _stateElements = new List<StateUIPlaceElement>();
             ((RectTransform)transform).sizeDelta *= gridScaleFactor;
             stateElementPlaceOffset *= gridScaleFactor;
+            DestroyStates();
             for (var i = 0; i < numberOfStates; i++)
             {
                 AddState();
@@ -52,7 +53,7 @@ namespace UI
                 _stateElements[^1].SetToAvailable();
         }
 
-        public void DestroyStates()
+        private void DestroyStates()
         {
             for (var i = transform.childCount - 1; i >= 0; i--)
             {

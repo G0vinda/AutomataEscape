@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using PlasticGui.WorkspaceWindow.PendingChanges;
-using Tiles;
+using Helper;
 using UI;
 using UnityEngine;
 using TileType = Tiles.Tile.TileType;
@@ -21,11 +18,6 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
     public Action<bool> StateChartRunnerStateChanged;
-
-    public readonly Quaternion Up = Quaternion.Euler(new Vector3(0, 0, 180f));
-    public readonly Quaternion Down = Quaternion.Euler(new Vector3(0, 0, 0));
-    public readonly Quaternion Right = Quaternion.Euler(new Vector3(0, 0, 90));
-    public readonly Quaternion Left = Quaternion.Euler(new Vector3(0, 0, -90));
 
     private LevelData[] _levels;
     private StateChartRunner _stateChartRunner;
@@ -49,8 +41,8 @@ public class GameManager : MonoBehaviour
         _levels = new[]
         {
             new LevelData(
-                (0, -1),
-                Up,
+                new Vector2Int(0, -1),
+                Direction.Up,
                 new[,]
                 {
                     { TileType.Floor, TileType.Floor, TileType.None, TileType.Floor },
@@ -67,9 +59,9 @@ public class GameManager : MonoBehaviour
                 }
             ),
             new LevelWithKeyData(
-                (4, 0),
-                (3, -2),
-                Down,
+                new Vector2Int(4, 0),
+                new Vector2Int(3, -2),
+                Direction.Down,
                 new[,]
                 {
                     { TileType.Goal, TileType.Floor, TileType.None, TileType.Floor, TileType.Floor },
@@ -126,8 +118,19 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            _stateChartRunner.StartRun(stateChartManager.GetStateChart());
-            StateChartRunnerStateChanged?.Invoke(true);   
+            if (!stateChartManager.GetStateChart().CheckIfChartIsExecutable(out var errorStateIds))
+            {
+                Debug.Log("StateChart can't be executed, following states have errors:");
+                foreach (var errorStateId in errorStateIds)
+                {
+                    Debug.Log($"State {errorStateId}");
+                }
+            }
+            else
+            {
+                _stateChartRunner.StartRun(stateChartManager.GetStateChart());
+                StateChartRunnerStateChanged?.Invoke(true);   
+            }
         }
     }
 
@@ -140,6 +143,7 @@ public class GameManager : MonoBehaviour
     public void LoadNextLevel()
     {
         Destroy(_stateChartRunner.gameObject);
+        StateChartRunnerStateChanged?.Invoke(false);
         _currentLevelId++;
         LoadLevel(_currentLevelId);
     }
@@ -160,9 +164,9 @@ public class GameManager : MonoBehaviour
         var tileRenderers = gridManager.GetTileObjectRenderers();
         cameraController.AlignCameraWithLevel(tileRenderers);
         Vector3 robotStartPositionOnGrid = gridManager.GetTilePosition(level.RobotStartPosition);
-        Quaternion robotStartRotation = level.RobotStartRotation;
+        Quaternion robotStartRotation = level.RobotStartDirection.ToZRotation();
         _stateChartRunner = Instantiate(robotStateChartRunnerPrefab, robotStartPositionOnGrid, robotStartRotation);
-        _stateChartRunner.SetStartCoordinates(level.RobotStartPosition);
+        _stateChartRunner.SetStartCoordinates(level.RobotStartPosition, level.RobotStartDirection);
         if (level is LevelWithKeyData)
         {
             var keyCoordinates = ((LevelWithKeyData)level).KeyPosition;

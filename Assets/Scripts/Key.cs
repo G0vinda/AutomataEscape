@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Key : MonoBehaviour
 {
-    public (int, int) Coordinates { get; set; }
+    public Vector2Int Coordinates { get; set; }
 }

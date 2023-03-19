@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -120,6 +121,46 @@ public class StateChartManager : MonoBehaviour
             }
 
             return null;
+        }
+
+        public bool CheckIfChartIsExecutable(out List<int> stateIdsWithError)
+        {
+            stateIdsWithError = new List<int>();
+            if (_activeStates.Count <= 1)
+                return false;
+
+            foreach (var activeState in _activeStates)
+            {
+                if (activeState.DefaultTransitionDestinationId < 0)
+                    stateIdsWithError.Add(activeState.StateId);
+            }
+
+            foreach (var destinationState in _activeStates)
+            {
+                var destinationId = destinationState.StateId;
+                if(destinationId == 0)
+                    continue;
+                
+                var isDestinationOfTransition = false;
+                foreach (var sourceState in _activeStates)
+                {
+                    if (destinationState == sourceState)
+                        continue;
+
+                    if (sourceState.Transitions.Any(transition => transition.DestinationId == destinationId) ||
+                        sourceState.DefaultTransitionDestinationId == destinationId)
+                    {
+                        isDestinationOfTransition = true;
+                        break;
+                    }
+                }
+
+                if (!isDestinationOfTransition)
+                    stateIdsWithError.Add(destinationState.StateId);
+            }
+
+            stateIdsWithError = stateIdsWithError.Distinct().ToList();
+            return stateIdsWithError.Count == 0;
         }
     }
 

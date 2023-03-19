@@ -119,7 +119,16 @@ namespace UI
             return parentCell.GetSubCellOnCoordinates(subCellCoordinates);
         }
 
-        public bool CheckIfSubCellIsAdjacentToCell(Vector2 positionOnSubCell, StateChartCell sourceCell)
+        public bool IsPositionInsideSubCell(Vector2 subCellPosition, Vector2 checkPosition)
+        {
+            var halfSubCellSize = _subCellSize * 0.5f;
+            return checkPosition.x > subCellPosition.x - halfSubCellSize &&
+                   checkPosition.x < subCellPosition.x + halfSubCellSize &&
+                   checkPosition.y > subCellPosition.y - halfSubCellSize &&
+                   checkPosition.y < subCellPosition.y + halfSubCellSize;
+        }
+        
+        public bool CheckIfSubCellIsAdjacentToCell(StateChartCell sourceCell, Vector2 positionOnSubCell)
         {
             var hoveredCellCoordinates = ScreenToCellCoordinates(positionOnSubCell);
             var sourceCellCoordinates = GetCoordinatesFromCell(sourceCell);
@@ -158,15 +167,6 @@ namespace UI
                    positionOnSubCell.y > cellYBorderPosition - _subCellSize;
         }
 
-        public bool IsPositionInsideSubCell(Vector2 subCellPosition, Vector2 checkPosition)
-        {
-            var halfSubCellSize = _subCellSize * 0.5f;
-            return checkPosition.x > subCellPosition.x - halfSubCellSize &&
-                   checkPosition.x < subCellPosition.x + halfSubCellSize &&
-                   checkPosition.y > subCellPosition.y - halfSubCellSize &&
-                   checkPosition.y < subCellPosition.y + halfSubCellSize;
-        }
-        
         public bool CheckIfSubCellIsAdjacentToSubCell(Vector2 subCellPosition, Vector2 positionOnOtherSubCell, out Direction direction)
         {
             var halfSubCellSize = _subCellSize * 0.5f;
@@ -217,6 +217,36 @@ namespace UI
             return false;
         }
 
+        public bool CheckIfStateIsAdjacentToSubCell(Vector2 subCellPosition, Vector2 positionOnState,
+            out StateUIPlaceElement state)
+        {
+            state = null;
+
+            var sourceCoordinates = ScreenToCellCoordinates(subCellPosition);
+            var checkedCoordinates = ScreenToCellCoordinates(positionOnState);
+
+            if (!Mathf.Approximately(Vector2Int.Distance(sourceCoordinates,checkedCoordinates), 1f))
+                return false;
+            
+            var checkedCell = _gridCells[checkedCoordinates];
+            var checkedState = checkedCell.PlacedStateElement;
+
+            return checkedState != null && checkedState.TryGetComponent<StateUIPlaceElement>(out state);
+        }
+
+        public (Vector2, Direction) GetPlugAttributesForAdjacentState(Vector2 subCellPosition, StateChartCell stateCell)
+        {
+            var adjacentStateCoordinates = GetCoordinatesFromCell(stateCell);
+            var coordinateDelta = ScreenToCellCoordinates(subCellPosition) - adjacentStateCoordinates;
+            var adjacentStatePosition = CellToScreenCoordinates(adjacentStateCoordinates);
+
+            var plugDirection = coordinateDelta.ToDirection();
+            var plugPosition = GetStateBorderPosition(adjacentStatePosition, subCellPosition,
+                plugDirection);
+
+            return (plugPosition, plugDirection);
+        }
+
         public Vector2 GetNextSubCellPositionInDirection(Vector2 startPosition, Direction direction, bool fromBorder = false)
         {
             var distanceFactor = fromBorder ? 0.5f : 1;
@@ -230,7 +260,7 @@ namespace UI
             };
         }
         
-        public Vector2 GetTransitionDrawStartPosition(Vector2 statePosition, Vector2 inputPosition, Direction drawDirection)
+        public Vector2 GetStateBorderPosition(Vector2 statePosition, Vector2 inputPosition, Direction drawDirection)
         {
             float xValue, yValue;
             switch (drawDirection)
@@ -331,11 +361,15 @@ namespace UI
             return null;
         }
 
-        public void ClearGridCells()
+        public void RemoveCellsFromGrid()
         {
-            foreach (var stateChartCell in _gridCells)
+            foreach (var (key, stateChartCell) in _gridCells)
             {
-                stateChartCell.Value.RemoveStateElement();
+                if(stateChartCell.PlacedStateElement == null)
+                    continue;
+                if(stateChartCell.PlacedStateElement.GetComponent<StateUIPlaceElement>() != null)
+                    Destroy(stateChartCell.PlacedStateElement.gameObject);
+                stateChartCell.RemoveStateElement();
             }
         }
     }

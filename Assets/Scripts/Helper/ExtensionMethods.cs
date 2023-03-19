@@ -71,52 +71,43 @@ namespace Helper
             throw new ArgumentException();
         }
 
-        public static bool IsOpposite(this Direction dirA, Direction dirB)
+        public static Direction Turn(this Direction direction, bool turnClockwise)
         {
-            return dirA == Direction.Up && dirB == Direction.Down ||
-                   dirA == Direction.Down && dirB == Direction.Up ||
-                   dirA == Direction.Left && dirB == Direction.Right ||
-                   dirA == Direction.Right && dirB == Direction.Left;
+            if (turnClockwise)
+            {
+                return direction == (Direction)3 ? 0 : direction + 1;   
+            }
+
+            return direction == 0 ? (Direction)3 : direction - 1;
         }
 
-        public static Vector2 ZRotToDir(this RectTransform transform)
+        public static Direction Opposite(this Direction direction)
         {
-            var rotation = transform.eulerAngles.z;
-            if (rotation < 0)
-                rotation += 360;
-            else if (rotation > 360)
-                rotation -= 360;
-            
-            if (Math.Abs(rotation - 0) < float.Epsilon)
-                return Vector2.up;
-            
-            if (Math.Abs(rotation - 90) < float.Epsilon)
-                return Vector2.left;
-            
-            if (Math.Abs(rotation - 180) < float.Epsilon)
-                return Vector2.down;
-            
-            if (Math.Abs(rotation - 270) < float.Epsilon)
-                return Vector2.right;
+            return direction switch
+            {
+                Direction.Up => Direction.Down,
+                Direction.Down => Direction.Up,
+                Direction.Left => Direction.Right,
+                Direction.Right => Direction.Left,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
 
-            return Vector2.zero;
+        public static bool IsOpposite(this Direction dirA, Direction dirB)
+        {
+            return dirA == dirB.Opposite();
         }
 
         public static Quaternion ToZRotation(this Direction direction)
         {
             return direction switch
             {
-                Direction.Up => Quaternion.identity, // Object are rotated upwards by default
+                Direction.Up => Quaternion.identity, // Objects are rotated upwards by default
                 Direction.Down => Quaternion.Euler(0, 0, 180),
                 Direction.Left => Quaternion.Euler(0, 0, 90),
                 Direction.Right => Quaternion.Euler(0, 0, -90),
                 _ => throw new ArgumentOutOfRangeException()
             };
-        }
-
-        public static float SumOfElements(this Vector2 vector)
-        {
-            return Vector2.Dot(vector, Vector2.one);
         }
 
         public static bool IsInsideSquare(this Vector2 position, Vector2 squareBottomLeft, float squareSize)
