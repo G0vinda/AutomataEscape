@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private InputManager inputManager;
     [SerializeField] private StateChartRunner robotStateChartRunnerPrefab;
     [SerializeField] private GameObject keyObject;
+    [SerializeField] private CurrentStateIndicator currentStateIndicator;
 
     public static GameManager Instance { get; private set; }
     public Action<bool> StateChartRunnerStateChanged;
@@ -113,6 +114,7 @@ public class GameManager : MonoBehaviour
     {
         if (_stateChartRunner.IsRunning)
         {
+            currentStateIndicator.gameObject.SetActive(false);
             ReloadLevel();
             StateChartRunnerStateChanged?.Invoke(false);
         }
@@ -128,6 +130,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                currentStateIndicator.gameObject.SetActive(true);
                 _stateChartRunner.StartRun(stateChartManager.GetStateChart());
                 StateChartRunnerStateChanged?.Invoke(true);   
             }
@@ -144,6 +147,7 @@ public class GameManager : MonoBehaviour
     {
         Destroy(_stateChartRunner.gameObject);
         StateChartRunnerStateChanged?.Invoke(false);
+        currentStateIndicator.gameObject.SetActive(false);
         _currentLevelId++;
         LoadLevel(_currentLevelId);
     }

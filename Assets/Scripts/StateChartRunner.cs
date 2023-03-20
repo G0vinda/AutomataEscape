@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Helper;
 using UI;
@@ -8,6 +9,8 @@ using static StateChartManager;
 public class StateChartRunner : MonoBehaviour
 {
     [SerializeField] private GameObject keySprite;
+
+    public static Action<StateAction> NextStateStarts;  
     
     public bool IsRunning { get; private set; }
     
@@ -45,6 +48,7 @@ public class StateChartRunner : MonoBehaviour
 
     private int ProcessState(StateData state)
     {
+        NextStateStarts?.Invoke(state.Action);
         switch (state.Action)
         {
             case StateAction.None:
