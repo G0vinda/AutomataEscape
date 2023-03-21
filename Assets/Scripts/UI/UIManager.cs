@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using static StateChartManager;
 
 namespace UI
@@ -11,6 +12,7 @@ namespace UI
         [SerializeField] private List<TransitionSelectElement> transitionSelectElements;
         [SerializeField] private StartStateUIElement startStateUIElement;
         [SerializeField] private StateChartPanel stateChartPanel;
+        [SerializeField] private Image selectPanel;
 
         private StateChartManager _stateChartManager;
         private StateChartUIGrid _stateChartUIGrid;
@@ -67,7 +69,8 @@ namespace UI
         {
             if (!_stateChartUIInitialized)
             {
-                stateChartPanel.Initialize();
+                var availableHorizontalSpace = selectPanel.transform.position.x - selectPanel.rectTransform.sizeDelta.x;
+                stateChartPanel.Initialize(availableHorizontalSpace);
                 _stateChartUIInitialized = true;
             }
 

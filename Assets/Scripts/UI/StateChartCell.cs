@@ -6,8 +6,8 @@ namespace UI
     {
         public struct SubCell
         {
-            public bool BlockedHorizontally { get; set; }
-            public bool BlockedVertically { get; set; }
+            public TransitionLine PlacedHorizontalLine { get; set; }
+            public TransitionLine PlacedVerticalLine { get; set; }
         }
         
         public StateUIElement PlacedStateElement { get; private set; }
@@ -29,10 +29,10 @@ namespace UI
             }
         }
 
-        public SubCell GetSubCellOnCoordinates(Vector2Int subCoordinates)
+        public ref SubCell GetSubCellOnCoordinates(Vector2Int subCoordinates)
         {
             var subCellId = (subCoordinates.y + 1) * 3 + (subCoordinates.x + 1);
-            return _subCells[subCellId];
+            return ref _subCells[subCellId];
         }
 
         public void RemoveStateElement()

@@ -995,6 +995,7 @@ MonoBehaviour:
   - {fileID: 1221022764}
   startStateUIElement: {fileID: 714388723}
   stateChartPanel: {fileID: 1189406611}
+  selectPanel: {fileID: 2067352786}
 --- !u!114 &654531689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1782,11 +1783,11 @@ RectTransform:
   m_Father: {fileID: 654531687}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 100, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -340.00006, y: 0}
   m_SizeDelta: {x: 1040, y: 1040}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1189406609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2337,7 +2338,7 @@ GameObject:
   - component: {fileID: 2067352787}
   - component: {fileID: 2067352786}
   m_Layer: 5
-  m_Name: AvailableElementsPanel
+  m_Name: SelectPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

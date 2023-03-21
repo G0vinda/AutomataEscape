@@ -71,10 +71,21 @@ namespace UI
             var inputIsHorizontal = inputDirection == Direction.Left || inputDirection == Direction.Right;
             var hoveredSubCell = StateChartUIGrid.GetSubCellOnPosition(inputPosition);
 
-            if (inputIsHorizontal && hoveredSubCell.BlockedHorizontally ||
-                !inputIsHorizontal && hoveredSubCell.BlockedVertically)
-                return false;
-            
+            if (inputIsHorizontal)
+            {
+                if (hoveredSubCell.PlacedHorizontalLine != null)
+                    return false;
+
+                hoveredSubCell.PlacedHorizontalLine = CurrentTransitionLine;
+            }
+            else
+            {
+                if (hoveredSubCell.PlacedVerticalLine != null)
+                    return false;
+
+                hoveredSubCell.PlacedVerticalLine = CurrentTransitionLine;
+            }
+
             var drawStartPosition = StateChartUIGrid.GetStateBorderPosition(sourceState.transform.position, inputPosition, inputDirection);
             var colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition]++;
             var lineColor = _colorSetsByCondition[CurrentTransitionCondition][colorIndex % 10];
@@ -115,6 +126,19 @@ namespace UI
                 if (newDirection.IsOpposite(_previousDrawDirection))
                 {
                     CurrentTransitionLine.RemoveLastElement();
+                    
+                    var previousInputWasHorizontal = _previousDrawDirection == Direction.Left ||
+                                                     _previousDrawDirection == Direction.Right;
+                    ref var hoveredSubCell = ref StateChartUIGrid.GetSubCellOnPosition(inputPosition);
+                    if (previousInputWasHorizontal)
+                    {
+                        hoveredSubCell.PlacedHorizontalLine = null;
+                    }
+                    else
+                    {
+                        hoveredSubCell.PlacedVerticalLine = null;
+                    }
+
                     if (!CurrentTransitionLine.TryGetLastElementDirection(out _previousDrawDirection))
                     {
                         return false;
@@ -122,6 +146,30 @@ namespace UI
                 }
                 else
                 {
+                    var inputIsHorizontal = newDirection == Direction.Left || newDirection == Direction.Right;
+                    var previousInputWasHorizontal = _previousDrawDirection == Direction.Left ||
+                                                     _previousDrawDirection == Direction.Right;
+                    ref var hoveredSubCell = ref StateChartUIGrid.GetSubCellOnPosition(inputPosition);
+                    ref var previousSubCell = ref StateChartUIGrid.GetSubCellOnPosition(_currentSubCellPosition);
+                    
+                    if (inputIsHorizontal)
+                    {
+                        if (hoveredSubCell.PlacedHorizontalLine != null)
+                            return true;
+
+                        hoveredSubCell.PlacedHorizontalLine = CurrentTransitionLine;
+                        if (!previousInputWasHorizontal)
+                            previousSubCell.PlacedHorizontalLine = CurrentTransitionLine;
+                    }
+                    else
+                    {
+                        if (hoveredSubCell.PlacedVerticalLine != null)
+                            return true;
+
+                        hoveredSubCell.PlacedVerticalLine = CurrentTransitionLine;
+                        if (previousInputWasHorizontal)
+                            previousSubCell.PlacedVerticalLine = CurrentTransitionLine;
+                    }
                     CurrentTransitionLine.DrawLineElement(newDirection);
                     _previousDrawDirection = newDirection;
                 }

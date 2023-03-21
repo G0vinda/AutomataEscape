@@ -75,7 +75,7 @@ namespace UI
             SetAllDirty();
         }
 
-        public bool TryGetLastElementDirection(out Direction lastElementDirection) // Should not be called if _lineElements is empty
+        public bool TryGetLastElementDirection(out Direction lastElementDirection)
         {
             lastElementDirection = 0; // Is invalid if returns false
             if (_lineElements.Count == 0)
@@ -159,6 +159,7 @@ namespace UI
         public void RemoveLastElement()
         {
             _lineElements.RemoveAt(_lineElements.Count - 1);
+            SetAllDirty();
         }
 
         public void DrawLineElement(Direction direction)
@@ -167,6 +168,7 @@ namespace UI
             _lineElements.Add(newLineElement);
             SetAllDirty();
         }
+        
         private LineElement CreateLineElement(Direction direction, LineElement lastLineElement)
         {
             return direction switch

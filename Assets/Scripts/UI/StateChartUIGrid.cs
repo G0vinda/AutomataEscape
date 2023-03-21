@@ -89,7 +89,7 @@ namespace UI
             return _gridCells[cellCoordinates];
         }
 
-        public StateChartCell.SubCell GetSubCellOnPosition(Vector2 position) // Check if position is inside grid before!
+        public ref StateChartCell.SubCell GetSubCellOnPosition(Vector2 position) // Check if position is inside grid before!
         {
             var parentCellCoordinates = ScreenToCellCoordinates(position);
             var parentCell = _gridCells[parentCellCoordinates];
@@ -114,9 +114,8 @@ namespace UI
             {
                 subCellCoordinates.y = -1;
             }
-
-            Debug.Log($"The subCoordinates are {subCellCoordinates}");
-            return parentCell.GetSubCellOnCoordinates(subCellCoordinates);
+            
+            return ref parentCell.GetSubCellOnCoordinates(subCellCoordinates);
         }
 
         public bool IsPositionInsideSubCell(Vector2 subCellPosition, Vector2 checkPosition)
