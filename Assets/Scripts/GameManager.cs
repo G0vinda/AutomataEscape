@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public Action<bool> StateChartRunnerStateChanged;
     
     private StateChartRunner _stateChartRunner;
-    private int _currentLevelId = 3;
+    private int _currentLevelId = 0;
 
     private void Awake()
     {
@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         uiManager.Initialize();
+        _currentLevelId = PlayerPrefs.GetInt("CurrentLevelId", 0);
         LoadLevel(_currentLevelId);
     }
 
@@ -96,10 +97,12 @@ public class GameManager : MonoBehaviour
 
     public void LoadNextLevel()
     {
+        
         Destroy(_stateChartRunner.gameObject);
         StateChartRunnerStateChanged?.Invoke(false);
         currentStateIndicator.gameObject.SetActive(false);
         _currentLevelId++;
+        PlayerPrefs.SetInt("CurrentLevelId", _currentLevelId);
         LoadLevel(_currentLevelId);
     }
 
