@@ -54,7 +54,7 @@ namespace UI
         public void Initialize(int assignedId)
         {
             _imageTransform = image.GetComponent<RectTransform>();
-            _imageTransform.sizeDelta = StateSizeAttributes.StateSize;
+            _imageTransform.sizeDelta = StateSizeAttributes.DefaultStateSize;
 
             AssignedId = assignedId;
         }

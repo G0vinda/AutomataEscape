@@ -99,11 +99,6 @@ namespace UI
             SetColorsToDisabled();
         }
 
-        public bool IsPositionInRangeOfState(Vector3 pos)
-        {
-            return Vector3.Distance(pos, transform.position) < _uiElement.stateBufferSpace;
-        }
-
         public void SetSizeToBig()
         {
             _uiElement.image.rectTransform.localScale = new Vector2(1.15f, 1.15f);

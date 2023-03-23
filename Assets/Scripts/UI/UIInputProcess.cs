@@ -28,7 +28,7 @@ public class UIInputProcess : MonoBehaviour
     private StateChartCell _selectedDrawStateCell;
     private Vector2Int _selectedDrawStateCellCoordinates;
 
-    private Vector2 _previousInputPosition;
+    private Vector2 _previousDragPosition;
 
     #region OnEnable/OnDisable
 
@@ -108,8 +108,6 @@ public class UIInputProcess : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
-        _previousInputPosition = currentInputPosition;
     }
 
     private void HandleDragEnded()
@@ -187,6 +185,7 @@ public class UIInputProcess : MonoBehaviour
     {
         InputManager.DragEnded += HandleDragEnded;
         _inputState = UIInputState.DraggingStateChart;
+        _previousDragPosition = _inputManager.GetPointerPosition();
     }
 
     private void HandleTransitionSelected(TransitionCondition condition)
@@ -297,8 +296,9 @@ public class UIInputProcess : MonoBehaviour
 
     private void DragStateChartPanel(Vector2 currentInputPosition)
     {
-        var inputDifference = currentInputPosition - _previousInputPosition;
+        var inputDifference = currentInputPosition - _previousDragPosition;
         _stateChartPanel.MoveByVector(inputDifference);
+        _previousDragPosition = currentInputPosition;
     }
 
 
