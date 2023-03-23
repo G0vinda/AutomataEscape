@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Tiles
 {
-    public class GateTile : Tile
+    public class GateTile : MonoBehaviour
     {
         [SerializeField] private GameObject gate;
 
@@ -14,7 +14,6 @@ namespace Tiles
         public void SetDirection(Direction newDirection)
         {
             _gateDirection = newDirection;
-            transform.rotation = newDirection.ToZRotation();
         }
         
         public void Unlock()

@@ -6,89 +6,86 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-    [SerializeField] private Vector3 gridStartPosition;
-    [SerializeField] private Tile floorTilePrefab;
-    [SerializeField] private Tile goalTilePrefab;
-    [SerializeField] private Tile gateTilePrefab;
+    [SerializeField] private Vector2 gridStartPosition;
+    [SerializeField] private GameObject floorTilePrefab;
+    [SerializeField] private GameObject goalTilePrefab;
+    [SerializeField] private GameObject orangeTilePrefab;
+    [SerializeField] private GameObject purpleTilePrefab;
+    [SerializeField] private GameObject gateTilePrefab;
     [SerializeField] private GameObject keyPrefab;
 
-    public Dictionary<Vector2Int, Tile> Grid => _grid;
+    public Dictionary<Vector2Int, GameObject> Grid { get; } = new ();
 
-    private Dictionary<Vector2Int, Tile> _grid = new ();
-
-    public void CreateLevelBasedOnGrid(Tile.TileType[,] gridSource)
+    public void CreateLevelBasedOnGrid(TileType[,] gridSource)
     {
         ClearGrid();
         
-        for (int y = 0; y > -gridSource.GetLength(0); y--)
+        for (var y = 0; y > -gridSource.GetLength(0); y--)
         {
-            for (int x = 0; x < gridSource.GetLength(1); x++)
+            for (var x = 0; x < gridSource.GetLength(1); x++)
             {
-                Tile tileType;
+                GameObject tileToInstantiate;
+                var placementPosition = new Vector2Int(x, y);
+                var placementDirection = Direction.Up;
                 switch (gridSource[-y, x])
                 {
-                    case Tile.TileType.None:
+                    case TileType.None:
                         continue;
-                    case Tile.TileType.Floor:
-                        tileType = floorTilePrefab;
+                    case TileType.Floor:
+                        tileToInstantiate = floorTilePrefab;
                         break;
-                    case Tile.TileType.Goal:
-                        tileType = goalTilePrefab;
+                    case TileType.Goal:
+                        tileToInstantiate = goalTilePrefab;
                         break;
-                    case Tile.TileType.GateUp:
-                    case Tile.TileType.GateDown:
-                    case Tile.TileType.GateRight:
-                    case Tile.TileType.GateLeft:
-                        _grid.Add(new Vector2Int(x,y), InstantiateGateTile(gridSource[-y, x], x, y));
-                        continue;
+                    case TileType.Orange:
+                        tileToInstantiate = orangeTilePrefab;
+                        break;
+                    case TileType.Purple:
+                        tileToInstantiate = purpleTilePrefab;
+                        break;
+                    case TileType.GateUp:
+                        tileToInstantiate = gateTilePrefab;
+                        break;
+                    case TileType.GateRight:
+                        placementDirection = Direction.Right;
+                        tileToInstantiate = gateTilePrefab;
+                        break;
+                    case TileType.GateDown:
+                        placementDirection = Direction.Down;
+                        tileToInstantiate = gateTilePrefab;
+                        break;
+                    case TileType.GateLeft:
+                        placementDirection = Direction.Left;
+                        tileToInstantiate = gateTilePrefab;
+                        break;
                     default:
                         Debug.LogError("Invalid tileType on level creation!");
                         return;
                 }
                 
-                _grid.Add(new Vector2Int(x,y), InstantiateTile(tileType, x, y));
+                InstantiateTile(tileToInstantiate, placementPosition, placementDirection);
             }
         }
     }
 
-    private Tile InstantiateGateTile(Tile.TileType type, int x, int y)
+    private void InstantiateTile(GameObject tilePrefab, Vector2Int placementCoordinates, Direction placementDirection)
     {
-        var newGateTile = (GateTile)InstantiateTile(gateTilePrefab, x, y);
-        switch (type)
-        {
-            case Tile.TileType.GateUp:
-                newGateTile.SetDirection(Direction.Up);
-                break;
-            case Tile.TileType.GateDown:
-                newGateTile.SetDirection(Direction.Down);
-                break;
-            case Tile.TileType.GateRight:
-                newGateTile.SetDirection(Direction.Right);
-                break;
-            case Tile.TileType.GateLeft:
-                newGateTile.SetDirection(Direction.Left);
-                break;
-        }
-
-        return newGateTile;
-    }
-
-    private Tile InstantiateTile(Tile tilePrefab, int x, int y)
-    {
-        var positionOffset = new Vector3(x, y, 0);
-        var newTile = Instantiate(tilePrefab, gridStartPosition + positionOffset, Quaternion.identity,
+        Vector2 positionOffset = placementCoordinates; 
+        var newTile = Instantiate(tilePrefab, gridStartPosition + positionOffset, placementDirection.ToZRotation(),
             transform);
-        newTile.name = $"Tile_{x}_{y}";
-
-        return newTile;
+        newTile.name = $"Tile_{placementCoordinates.x}_{placementCoordinates.y}";
+        if (newTile.TryGetComponent<GateTile>(out var newGateTile))
+            newGateTile.SetDirection(placementDirection);
+        
+        Grid.Add(placementCoordinates, newTile);
     }
 
     public void DropKey(Vector2Int dropCoordinates)
     {
-        var tile = _grid[dropCoordinates];
-        if (tile is GateTile)
+        var tile = Grid[dropCoordinates];
+        if (tile.TryGetComponent<GateTile>(out var gateTile))
         {
-            ((GateTile)tile).Unlock();
+            gateTile.Unlock();
         }
         else
         {
@@ -99,41 +96,69 @@ public class GridManager : MonoBehaviour
     public bool CheckIfWayIsBlocked(Vector2Int currentCoordinates, Direction moveDirection)
     {
         var nextCoordinates = currentCoordinates + moveDirection.ToVector2Int();
-        if (!_grid.ContainsKey(nextCoordinates))
+        if (!Grid.ContainsKey(nextCoordinates))
             return true;
 
-        var currentTile = _grid[currentCoordinates];
-        
-        return currentTile is GateTile && ((GateTile)currentTile).IsBlockingWay(moveDirection);
+        var currentTile = Grid[currentCoordinates];
+
+        return currentTile.TryGetComponent<GateTile>(out var gateTile) && gateTile.IsBlockingWay(moveDirection);
     }
 
     public bool CheckIfTileIsGoal(Vector2Int tileCoordinates)
     {
-        return _grid[tileCoordinates].GetTileType() == Tile.TileType.Goal;
+        return CheckIfTileHasTag(tileCoordinates, "Goal");
+    }
+
+    public bool CheckIfTileIsOrange(Vector2Int tileCoordinates)
+    {
+        return CheckIfTileHasTag(tileCoordinates, "OrangeTile");
+    }
+
+    public bool CheckIfTileIsPurple(Vector2Int tileCoordinates)
+    {
+        return CheckIfTileHasTag(tileCoordinates, "PurpleTile");
+    }
+
+    private bool CheckIfTileHasTag(Vector2Int tileCoordinates, string checkedTag)
+    {
+        return Grid[tileCoordinates].CompareTag(checkedTag);
     }
 
     public Vector3 GetTilePosition(Vector2Int tileCoordinates)
     {
-        return _grid[tileCoordinates].transform.position;
+        return Grid[tileCoordinates].transform.position;
     }
 
     public List<SpriteRenderer> GetTileObjectRenderers()
     {
         var renderers = new List<SpriteRenderer>();
-        foreach (var tile in _grid)
+        foreach (var tile in Grid)
         {
             renderers.Add(tile.Value.GetComponentInChildren<SpriteRenderer>());
         }
-
+        
         return renderers;
     }
 
     private void ClearGrid()
     {
-        foreach (var tileEntry in _grid)
+        foreach (var tileEntry in Grid)
         {
             Destroy(tileEntry.Value.gameObject);
         }
-        _grid.Clear();
+        Grid.Clear();
+    }
+
+    public enum TileType
+    {
+        None,
+        Floor,
+        Goal,
+        Orange,
+        Purple,
+        GateUp,
+        GateDown,
+        GateRight,
+        GateLeft,
     }
 }

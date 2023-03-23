@@ -19,7 +19,9 @@ public class StateChartManager : MonoBehaviour
     {
         Default,
         IsInFrontOfWall,
-        StandsOnKey
+        StandsOnKey,
+        StandsOnOrange,
+        StandsOnPurple
     }
         
     public class Transition
@@ -59,6 +61,16 @@ public class StateChartManager : MonoBehaviour
                     break;
                 }    
             }
+        }
+
+        public bool TryGetTransition(TransitionCondition condition, out Transition transition)
+        {
+            transition = null;
+            if (Transitions.All(t => t.Condition != condition))
+                return false;
+            
+            transition = Transitions.First(t => t.Condition == condition);
+            return true;
         }
     }
 

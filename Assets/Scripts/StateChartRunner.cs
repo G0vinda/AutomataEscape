@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Helper;
+using PlasticGui.Help;
 using UI;
 using UnityEngine;
 using static StateChartManager;
@@ -17,7 +19,7 @@ public class StateChartRunner : MonoBehaviour
     private GridManager _gridManager;
     private Vector2Int _currentCoordinates;
     private Direction _currentDirection;
-    private bool isCarryingKey;
+    private bool _isCarryingKey;
 
     public void SetStartCoordinates(Vector2Int coordinates, Direction direction)
     {
@@ -33,17 +35,19 @@ public class StateChartRunner : MonoBehaviour
 
     public IEnumerator Run(StateChart stateChart)
     {
-        StateData currentState = stateChart.StartState;
+        var currentState = stateChart.StartState;
         IsRunning = true;
         do
         {
             Debug.Log($"New Step in StateChartRunner starts: {currentState.StateId} ID");
-            int nextStateId = ProcessState(currentState);
+            var nextStateId = ProcessState(currentState);
+            if(!IsRunning)
+                break;
             Debug.Log($"Next Id should be {nextStateId}");
             currentState = stateChart.GetStateById(nextStateId);
             
             yield return new WaitForSeconds(1f);
-        } while (IsRunning);
+        } while (true);
     }
 
     private int ProcessState(StateData state)
@@ -55,6 +59,8 @@ public class StateChartRunner : MonoBehaviour
                 break;
             case StateAction.MoveForward:
                 Move(_currentDirection);
+                if (!IsRunning)
+                    return -1;
                 break;
             case StateAction.TurnLeft:
                 Turn(false);
@@ -70,22 +76,36 @@ public class StateChartRunner : MonoBehaviour
                 break;
         }
 
-        foreach (var transition in state.Transitions)
+        Transition transition;
+        if (state.TryGetTransition(TransitionCondition.IsInFrontOfWall, out transition))
         {
-            switch (transition.Condition)
+            if (CheckIfWayIsBlocked())
             {
-                case TransitionCondition.IsInFrontOfWall:
-                    if (CheckIfWayIsBlocked())
-                    {
-                        return transition.DestinationId;
-                    }
-                    break;
-                case TransitionCondition.StandsOnKey:
-                    if (CheckIfOnKey())
-                    {
-                        return transition.DestinationId;
-                    }
-                    break;
+                return transition.DestinationId;
+            }
+        }
+        
+        if (state.TryGetTransition(TransitionCondition.StandsOnKey, out transition))
+        {
+            if (CheckIfOnKey())
+            {
+                return transition.DestinationId;
+            }
+        }
+        
+        if (state.TryGetTransition(TransitionCondition.StandsOnOrange, out transition))
+        {
+            if (_gridManager.CheckIfTileIsOrange(_currentCoordinates))
+            {
+                return transition.DestinationId;
+            }
+        }
+        
+        if (state.TryGetTransition(TransitionCondition.StandsOnPurple, out transition))
+        {
+            if (_gridManager.CheckIfTileIsPurple(_currentCoordinates))
+            {
+                return transition.DestinationId;
             }
         }
 
@@ -117,24 +137,24 @@ public class StateChartRunner : MonoBehaviour
 
     private void Grab()
     {
-        if (!CheckIfOnKey() || isCarryingKey)
+        if (!CheckIfOnKey() || _isCarryingKey)
         {
             return;
         }
 
         var key = GameObject.FindGameObjectWithTag("Key");
         Destroy(key);
-        isCarryingKey = true;
+        _isCarryingKey = true;
         keySprite.SetActive(true);
     }
 
     private void Drop()
     {
-        if(!isCarryingKey)
+        if(!_isCarryingKey)
             return;
         
         _gridManager.DropKey(_currentCoordinates);
-        isCarryingKey = false;
+        _isCarryingKey = false;
         keySprite.SetActive(false);
     }
 

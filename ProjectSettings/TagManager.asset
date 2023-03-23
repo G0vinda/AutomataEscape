@@ -12,6 +12,8 @@ TagManager:
   - Blocker
   - TransitionLineBlocker
   - StateUIElement
+  - OrangeTile
+  - PurpleTile
   layers:
   - Default
   - TransparentFX

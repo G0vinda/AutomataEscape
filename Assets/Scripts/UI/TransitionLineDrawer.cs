@@ -15,8 +15,10 @@ namespace UI
             new Dictionary<StateChartManager.TransitionCondition, int>()
             {
                 { StateChartManager.TransitionCondition.Default, 0 },
+                { StateChartManager.TransitionCondition.IsInFrontOfWall, 0 },
                 { StateChartManager.TransitionCondition.StandsOnKey, 0 },
-                { StateChartManager.TransitionCondition.IsInFrontOfWall, 0 }
+                { StateChartManager.TransitionCondition.StandsOnOrange, 0 },
+                { StateChartManager.TransitionCondition.StandsOnPurple, 0 },
             };
 
         private static Dictionary<StateChartManager.TransitionCondition, Color32[]> _colorSetsByCondition =
@@ -57,6 +59,30 @@ namespace UI
                     new (0x10, 0x22, 0xDF, 0xFF),
                     new (0x10, 0x22, 0xDF, 0xFF),
                     new (0x10, 0x22, 0xDF, 0xFF)
+                }},
+                { StateChartManager.TransitionCondition.StandsOnOrange, new Color32[] {
+                    new (0xE5, 0x8D, 0x1B, 0xFF),
+                    new (0xE5, 0x8D, 0x1B, 0xFF),
+                    new (0xE5, 0x8D, 0x1B, 0xFF),
+                    new (0xE5, 0x8D, 0x1B, 0xFF),
+                    new (0xE5, 0x8D, 0x1B, 0xFF),
+                    new (0xE5, 0x8D, 0x1B, 0xFF),
+                    new (0xE5, 0x8D, 0x1B, 0xFF),
+                    new (0xE5, 0x8D, 0x1B, 0xFF),
+                    new (0xE5, 0x8D, 0x1B, 0xFF),
+                    new (0xE5, 0x8D, 0x1B, 0xFF)
+                }},
+                { StateChartManager.TransitionCondition.StandsOnPurple, new Color32[] {
+                    new (0x56, 0x31, 0xBC, 0xFF),
+                    new (0x56, 0x31, 0xBC, 0xFF),
+                    new (0x56, 0x31, 0xBC, 0xFF),
+                    new (0x56, 0x31, 0xBC, 0xFF),
+                    new (0x56, 0x31, 0xBC, 0xFF),
+                    new (0x56, 0x31, 0xBC, 0xFF),
+                    new (0x56, 0x31, 0xBC, 0xFF),
+                    new (0x56, 0x31, 0xBC, 0xFF),
+                    new (0x56, 0x31, 0xBC, 0xFF),
+                    new (0x56, 0x31, 0xBC, 0xFF)
                 }},
                 
             };

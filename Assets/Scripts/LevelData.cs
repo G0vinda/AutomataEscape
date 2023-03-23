@@ -19,12 +19,12 @@ public class LevelData
     
     public Vector2Int RobotStartPosition { get; }
     public Direction RobotStartDirection { get; }
-    public Tile.TileType[,] Grid { get; }
+    public GridManager.TileType[,] Grid { get; }
 
     public List<AvailableStateInfo> AvailableActions;
     public List<StateChartManager.TransitionCondition> AvailableTransitionConditions;
 
-    public LevelData(Vector2Int startPos, Direction startDirection, Tile.TileType[,] grid,
+    public LevelData(Vector2Int startPos, Direction startDirection, GridManager.TileType[,] grid,
         List<AvailableStateInfo> actions, List<StateChartManager.TransitionCondition> conditions)
     {
         RobotStartPosition = startPos;
@@ -40,7 +40,7 @@ public class LevelWithKeyData : LevelData
     public Vector2Int KeyPosition { get; }
 
     public LevelWithKeyData(Vector2Int startPos, Vector2Int keyPos, Direction startDirection,
-        Tile.TileType[,] grid, List<AvailableStateInfo> actions,
+        GridManager.TileType[,] grid, List<AvailableStateInfo> actions,
         List<StateChartManager.TransitionCondition> conditions) : base(startPos, startDirection, grid, actions, conditions)
     {
         KeyPosition = keyPos;
