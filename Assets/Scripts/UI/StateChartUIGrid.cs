@@ -360,14 +360,15 @@ namespace UI
             return null;
         }
 
-        public void RemoveCellsFromGrid()
+        public void RemoveStateElementsFromGrid()
         {
             foreach (var (key, stateChartCell) in _gridCells)
             {
-                if(stateChartCell.PlacedStateElement == null)
+                if (stateChartCell.PlacedStateElement == null || 
+                    stateChartCell.PlacedStateElement.GetComponent<StateUIPlaceElement>() == null) 
                     continue;
-                if(stateChartCell.PlacedStateElement.GetComponent<StateUIPlaceElement>() != null)
-                    Destroy(stateChartCell.PlacedStateElement.gameObject);
+                
+                Destroy(stateChartCell.PlacedStateElement.gameObject);
                 stateChartCell.RemoveStateElement();
             }
         }

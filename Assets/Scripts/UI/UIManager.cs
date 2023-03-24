@@ -67,12 +67,12 @@ namespace UI
         
         private void SetupStateChartUI()
         {
-            if (!_stateChartUIInitialized)
-            {
-                var availableHorizontalSpace = selectPanel.transform.position.x - selectPanel.rectTransform.sizeDelta.x;
-                stateChartPanel.Initialize(availableHorizontalSpace);
-                _stateChartUIInitialized = true;
-            }
+            if (_stateChartUIInitialized)
+                return;
+                
+            var availableHorizontalSpace = selectPanel.transform.position.x - selectPanel.rectTransform.sizeDelta.x;
+            stateChartPanel.Initialize(availableHorizontalSpace);
+            _stateChartUIInitialized = true;
 
             var startCoordinates = new Vector2Int(0, 3);
             var startCell = _stateChartUIGrid.GetCellOnCoordinates(startCoordinates);
@@ -104,7 +104,7 @@ namespace UI
         private void ClearStateChartUI()
         {
             _connectedTransitions.Clear();
-            _stateChartUIGrid.RemoveCellsFromGrid();
+            _stateChartUIGrid.RemoveStateElementsFromGrid();
             _placedStateElements.Clear();
             startStateUIElement.RemoveDefaultTransitionLine();
         }
@@ -156,7 +156,20 @@ namespace UI
         public void AddTransition(StateUIElement sourceState, StateUIPlaceElement destinationState,
             TransitionCondition condition)
         {
-            _connectedTransitions.Add((sourceState, destinationState), condition);
+            var newKey = (sourceState, destinationState);
+            if (_connectedTransitions.ContainsKey(newKey))
+            {
+                RemoveTransition(sourceState, condition);   
+            }
+
+            var transitionWithSameCondition =
+                _connectedTransitions.FirstOrDefault(t => t.Key.Item1 == sourceState && t.Value == condition);
+            if (!transitionWithSameCondition.Equals(default(KeyValuePair<(StateUIElement, StateUIPlaceElement),TransitionCondition>)))
+            {
+                RemoveTransition(sourceState, condition);
+            }
+
+            _connectedTransitions.Add(newKey, condition);
             if (condition == TransitionCondition.Default)
             {
                 _stateChartManager.AddDefaultTransition(sourceState.AssignedId, destinationState.GetAssignedId());

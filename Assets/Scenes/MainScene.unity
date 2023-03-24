@@ -1441,6 +1441,7 @@ MonoBehaviour:
   robotStateChartRunnerPrefab: {fileID: 5906237375931738515, guid: 4e1cc2fbe5a373345aea51e3bbf8a233, type: 3}
   keyObject: {fileID: 8136169380437567612, guid: 0cf3fc4228cd19144b0ee149455fb0b8, type: 3}
   currentStateIndicator: {fileID: 2127462071}
+  resetSaveSystemOnStart: 1
 --- !u!114 &868897338
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private StateChartRunner robotStateChartRunnerPrefab;
     [SerializeField] private GameObject keyObject;
     [SerializeField] private CurrentStateIndicator currentStateIndicator;
+    [SerializeField] private bool resetSaveSystemOnStart;
 
     public static GameManager Instance { get; private set; }
     public Action<bool> StateChartRunnerStateChanged;
@@ -38,6 +39,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         uiManager.Initialize();
+        if(resetSaveSystemOnStart)
+            PlayerPrefs.SetInt("CurrentLevelId", 0);
         _currentLevelId = PlayerPrefs.GetInt("CurrentLevelId", 0);
         LoadLevel(_currentLevelId);
     }
