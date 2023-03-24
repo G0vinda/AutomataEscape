@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using Helper;
 using UI;
 using UnityEngine;
-using TileType = GridManager.TileType;
 
 [DefaultExecutionOrder(-1)] // Game Manager will be executed before all other scripts
 public class GameManager : MonoBehaviour
