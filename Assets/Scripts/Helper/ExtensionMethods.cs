@@ -116,9 +116,9 @@ namespace Helper
                      position.y < squareBottomLeft.y || position.y > squareBottomLeft.y + squareSize);
         }
 
-        // public static bool IsDefault<T>(this T variable)
-        // {
-        //     
-        // }
+        public static bool IsDefault<T>(this T value)
+        {
+            return value.Equals(default(T));
+        }
     }
 }

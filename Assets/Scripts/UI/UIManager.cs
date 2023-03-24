@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Helper;
 using UnityEngine;
 using UnityEngine.UI;
 using static StateChartManager;
@@ -118,6 +119,12 @@ namespace UI
         {
             connectedCell.PlaceStateElement(placeElement);
             placeElement.PlaceState(connectedCell, stateChartPanel.transform);
+            var transitionLinesToRemove = _stateChartUIGrid.GetCellTransitionLines(connectedCell);
+            foreach (var transitionLine in transitionLinesToRemove)
+            {
+                var sourceState = transitionLine.GetComponentInParent<StateUIElement>();
+                RemoveTransition(sourceState, transitionLine.Condition);
+            }
                 
             var assignedId = _stateChartManager.AddState(placeElement.GetAction());
             placeElement.SetAssignedId(assignedId);
@@ -164,7 +171,7 @@ namespace UI
 
             var transitionWithSameCondition =
                 _connectedTransitions.FirstOrDefault(t => t.Key.Item1 == sourceState && t.Value == condition);
-            if (!transitionWithSameCondition.Equals(default(KeyValuePair<(StateUIElement, StateUIPlaceElement),TransitionCondition>)))
+            if (!transitionWithSameCondition.IsDefault())
             {
                 RemoveTransition(sourceState, condition);
             }

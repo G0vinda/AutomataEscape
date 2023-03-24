@@ -233,6 +233,29 @@ namespace UI
             return checkedState != null && checkedState.TryGetComponent<StateUIPlaceElement>(out state);
         }
 
+        public List<TransitionLine> GetCellTransitionLines(StateChartCell cell)
+        {
+            List<TransitionLine> transitionLines = new List<TransitionLine>();
+            foreach (var subCell in cell.SubCells)
+            {
+                transitionLines.AddRange(GetSubCellTransitionLines(subCell));
+            }
+
+            return transitionLines.Distinct().ToList();
+        }
+
+        public List<TransitionLine> GetSubCellTransitionLines(StateChartCell.SubCell subCell)
+        {
+            List<TransitionLine> transitionLines = new List<TransitionLine>();
+            if(subCell.PlacedHorizontalLine != null)
+                transitionLines.Add(subCell.PlacedHorizontalLine);
+            
+            if(subCell.PlacedVerticalLine != null)
+                transitionLines.Add(subCell.PlacedVerticalLine);
+
+            return transitionLines.Distinct().ToList();
+        }
+
         public (Vector2, Direction) GetPlugAttributesForAdjacentState(Vector2 subCellPosition, StateChartCell stateCell)
         {
             var adjacentStateCoordinates = GetCoordinatesFromCell(stateCell);
