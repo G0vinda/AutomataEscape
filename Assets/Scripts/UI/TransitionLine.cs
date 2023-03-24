@@ -47,7 +47,7 @@ namespace UI
             color = lineColor;
             Condition = condition;
             _lineElements.Add(CreateFirstElement(startDirection));
-            SetAllDirty();
+            UpdateGeometry();
         }
 
         public void UpdateSize(float newFirstElementLength, float newElementLength, float newWidth)
@@ -71,8 +71,8 @@ namespace UI
                 positionDeltaToLine *= scaleFactor;
                 _plugTransform.position = transform.position + positionDeltaToLine;
             }
-
-            SetAllDirty();
+            
+            UpdateGeometry();
         }
 
         public bool TryGetLastElementDirection(out Direction lastElementDirection)
@@ -159,14 +159,14 @@ namespace UI
         public void RemoveLastElement()
         {
             _lineElements.RemoveAt(_lineElements.Count - 1);
-            SetAllDirty();
+            UpdateGeometry();
         }
 
         public void DrawLineElement(Direction direction)
         {
             var newLineElement = CreateLineElement(direction, _lineElements[^1]);
             _lineElements.Add(newLineElement);
-            SetAllDirty();
+            UpdateGeometry();
         }
         
         private LineElement CreateLineElement(Direction direction, LineElement lastLineElement)
@@ -300,113 +300,5 @@ namespace UI
 
             return new LineElement(Direction.Left, vertexPositions);
         }
-
-        // This will be probably not be needed anymore
-        // private void ResizeLastElement(float newLength)
-        // {
-        //     var lastElement = _lineElements.ElementAt(_lineElements.Count - 1);
-        //     var lastDirection = lastElement.Direction;
-        //     var secondLastElement = _lineElements.ElementAt(_lineElements.Count - 2);
-        //     LineElement replaceElement;
-        //     
-        //     if (lastDirection == Vector2.up)
-        //     {
-        //         replaceElement = CreateUpElement(secondLastElement, newLength);
-        //     }
-        //     else if (lastDirection == Vector2.down)
-        //     {
-        //         replaceElement = CreateDownElement(secondLastElement, newLength);
-        //     }
-        //     else if (lastDirection == Vector2.right)
-        //     {
-        //         replaceElement = CreateRightElement(secondLastElement, newLength);
-        //     }
-        //     else
-        //     {
-        //         replaceElement = CreateLeftElement(secondLastElement, newLength);
-        //     }
-        //
-        //     _lineElements.Remove(lastElement);
-        //     _lineElements.Add(replaceElement);
-        // }
-
-        // This will need a rework
-        // public void DrawLineToSlot(Vector3 linePos, Vector3 slotPos, Vector2 slotDir)
-        // {
-        //     var lastLineElement = _lineElements.ElementAt(_lineElements.Count - 1);
-        //     var lineDir = lastLineElement.Direction;
-        //     var lineDirIsHorizontal = Mathf.Abs(lineDir.x) > 0;
-        //     var uiManager = GameManager.Instance.GetUIManager();
-        //
-        //     if (lineDir - slotDir == Vector2.zero || lineDir + slotDir == Vector2.zero) // Directions are opposite
-        //     {
-        //         if (lineDirIsHorizontal)
-        //         {
-        //             var distance1 = Mathf.Abs(slotPos.y - linePos.y);
-        //             var line1Length = uiManager.UnscaleFloat(distance1);
-        //             var line1 = slotPos.y > linePos.y
-        //                 ? CreateUpElement(lastLineElement, line1Length)
-        //                 : CreateDownElement(lastLineElement, line1Length);
-        //             _lineElements.Add(line1);
-        //             
-        //             var distance2 = Mathf.Abs(slotPos.x - linePos.x);
-        //             var line2Length = uiManager.UnscaleFloat(distance2);
-        //             var line2 = slotPos.x > linePos.x 
-        //                 ? CreateRightElement(line1, line2Length)
-        //                 : CreateLeftElement(line1, line2Length);
-        //             _lineElements.Add(line2);
-        //         }
-        //         else
-        //         {
-        //             var distance1 = Mathf.Abs(slotPos.x - linePos.x);
-        //             var line1Length = uiManager.UnscaleFloat(distance1);
-        //             var line1 = slotPos.x > linePos.x 
-        //                 ? CreateRightElement(lastLineElement, line1Length)
-        //                 : CreateLeftElement(lastLineElement, line1Length);
-        //             _lineElements.Add(line1);
-        //
-        //             var distance2 = Mathf.Abs(slotPos.y - linePos.y);
-        //             var line2Length = uiManager.UnscaleFloat(distance2);
-        //             var line2 = slotPos.y > linePos.y 
-        //                 ? CreateUpElement(line1, line2Length)
-        //                 : CreateDownElement(line1, line2Length);
-        //             _lineElements.Add(line2);
-        //         }
-        //     }   
-        //     else if (Vector2.Dot(lineDir, slotDir) == 0) // Directions are orthogonal to each other
-        //     {
-        //         var xDiff = slotPos.x - linePos.x;
-        //         var yDiff = slotPos.y - linePos.y;
-        //         var scaledXDiff = uiManager.UnscaleFloat(xDiff);
-        //         var scaledYDiff = uiManager.UnscaleFloat(yDiff);
-        //
-        //         if (lineDirIsHorizontal)
-        //         {
-        //             var newLength = lineDir.x > 0 
-        //                 ? scaledXDiff + 0.5f * _width + _elementLength 
-        //                 : -scaledXDiff + 0.5f * _width + _elementLength;
-        //             ResizeLastElement(newLength);
-        //
-        //             var lastElement = _lineElements.ElementAt(_lineElements.Count - 1);
-        //             var line2Length = uiManager.UnscaleFloat(Mathf.Abs(yDiff)) - 0.5f * _width;
-        //             var finishElement = yDiff > 0 ? CreateUpElement(lastElement, line2Length) : CreateDownElement(lastElement, line2Length);
-        //             _lineElements.Add(finishElement);
-        //         }
-        //         else
-        //         {
-        //             var newLength = lineDir.y > 0 
-        //                 ? scaledYDiff + 0.5f * _width + _elementLength 
-        //                 : -scaledYDiff + 0.5f * _width + _elementLength;
-        //             ResizeLastElement(newLength);
-        //             
-        //             var lastElement = _lineElements.ElementAt(_lineElements.Count - 1);
-        //             var line2Length = uiManager.UnscaleFloat(Mathf.Abs(xDiff)) - 0.5f * _width;
-        //             var finishElement = xDiff > 0 ? CreateRightElement(lastElement, line2Length) : CreateLeftElement(lastElement, line2Length);
-        //             _lineElements.Add(finishElement);
-        //         }
-        //     }
-        //     
-        //     SetAllDirty();
-        //}
     }
 }
