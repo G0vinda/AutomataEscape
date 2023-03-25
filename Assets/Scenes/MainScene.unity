@@ -644,7 +644,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87afdd8ee30947bd9373d0e9403f824b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraBuffer: 2
+  cameraBuffer: 4
+  cameraYOffset: 2
 --- !u!1 &582005164
 GameObject:
   m_ObjectHideFlags: 0
@@ -1746,6 +1747,8 @@ MonoBehaviour:
   orangeTilePrefab: {fileID: 8037167587416976068, guid: 4864e6fdac7659442acb5618590cfbcc, type: 3}
   purpleTilePrefab: {fileID: 3936563129576413985, guid: a290fc6dd5a262d42a4c7d10df064438, type: 3}
   gateTilePrefab: {fileID: 379294045583172316, guid: f68c121c63a67b846945c6faf09748a1, type: 3}
+  upWallPrefab: {fileID: 3469315490294237539, guid: d53ad37b1bc2e91468b77ab914d25712, type: 3}
+  sideWallPrefab: {fileID: 2574102252516868706, guid: a67575e7ab2b4864b866ece1a9c68d29, type: 3}
   keyPrefab: {fileID: 8136169380437567612, guid: 0cf3fc4228cd19144b0ee149455fb0b8, type: 3}
 --- !u!4 &1040296884
 Transform:

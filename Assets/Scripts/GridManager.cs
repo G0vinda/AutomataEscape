@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Helper;
 using Tiles;
 using UI;
 using UnityEngine;
+using UnityEngine.Windows.Speech;
 
 public class GridManager : MonoBehaviour
 {
@@ -12,9 +14,21 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GameObject orangeTilePrefab;
     [SerializeField] private GameObject purpleTilePrefab;
     [SerializeField] private GameObject gateTilePrefab;
+
+    [SerializeField] private GameObject upWallPrefab;
+    [SerializeField] private GameObject sideWallPrefab;
+
     [SerializeField] private GameObject keyPrefab;
 
     public Dictionary<Vector2Int, GameObject> Grid { get; } = new ();
+
+    private Vector2 _tileSize;
+
+    private void Awake()
+    {
+        _tileSize = floorTilePrefab.GetComponentInChildren<SpriteRenderer>().bounds.size;
+        Debug.Log($"TileSize is {_tileSize}");
+    }
 
     public void CreateLevelBasedOnGrid(TileType[,] gridSource)
     {
@@ -64,13 +78,20 @@ public class GridManager : MonoBehaviour
                 }
                 
                 InstantiateTile(tileToInstantiate, placementPosition, placementDirection);
+                var wallsNeeded = new WallsNeeded(
+                    y == 0, // Needs wall on top
+                    x == gridSource.GetLength(1) - 1, // Needs wall on right
+                    y == gridSource.GetLength(0) - 1, // Needs wall on bottom
+                    x == 0); // Needs wall on left
+                
+                InstantiateWallIfNeeded(placementPosition, wallsNeeded);
             }
         }
     }
 
     private void InstantiateTile(GameObject tilePrefab, Vector2Int placementCoordinates, Direction placementDirection)
     {
-        Vector2 positionOffset = placementCoordinates; 
+        var positionOffset = (Vector2)placementCoordinates * _tileSize; 
         var newTile = Instantiate(tilePrefab, gridStartPosition + positionOffset, placementDirection.ToZRotation(),
             transform);
         newTile.name = $"Tile_{placementCoordinates.x}_{placementCoordinates.y}";
@@ -78,6 +99,24 @@ public class GridManager : MonoBehaviour
             newGateTile.SetDirection(placementDirection);
         
         Grid.Add(placementCoordinates, newTile);
+    }
+
+    private void InstantiateWallIfNeeded(Vector2Int tileCoordinates, WallsNeeded wallsNeeded)
+    {
+        var tilePosition = (Vector2)tileCoordinates * _tileSize + gridStartPosition;
+        var wallPositionOffset = new Vector2();
+
+        if (wallsNeeded.OnTop) // Create wall on top
+        {
+            wallPositionOffset = Vector2.up * _tileSize * 0.5f;
+            Instantiate(upWallPrefab, tilePosition + wallPositionOffset, Quaternion.identity);
+        }
+
+        if (wallsNeeded.OnLeft)
+        {
+            wallPositionOffset = Vector2.left * _tileSize * 0.5f;
+            Instantiate(sideWallPrefab, tilePosition + wallPositionOffset, Quaternion.identity);
+        }
     }
 
     public void DropKey(Vector2Int dropCoordinates)
@@ -160,5 +199,21 @@ public class GridManager : MonoBehaviour
         GateDown,
         GateRight,
         GateLeft,
+    }
+
+    private struct WallsNeeded
+    {
+        public bool OnTop { get; }
+        public bool OnRight { get; }
+        public bool OnBottom { get; }
+        public bool OnLeft { get; }
+
+        public WallsNeeded(bool top, bool right, bool bottom, bool left)
+        {
+            OnTop = top;
+            OnRight = right;
+            OnBottom = bottom;
+            OnLeft = left;
+        }
     }
 }

@@ -123,8 +123,7 @@ public class GameManager : MonoBehaviour
         var tileRenderers = gridManager.GetTileObjectRenderers();
         cameraController.AlignCameraWithLevel(tileRenderers);
         Vector3 robotStartPositionOnGrid = gridManager.GetTilePosition(level.RobotStartPosition);
-        Quaternion robotStartRotation = level.RobotStartDirection.ToZRotation();
-        _stateChartRunner = Instantiate(robotStateChartRunnerPrefab, robotStartPositionOnGrid, robotStartRotation);
+        _stateChartRunner = Instantiate(robotStateChartRunnerPrefab, robotStartPositionOnGrid, Quaternion.identity);
         _stateChartRunner.SetStartCoordinates(level.RobotStartPosition, level.RobotStartDirection);
         if (level is LevelWithKeyData)
         {

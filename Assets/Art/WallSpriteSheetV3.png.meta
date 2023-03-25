@@ -1,0 +1,554 @@
+fileFormatVersion: 2
+guid: b0430c081e78737478535bacbd148752
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMasterTextureLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_0
+      rect:
+        serializedVersion: 2
+        x: 2440
+        y: 962
+        width: 130
+        height: 520
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5bcd5ee3c36bdd74fb592f4c313cc2e5
+      internalID: 2029411341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_3
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 960
+        width: 450
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3093d58f12b4177409b553dfe99526fd
+      internalID: -16489896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_11
+      rect:
+        serializedVersion: 2
+        x: 2900
+        y: 950
+        width: 131
+        height: 451
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75ae07b8a1d92c14687c98d56f814f0a
+      internalID: -1333981047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_12
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 960
+        width: 451
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b04625a0839cbc043b5df174a3e9a636
+      internalID: 1076341410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_13
+      rect:
+        serializedVersion: 2
+        x: 970
+        y: 961
+        width: 451
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 977c3e226a587b0429810aef591edcbc
+      internalID: 1744402596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_14
+      rect:
+        serializedVersion: 2
+        x: 1442
+        y: 960
+        width: 450
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ee577f44df350145a7546445baa9ba0
+      internalID: -1328262415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_15
+      rect:
+        serializedVersion: 2
+        x: 1912
+        y: 961
+        width: 450
+        height: 449
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ce647d335b1f8f43bcef039caa371f8
+      internalID: -34626199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_35
+      rect:
+        serializedVersion: 2
+        x: 1439
+        y: 518
+        width: 449
+        height: 403
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 17ec9adf1e487a4429f8c9991433553f
+      internalID: 1362492647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_36
+      rect:
+        serializedVersion: 2
+        x: 1906
+        y: 516
+        width: 458
+        height: 405
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e7f58f56c369d24d9695b84e4ade7bd
+      internalID: 910919045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_37
+      rect:
+        serializedVersion: 2
+        x: 2388
+        y: 517
+        width: 453
+        height: 407
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3557b23ce5f1e6f4c9ad6b31f9bf16be
+      internalID: -902110422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_38
+      rect:
+        serializedVersion: 2
+        x: 2858
+        y: 517
+        width: 453
+        height: 404
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ba7d5dac5360064fba5883a3da8d4cd
+      internalID: 1837925724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_39
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 460
+        width: 451
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f194edf0d1820c43981ecfd5e15925e
+      internalID: 2071983406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_40
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 190
+        width: 451
+        height: 720
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f86d18ea806dcc546af1b55ebea10ff6
+      internalID: -1474341826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_41
+      rect:
+        serializedVersion: 2
+        x: 980
+        y: 191
+        width: 130
+        height: 720
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa43595d0722ce540b4a4484ddaf28d5
+      internalID: 1026774159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_53
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 50
+        width: 450
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b26c4215582fe954c8a203f57b1c1e6d
+      internalID: -154178719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_58
+      rect:
+        serializedVersion: 2
+        x: 1977
+        y: 99
+        width: 305
+        height: 303
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42d4d16c694e0124fb4c4d22110570b4
+      internalID: 1622128944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WallSpriteSheetV3_59
+      rect:
+        serializedVersion: 2
+        x: 2466
+        y: 99
+        width: 306
+        height: 303
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f5f76d593832d04b9f458f880e7c277
+      internalID: 693541716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      WallSpriteSheetV3_1: -1732780735
+      WallSpriteSheetV3_44: -1466302168
+      WallSpriteSheetV3_35: 1362492647
+      WallSpriteSheetV3_2: -2037402859
+      WallSpriteSheetV3_7: -1851520611
+      WallSpriteSheetV3_26: 574857126
+      WallSpriteSheetV3_12: 1076341410
+      WallSpriteSheetV3_14: -1328262415
+      WallSpriteSheetV3_52: 295012500
+      WallSpriteSheetV3_58: 1622128944
+      WallSpriteSheetV3_51: 1674114182
+      WallSpriteSheetV3_25: -2016614262
+      WallSpriteSheetV3_59: 693541716
+      WallSpriteSheetV3_39: 2071983406
+      WallSpriteSheetV3_24: -1875173218
+      WallSpriteSheetV3_45: 430658070
+      WallSpriteSheetV3_48: 482459869
+      WallSpriteSheetV3_13: 1744402596
+      WallSpriteSheetV3_16: 281402927
+      WallSpriteSheetV3_29: -1274391982
+      WallSpriteSheetV3_31: -323226932
+      WallSpriteSheetV3_40: -1474341826
+      WallSpriteSheetV3_11: -1333981047
+      WallSpriteSheetV3_17: -1722351152
+      WallSpriteSheetV3_20: 1191315378
+      WallSpriteSheetV3_53: -154178719
+      WallSpriteSheetV3_33: -277345526
+      WallSpriteSheetV3_27: 2008924291
+      WallSpriteSheetV3_23: -830649439
+      WallSpriteSheetV3_10: 1139330814
+      WallSpriteSheetV3_57: -1853027959
+      WallSpriteSheetV3_50: -753036244
+      WallSpriteSheetV3_8: 942334095
+      WallSpriteSheetV3_9: -2106428937
+      WallSpriteSheetV3_32: -1458518277
+      WallSpriteSheetV3_30: 972922355
+      WallSpriteSheetV3_3: -16489896
+      WallSpriteSheetV3_37: -902110422
+      WallSpriteSheetV3_42: 1356949901
+      WallSpriteSheetV3_49: 1639690570
+      WallSpriteSheetV3_56: 1390757522
+      WallSpriteSheetV3_18: -1576127661
+      WallSpriteSheetV3_0: 2029411341
+      WallSpriteSheetV3_34: 1749217996
+      WallSpriteSheetV3_21: -1158069543
+      WallSpriteSheetV3_4: 606955290
+      WallSpriteSheetV3_28: -331197285
+      WallSpriteSheetV3_60: -917137565
+      WallSpriteSheetV3_54: -1745811653
+      WallSpriteSheetV3_19: 1924908628
+      WallSpriteSheetV3_22: -572891667
+      WallSpriteSheetV3_6: -1745928054
+      WallSpriteSheetV3_15: -34626199
+      WallSpriteSheetV3_38: 1837925724
+      WallSpriteSheetV3_47: 322683963
+      WallSpriteSheetV3_36: 910919045
+      WallSpriteSheetV3_43: 1521756789
+      WallSpriteSheetV3_46: 1206926926
+      WallSpriteSheetV3_5: -2123192741
+      WallSpriteSheetV3_55: 1048422292
+      WallSpriteSheetV3_61: 1281112715
+      WallSpriteSheetV3_41: 1026774159
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -15,6 +15,7 @@ public class StateChartRunner : MonoBehaviour
     public bool IsRunning { get; private set; }
     
     private GridManager _gridManager;
+    private RobotSpriteChanger _spriteChanger;
     private Vector2Int _currentCoordinates;
     private Direction _currentDirection;
     private bool _isCarryingKey;
@@ -23,7 +24,9 @@ public class StateChartRunner : MonoBehaviour
     {
         _currentCoordinates = coordinates;
         _currentDirection = direction;
-        _gridManager = FindObjectOfType<GridManager>();
+        _gridManager = FindObjectOfType<GridManager>(); // Todo: Fetch from GameManager
+        _spriteChanger = GetComponent<RobotSpriteChanger>();
+        _spriteChanger.SetSprite(direction);
     }
 
     public void StartRun(StateChart stateChart)
@@ -130,7 +133,7 @@ public class StateChartRunner : MonoBehaviour
     private void Turn(bool turnClockwise)
     {
         _currentDirection = _currentDirection.Turn(turnClockwise);
-        transform.rotation = _currentDirection.ToZRotation();
+        _spriteChanger.SetSprite(_currentDirection);
     }
 
     private void Grab()
