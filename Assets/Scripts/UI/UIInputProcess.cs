@@ -286,11 +286,10 @@ public class UIInputProcess : MonoBehaviour
             var destinationState = TransitionLineDrawer.DestinationStateElement;
             TransitionLineDrawer.FinishLine();
             _uiManager.AddTransition(_selectedDrawStateElement, destinationState, _selectedTransitionCondition.Value);
-            Debug.Log("Transition would be created!");   
         }
         else
         {
-            _selectedDrawStateElement.RemoveTransitionByCondition(currentTransitionLine.Condition);
+            _selectedDrawStateElement.RemoveTransition(currentTransitionLine);
         }
     }
 

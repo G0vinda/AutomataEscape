@@ -120,8 +120,13 @@ namespace UI
         public void RemoveTransitionByCondition(StateChartManager.TransitionCondition condition)
         {
             var transitionMatch = _outgoingTransitionLines.First(transition => transition.Condition == condition);
-            _outgoingTransitionLines.Remove(transitionMatch);
-            Destroy(transitionMatch.gameObject);
+            RemoveTransition(transitionMatch);
+        }
+
+        public void RemoveTransition(TransitionLine transitionLine)
+        {
+            _outgoingTransitionLines.Remove(transitionLine);
+            Destroy(transitionLine.gameObject);
         }
     }
 }
