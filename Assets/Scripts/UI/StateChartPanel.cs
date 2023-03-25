@@ -38,9 +38,9 @@ namespace UI
             return _scaleFactor;
         }
 
-        public void MoveByVector(Vector3 moveVector)
+        public void MoveByVector(Vector2 moveVector)
         {
-            var newPosition = transform.position + moveVector;
+            var newPosition = (Vector2)transform.position + moveVector;
             transform.position = _movementBoundaries.ClampVector2(newPosition);
             CalculateGridValues();
             _stateChartUIGrid.UpdateGrid(_gridHeight, _bottomLeftGridPosition);

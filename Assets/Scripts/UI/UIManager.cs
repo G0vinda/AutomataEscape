@@ -23,19 +23,11 @@ namespace UI
         private List<StateUIPlaceElement> _placedStateElements;
         private List<LevelData.AvailableStateInfo> _availableStateInfo;
         private List<TransitionCondition> _availableTransitionConditions;
-        private bool _stateChartUIInitialized;
-        private bool _setupUIOnEnable;
+        private bool _stateChartPanelInitialized;
+        private bool _availableSelectChanged;
+        private bool _uiActive;
 
         private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionCondition> _connectedTransitions = new();
-
-        private void OnEnable()
-        {
-            if (!_setupUIOnEnable) return;
-
-            SetupStateChartUI();
-            EnableAvailableUIElements();
-            _setupUIOnEnable = false;
-        }
 
         public void Initialize()
         {
@@ -48,32 +40,27 @@ namespace UI
             _placedStateElements = new List<StateUIPlaceElement>();
         }
         
-        public void SetupUI(List<LevelData.AvailableStateInfo> availableStateInfo,
+        public void SetupUIForLevel(List<LevelData.AvailableStateInfo> availableStateInfo,
             List<TransitionCondition> availableTransitionConditions)
         {
             ClearStateChartUI();
             _availableStateInfo = availableStateInfo;
             _availableTransitionConditions = availableTransitionConditions;
 
-            if (gameObject.activeSelf)
+            if (_uiActive)
             {
-                SetupStateChartUI();
                 EnableAvailableUIElements();
             }
             else
             {
-                _setupUIOnEnable = true;
+                _availableSelectChanged = true;
             }
         }
         
         private void SetupStateChartUI()
         {
-            if (_stateChartUIInitialized)
-                return;
-                
             var availableHorizontalSpace = selectPanel.transform.position.x - selectPanel.rectTransform.sizeDelta.x;
             stateChartPanel.Initialize(availableHorizontalSpace);
-            _stateChartUIInitialized = true;
 
             var startCoordinates = new Vector2Int(0, 3);
             var startCell = _stateChartUIGrid.GetCellOnCoordinates(startCoordinates);
@@ -85,8 +72,6 @@ namespace UI
 
         private void EnableAvailableUIElements()
         {
-            Debug.Log("EnableAvailableUIElements is called");
-            Debug.Log($"List of available stacks has {_availableStateInfo.Count} elements");
             var stateChartPanelScaleFactor = stateChartPanel.GetScaleFactor();
             foreach (var availableStateInfo in _availableStateInfo)
             {
@@ -108,6 +93,28 @@ namespace UI
             _stateChartUIGrid.RemoveStateElementsFromGrid();
             _placedStateElements.Clear();
             startStateUIElement.RemoveDefaultTransitionLine();
+        }
+
+        public void ToggleUI()
+        {
+            _uiActive = !_uiActive;
+            stateChartPanel.gameObject.SetActive(_uiActive);
+            selectPanel.gameObject.SetActive(_uiActive);
+
+            if (!_uiActive) 
+                return;
+
+            if (!_stateChartPanelInitialized)
+            {
+                SetupStateChartUI();
+                _stateChartPanelInitialized = true;
+            }
+            
+            if (_availableSelectChanged)
+            {
+                EnableAvailableUIElements();
+                _availableSelectChanged = false;
+            }
         }
 
         public void ZoomStateChartPanel(float zoomFactor, float zoomDelta, Vector2 zoomCenter)

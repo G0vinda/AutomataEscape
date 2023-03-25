@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
 
         // Setup StateChart
         stateChartManager.ResetStateChart();
-        uiManager.SetupUI(level.AvailableActions, level.AvailableTransitionConditions);
+        uiManager.SetupUIForLevel(level.AvailableActions, level.AvailableTransitionConditions);
     }
 
     private void LoadLevelGrid(LevelData level)
