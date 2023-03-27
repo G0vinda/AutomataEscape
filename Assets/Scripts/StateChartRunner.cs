@@ -34,7 +34,7 @@ public class StateChartRunner : MonoBehaviour
         StartCoroutine(Run(stateChart));
     }
 
-    public IEnumerator Run(StateChart stateChart)
+    private IEnumerator Run(StateChart stateChart)
     {
         var currentState = stateChart.StartState;
         IsRunning = true;

@@ -23,13 +23,11 @@ public class InputManager : MonoBehaviour
     public static Action<float, Vector2> ZoomInputChanged;
 
     private UIInput _uiInput;
-    private UIManager _uiManager;
     private bool _inputReleased;
 
     private void Awake()
     {
         _uiInput = new UIInput();
-        _uiManager = GameManager.Instance.GetUIManager();
     }
 
     private void OnEnable()

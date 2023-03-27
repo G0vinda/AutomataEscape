@@ -1,5 +1,4 @@
 using System;
-using Helper;
 using UI;
 using UnityEngine;
 
@@ -58,11 +57,6 @@ public class GameManager : MonoBehaviour
         return stateChartManager;
     }
 
-    public void ToggleStateChartView()
-    {
-        uiManager.gameObject.SetActive(!uiManager.gameObject.activeSelf);
-    }
-
     public void ToggleStateChartRunState()
     {
         if (_stateChartRunner.IsRunning)
@@ -98,7 +92,6 @@ public class GameManager : MonoBehaviour
 
     public void LoadNextLevel()
     {
-        
         Destroy(_stateChartRunner.gameObject);
         StateChartRunnerStateChanged?.Invoke(false);
         currentStateIndicator.gameObject.SetActive(false);
@@ -122,13 +115,14 @@ public class GameManager : MonoBehaviour
         gridManager.CreateLevelBasedOnGrid(level.Grid);
         var tileRenderers = gridManager.GetTileObjectRenderers();
         cameraController.AlignCameraWithLevel(tileRenderers);
-        Vector3 robotStartPositionOnGrid = gridManager.GetTilePosition(level.RobotStartPosition);
+        var robotStartPositionOnGrid = gridManager.GetTilePosition(level.RobotStartPosition);
         _stateChartRunner = Instantiate(robotStateChartRunnerPrefab, robotStartPositionOnGrid, Quaternion.identity);
         _stateChartRunner.SetStartCoordinates(level.RobotStartPosition, level.RobotStartDirection);
+        
         if (level is LevelWithKeyData)
         {
             var keyCoordinates = ((LevelWithKeyData)level).KeyPosition;
-            Vector3 keyPositionOnGrid = gridManager.GetTilePosition(keyCoordinates);
+            var keyPositionOnGrid = gridManager.GetTilePosition(keyCoordinates);
             var key = Instantiate(keyObject, keyPositionOnGrid, Quaternion.identity).GetComponent<Key>();
             key.Coordinates = keyCoordinates;
         }

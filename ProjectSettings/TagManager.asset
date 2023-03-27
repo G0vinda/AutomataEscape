@@ -51,6 +51,15 @@ TagManager:
   - name: Ground
     uniqueID: 3240027715
     locked: 0
+  - name: BackgroundWall
+    uniqueID: 3676094111
+    locked: 0
+  - name: SideWall
+    uniqueID: 4103662689
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: ForegroundWall
+    uniqueID: 2760532003
     locked: 0

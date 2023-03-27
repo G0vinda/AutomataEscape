@@ -9,20 +9,35 @@ using UnityEngine.Windows.Speech;
 public class GridManager : MonoBehaviour
 {
     [SerializeField] private Vector2 gridStartPosition;
+    [SerializeField] private GameObject keyPrefab;
+    
+    [Header("TilePrefabs")]
     [SerializeField] private GameObject floorTilePrefab;
     [SerializeField] private GameObject goalTilePrefab;
     [SerializeField] private GameObject orangeTilePrefab;
     [SerializeField] private GameObject purpleTilePrefab;
     [SerializeField] private GameObject gateTilePrefab;
 
-    [SerializeField] private GameObject upWallPrefab;
-    [SerializeField] private GameObject sideWallPrefab;
-
-    [SerializeField] private GameObject keyPrefab;
+    [Header("WallPrefabs")]
+    [SerializeField] private GameObject solidWallPrefab;
+    [SerializeField] private GameObject transparentWallPrefab;
+    [SerializeField] private GameObject rightWallPrefab;
+    [SerializeField] private GameObject leftWallPrefab;
+    [SerializeField] private GameObject downFacingUWallPrefab;
+    [SerializeField] private GameObject sideFacingUWallPrefab;
+    [SerializeField] private GameObject upFacingUWallPrefab;
+    [SerializeField] private GameObject wallBlockPrefab;
+    [SerializeField] private GameObject upperCornerPrefab;
+    [SerializeField] private GameObject lowerCornerPrefab;
+    [SerializeField] private GameObject solidWallConnectorRightPrefab;
+    [SerializeField] private GameObject solidWallConnectorLeftPrefab;
+    [SerializeField] private GameObject transparentWallConnectorRightPrefab;
+    [SerializeField] private GameObject transparentWallConnectorLeftPrefab;
 
     public Dictionary<Vector2Int, GameObject> Grid { get; } = new ();
 
     private Vector2 _tileSize;
+    private List<GameObject> _placedWalls = new ();
 
     private void Awake()
     {
@@ -78,15 +93,10 @@ public class GridManager : MonoBehaviour
                 }
                 
                 InstantiateTile(tileToInstantiate, placementPosition, placementDirection);
-                var wallsNeeded = new WallsNeeded(
-                    y == 0, // Needs wall on top
-                    x == gridSource.GetLength(1) - 1, // Needs wall on right
-                    y == gridSource.GetLength(0) - 1, // Needs wall on bottom
-                    x == 0); // Needs wall on left
-                
-                InstantiateWallIfNeeded(placementPosition, wallsNeeded);
             }
         }
+        
+        CreateWalls(gridSource.GetLength(1), gridSource.GetLength(0));
     }
 
     private void InstantiateTile(GameObject tilePrefab, Vector2Int placementCoordinates, Direction placementDirection)
@@ -101,22 +111,309 @@ public class GridManager : MonoBehaviour
         Grid.Add(placementCoordinates, newTile);
     }
 
-    private void InstantiateWallIfNeeded(Vector2Int tileCoordinates, WallsNeeded wallsNeeded)
+    private GameObject InstantiateWall(GameObject wallPrefab, Vector2 position)
     {
-        var tilePosition = (Vector2)tileCoordinates * _tileSize + gridStartPosition;
-        var wallPositionOffset = new Vector2();
+        var newWall = Instantiate(wallPrefab, position, Quaternion.identity);
+        _placedWalls.Add(newWall);
+        return newWall;
+    }
 
-        if (wallsNeeded.OnTop) // Create wall on top
+    private void CreateWalls(int xMax, int yMax)
+    {
+        for (var x = 0; x < xMax; x++)
         {
-            wallPositionOffset = Vector2.up * _tileSize * 0.5f;
-            Instantiate(upWallPrefab, tilePosition + wallPositionOffset, Quaternion.identity);
+            for (var y = -(yMax - 1); y <= 0; y++)
+            {
+                var currentCoordinates = new Vector2Int(x, y);
+                if (!Grid.ContainsKey(currentCoordinates))
+                {
+                    CreateWallsOnEmptyTile(currentCoordinates);
+                }
+            }
+        }
+        
+        // Create walls on top border
+        var createLeftWallConnector = true;
+        var borderCoordinates = new Vector2Int(0, 0);
+        for (var x = 0; x < xMax; x++)
+        {
+            borderCoordinates.x = x;
+            if(!Grid.ContainsKey(borderCoordinates))
+                continue;
+
+            if (x == 0)
+            {
+                CreateLeftWall(borderCoordinates);
+            }else if (x == xMax - 1)
+            {
+                CreateRightWall(borderCoordinates);
+            }
+
+            if (createLeftWallConnector)
+            {
+                createLeftWallConnector = false;
+
+                var connectorPosition = (Vector2)Grid[borderCoordinates].transform.position + new Vector2(-_tileSize.x, _tileSize.y) * 0.5f;
+                Instantiate(solidWallConnectorLeftPrefab, connectorPosition, Quaternion.identity);
+            }
+            
+            if (!Grid.ContainsKey(borderCoordinates + Vector2Int.right))
+            {
+                createLeftWallConnector = true;
+
+                var connectorPosition = (Vector2)Grid[borderCoordinates].transform.position + new Vector2(_tileSize.x, _tileSize.y) * 0.5f;
+                Instantiate(solidWallConnectorRightPrefab, connectorPosition, Quaternion.identity);
+            }
+
+            CreateUpperWall(borderCoordinates);
         }
 
-        if (wallsNeeded.OnLeft)
+        // Create walls on right border
+        var createUpperWallConnector = false;
+        borderCoordinates = new Vector2Int(xMax - 1, -1);
+        for (var y = -1; y > -yMax; y--)
         {
-            wallPositionOffset = Vector2.left * _tileSize * 0.5f;
-            Instantiate(sideWallPrefab, tilePosition + wallPositionOffset, Quaternion.identity);
+            borderCoordinates.y = y;
+            if(!Grid.ContainsKey(borderCoordinates))
+                continue;
+            
+            if (y == -(yMax - 1))
+            {
+                CreateBottomWall(borderCoordinates);
+            }
+            
+            if (createUpperWallConnector)
+            {
+                createUpperWallConnector = false;
+
+                var connectorPosition = (Vector2)Grid[borderCoordinates].transform.position + new Vector2(_tileSize.x, _tileSize.y) * 0.5f;
+                Instantiate(solidWallConnectorRightPrefab, connectorPosition, Quaternion.identity);
+            }
+            
+            if (!Grid.ContainsKey(borderCoordinates + Vector2Int.down))
+            {
+                createUpperWallConnector = true;
+
+                var connectorPosition = (Vector2)Grid[borderCoordinates].transform.position + new Vector2(_tileSize.x, -_tileSize.y) * 0.5f;
+                Instantiate(transparentWallConnectorRightPrefab, connectorPosition, Quaternion.identity);
+            }
+            
+            CreateRightWall(borderCoordinates);
         }
+        
+        // Create walls on bottom border
+        var createRightWallConnector = false;
+        borderCoordinates = new Vector2Int(xMax - 2, -(yMax - 1));
+        for (var x = xMax - 2; x >= 0; x--)
+        {
+            borderCoordinates.x = x;
+            if(!Grid.ContainsKey(borderCoordinates))
+                continue;
+            
+            if (x == 0)
+            {
+                CreateLeftWall(borderCoordinates);
+            }
+            
+            if (createRightWallConnector)
+            {
+                createRightWallConnector = false;
+
+                var connectorPosition = (Vector2)Grid[borderCoordinates].transform.position + new Vector2(_tileSize.x, _tileSize.y) * 0.5f;
+                Instantiate(transparentWallConnectorRightPrefab, connectorPosition, Quaternion.identity);
+            }
+            
+            if (!Grid.ContainsKey(borderCoordinates + Vector2Int.left))
+            {
+                createRightWallConnector = true;
+
+                var connectorPosition = (Vector2)Grid[borderCoordinates].transform.position + new Vector2(-_tileSize.x, -_tileSize.y) * 0.5f;
+                Instantiate(transparentWallConnectorLeftPrefab, connectorPosition, Quaternion.identity);
+            }
+            
+            CreateBottomWall(borderCoordinates);
+        }
+        
+        // Create walls on left border
+        var createLowerWallConnector = false;
+        borderCoordinates = new Vector2Int(0, -yMax + 2);
+        for (var y = -yMax + 2; y < 0; y++)
+        {
+            borderCoordinates.y = y;
+            if(!Grid.ContainsKey(borderCoordinates))
+                continue;
+            
+            if (createLowerWallConnector)
+            {
+                createLowerWallConnector = false;
+
+                var connectorPosition = (Vector2)Grid[borderCoordinates].transform.position + new Vector2(-_tileSize.x, -_tileSize.y) * 0.5f;
+                Instantiate(transparentWallConnectorLeftPrefab, connectorPosition, Quaternion.identity);
+            }
+            
+            if (!Grid.ContainsKey(borderCoordinates + Vector2Int.up))
+            {
+                createLowerWallConnector = true;
+
+                var connectorPosition = (Vector2)Grid[borderCoordinates].transform.position + new Vector2(-_tileSize.x, _tileSize.y) * 0.5f;
+                Instantiate(solidWallConnectorLeftPrefab, connectorPosition, Quaternion.identity);
+            }
+            
+            CreateLeftWall(borderCoordinates);
+        }
+
+    }
+
+    private void CreateWallsOnEmptyTile(Vector2Int coordinates)
+    {
+        var upperTileExists = Grid.ContainsKey(coordinates + Vector2Int.up);
+        var upperTile = upperTileExists ? Grid[coordinates + Vector2Int.up] : null;
+        
+        var rightTileExists = Grid.ContainsKey(coordinates + Vector2Int.right);
+        var rightTile = rightTileExists ? Grid[coordinates + Vector2Int.right] : null;
+        
+        var lowerTileExists = Grid.ContainsKey(coordinates + Vector2Int.down);
+        var lowerTile = lowerTileExists ? Grid[coordinates + Vector2Int.down] : null;
+        
+        var leftTileExists = Grid.ContainsKey(coordinates + Vector2Int.left);
+        var leftTile = leftTileExists ? Grid[coordinates + Vector2Int.left] : null;
+
+        if (upperTileExists && rightTileExists)
+        {
+            var placementPosition = (Vector2)upperTile.transform.position + Vector2.down * _tileSize;
+            if (lowerTileExists)
+            {
+                if (leftTileExists)
+                {
+                    // Create wall block
+                    InstantiateWall(wallBlockPrefab, placementPosition);
+                }
+                else
+                {
+                    // Create right facing U wall
+                    InstantiateWall(sideFacingUWallPrefab, placementPosition);
+                }
+            }
+            else if (leftTileExists)
+            {
+                // Create up facing U wall
+                InstantiateWall(upFacingUWallPrefab, placementPosition);
+            }
+            else
+            {
+                // Create up right corner wall
+                InstantiateWall(upperCornerPrefab, placementPosition);
+            }
+            
+            return;
+        }
+
+        if (upperTileExists && leftTileExists)
+        {
+            var placementPosition = (Vector2)upperTile.transform.position + Vector2.down * _tileSize;
+            if (lowerTileExists)
+            {
+                // Create left facing U wall
+                var uWallSpriteRenderer = InstantiateWall(sideFacingUWallPrefab, placementPosition).GetComponentInChildren<SpriteRenderer>();
+                uWallSpriteRenderer.flipX = true;
+            }
+            else
+            {
+                // Create up left corner wall                
+                var cornerWallSpriteRenderer = InstantiateWall(upperCornerPrefab, placementPosition).GetComponentInChildren<SpriteRenderer>();
+                cornerWallSpriteRenderer.flipX = true;
+            }
+
+            return;
+        }
+
+        if (lowerTileExists && rightTileExists)
+        {
+            var placementPosition = (Vector2)lowerTile.transform.position + Vector2.up * _tileSize;
+            if (leftTileExists)
+            {
+                // Create down facing U wall
+                InstantiateWall(downFacingUWallPrefab, placementPosition);
+            }
+            else
+            {
+                // Create down right corner wall
+                InstantiateWall(lowerCornerPrefab, placementPosition);
+            }
+
+            return;
+        }
+
+        if (lowerTileExists && leftTileExists)
+        {
+            var placementPosition = (Vector2)lowerTile.transform.position + Vector2.up * _tileSize;
+            
+            // Create down left corner wall
+            var cornerWallSpriteRenderer = InstantiateWall(lowerCornerPrefab, placementPosition).GetComponentInChildren<SpriteRenderer>();
+            cornerWallSpriteRenderer.flipX = true;
+            return;
+        }
+
+        if (upperTileExists)
+        {
+            var placementPosition = (Vector2)upperTile.transform.position + Vector2.down * _tileSize * 0.5f;
+            
+            // Create upper wall 
+            InstantiateWall(transparentWallPrefab, placementPosition);
+        }
+
+        if (lowerTileExists)
+        {
+            var placementPosition = (Vector2)lowerTile.transform.position + Vector2.up * _tileSize * 0.5f;
+            
+            // Create upper wall 
+            InstantiateWall(solidWallPrefab, placementPosition);
+        }
+        
+        if (rightTileExists)
+        {
+            var placementPosition = (Vector2)rightTile.transform.position + Vector2.left * _tileSize * 0.5f;
+
+            // Create right wall
+            InstantiateWall(rightWallPrefab, placementPosition);
+        }
+
+        if (leftTileExists)
+        {
+            var placementPosition = (Vector2)leftTile.transform.position + Vector2.right * _tileSize * 0.5f;
+            
+            // Create left wall
+            InstantiateWall(leftWallPrefab, placementPosition);
+        }
+    }
+    
+    private void CreateUpperWall(Vector2Int coordinates)
+    {
+        var topWallPosition = (Vector2)Grid[coordinates].transform.position + _tileSize * Vector2.up * 0.5f;
+        InstantiateWall(solidWallPrefab, topWallPosition);
+    }
+    
+    private void CreateRightWall(Vector2Int coordinates)
+    {
+        var rightWallPosition = (Vector2)Grid[coordinates].transform.position +
+                                _tileSize * Vector2.right * 0.5f;
+        var newWall = InstantiateWall(rightWallPrefab, rightWallPosition);
+        newWall.GetComponentInChildren<SpriteRenderer>().sortingOrder = -coordinates.y;
+    }
+    
+    private void CreateBottomWall(Vector2Int coordinates)
+    {
+        var bottomWallPosition = (Vector2)Grid[coordinates].transform.position +
+                                 _tileSize * Vector2.down * 0.5f;
+        InstantiateWall(transparentWallPrefab, bottomWallPosition);
+    }
+    
+    private void CreateLeftWall(Vector2Int coordinates)
+    {
+        var leftWallPosition = (Vector2)Grid[coordinates].transform.position +
+                               _tileSize * Vector2.left * 0.5f;
+        var newWall = Instantiate(leftWallPrefab, leftWallPosition, Quaternion.identity);
+        newWall.GetComponentInChildren<SpriteRenderer>().sortingOrder = -coordinates.y;
     }
 
     public void DropKey(Vector2Int dropCoordinates)
@@ -185,6 +482,11 @@ public class GridManager : MonoBehaviour
         {
             Destroy(tileEntry.Value.gameObject);
         }
+
+        foreach (var wall in _placedWalls)
+        {
+            Destroy(wall);
+        }
         Grid.Clear();
     }
 
@@ -199,21 +501,5 @@ public class GridManager : MonoBehaviour
         GateDown,
         GateRight,
         GateLeft,
-    }
-
-    private struct WallsNeeded
-    {
-        public bool OnTop { get; }
-        public bool OnRight { get; }
-        public bool OnBottom { get; }
-        public bool OnLeft { get; }
-
-        public WallsNeeded(bool top, bool right, bool bottom, bool left)
-        {
-            OnTop = top;
-            OnRight = right;
-            OnBottom = bottom;
-            OnLeft = left;
-        }
     }
 }
