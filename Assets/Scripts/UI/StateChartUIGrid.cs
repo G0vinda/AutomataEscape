@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Helper;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -19,6 +20,8 @@ namespace UI
         private float _subCellSize;
         private float _gridHeight;
         private Vector2 _bottomLeftPosition;
+        private CanvasScaler deleteMe;
+        private Graphic deleteMe2;
 
         public void Initialize(float gridHeight, Vector2 bottomLeftPosition)
         {
@@ -365,7 +368,7 @@ namespace UI
             return position.IsInsideSquare(_bottomLeftPosition, _gridHeight);
         }
 
-        public StateChartCell TryGetEmptyCellOnPosition(Vector2 screenPosition, out Vector3 cellPosition)
+        public StateChartCell TryGetEmptyCellOnPosition(Vector2 screenPosition, out Vector2 cellPosition)
         {
             if (IsPositionInsideGrid(screenPosition))
             {
@@ -379,7 +382,7 @@ namespace UI
                 }
             }
             
-            cellPosition = Vector3.zero;
+            cellPosition = Vector2.zero;
             return null;
         }
 

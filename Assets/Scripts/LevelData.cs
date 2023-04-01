@@ -23,26 +23,21 @@ public class LevelData
 
     public List<AvailableStateInfo> AvailableActions;
     public List<StateChartManager.TransitionCondition> AvailableTransitionConditions;
+    public Dictionary<Vector2Int, GridManager.KeyType> KeyData;
 
-    public LevelData(Vector2Int startPos, Direction startDirection, GridManager.TileType[,] grid,
-        List<AvailableStateInfo> actions, List<StateChartManager.TransitionCondition> conditions)
+    public LevelData(
+        Vector2Int startPos, 
+        Direction startDirection, 
+        GridManager.TileType[,] grid,
+        List<AvailableStateInfo> actions, 
+        List<StateChartManager.TransitionCondition> conditions,
+        Dictionary<Vector2Int, GridManager.KeyType> keyData)
     {
         RobotStartPosition = startPos;
         RobotStartDirection = startDirection;
         Grid = grid;
         AvailableActions = actions;
         AvailableTransitionConditions = conditions;
-    }
-}
-
-public class LevelWithKeyData : LevelData
-{
-    public Vector2Int KeyPosition { get; }
-
-    public LevelWithKeyData(Vector2Int startPos, Vector2Int keyPos, Direction startDirection,
-        GridManager.TileType[,] grid, List<AvailableStateInfo> actions,
-        List<StateChartManager.TransitionCondition> conditions) : base(startPos, startDirection, grid, actions, conditions)
-    {
-        KeyPosition = keyPos;
+        KeyData = keyData;
     }
 }

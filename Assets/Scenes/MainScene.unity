@@ -584,7 +584,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.095007114, g: 0.2924443, b: 0.3301887, a: 0}
+  m_BackGroundColor: {r: 0.11614455, g: 0.2579877, b: 0.2830189, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -992,7 +992,7 @@ GameObject:
   - component: {fileID: 654531688}
   - component: {fileID: 654531689}
   m_Layer: 5
-  m_Name: StateChartCanvas
+  m_Name: UICanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1443,7 +1443,8 @@ MonoBehaviour:
   uiManager: {fileID: 654531688}
   inputManager: {fileID: 868897339}
   robotStateChartRunnerPrefab: {fileID: 5906237375931738515, guid: 4e1cc2fbe5a373345aea51e3bbf8a233, type: 3}
-  keyObject: {fileID: 8136169380437567612, guid: 0cf3fc4228cd19144b0ee149455fb0b8, type: 3}
+  redKeyPrefab: {fileID: 7906716610573137442, guid: 681d2070f6dce1444af8213016f4dcbd, type: 3}
+  blueKeyPrefab: {fileID: 9051665487658809036, guid: 457731d3619972b48987801078d25961, type: 3}
   currentStateIndicator: {fileID: 2127462071}
   resetSaveSystemOnStart: 1
 --- !u!114 &868897338
@@ -1470,7 +1471,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bdbf564326b9d249833b8287d3d5acf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useTouch: 0
+  useTouch: 1
 --- !u!1001 &1009848778
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1594,7 +1595,7 @@ GameObject:
   - component: {fileID: 1022330844}
   - component: {fileID: 1022330843}
   m_Layer: 5
-  m_Name: ProgramButton
+  m_Name: ViewButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1750,7 +1751,8 @@ MonoBehaviour:
   goalTilePrefab: {fileID: 4579412800560945050, guid: 0450e4726e9f59d408f53e58abe06aa5, type: 3}
   orangeTilePrefab: {fileID: 8037167587416976068, guid: 4864e6fdac7659442acb5618590cfbcc, type: 3}
   purpleTilePrefab: {fileID: 3936563129576413985, guid: a290fc6dd5a262d42a4c7d10df064438, type: 3}
-  gateTilePrefab: {fileID: 379294045583172316, guid: f68c121c63a67b846945c6faf09748a1, type: 3}
+  blueGateTilePrefab: {fileID: 22112647600960642, guid: 5ac7a9ca79d7d624683eb46ff75b8a09, type: 3}
+  redGateTilePrefab: {fileID: 663882095650040343, guid: 3effc1a609708864babddfbfcf85f780, type: 3}
   solidWallPrefab: {fileID: 722756559696109042, guid: 4b917f5e4cdbf964aa07bc0165f38af5, type: 3}
   transparentWallPrefab: {fileID: 9199002141134467628, guid: e94ef0f81746ea84cbf47a9e6be90c5e, type: 3}
   rightWallPrefab: {fileID: 333017306851345668, guid: a20c46db9f10b264eaebc8b2bfafecbe, type: 3}
@@ -1760,7 +1762,7 @@ MonoBehaviour:
   upFacingUWallPrefab: {fileID: 4991052688193886819, guid: f5a208941eeb4954eb82b01772048a22, type: 3}
   wallBlockPrefab: {fileID: 9089401059336198310, guid: f69509c08310c224b9613f3ba5dd90be, type: 3}
   upperCornerPrefab: {fileID: 5351537508939905, guid: 4be2661117c5d2c418e3e2c890837fa9, type: 3}
-  lowerCornerPrefab: {fileID: 0}
+  lowerCornerPrefab: {fileID: 7097656074760604621, guid: e973f70abaa186442873dcc0661dc070, type: 3}
   solidWallConnectorRightPrefab: {fileID: 2734867729705314833, guid: 8cead1e8caee1034e9a4998d854f8cf8, type: 3}
   solidWallConnectorLeftPrefab: {fileID: 7957653580547911512, guid: 4081a3a519af1af4da7f72cf775bea11, type: 3}
   transparentWallConnectorRightPrefab: {fileID: 1731637766195072605, guid: e44067653993fd042853197013e023d2, type: 3}
@@ -2652,7 +2654,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5616124973732390945, guid: 120e659cafb05af4ea61d90cebb3c6c4, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -20.000488
+      value: -20.000977
       objectReference: {fileID: 0}
     - target: {fileID: 5616124973732390945, guid: 120e659cafb05af4ea61d90cebb3c6c4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
