@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UI;
 using UnityEngine;
 
@@ -119,6 +120,17 @@ namespace Helper
         public static bool IsDefault<T>(this T value)
         {
             return value.Equals(default(T));
+        }
+
+        public static List<Vector2Int> GetAdjacentCoordinates(this Vector2Int coordinates)
+        {
+            return new List<Vector2Int>()
+            {
+                coordinates + Vector2Int.up,
+                coordinates + Vector2Int.right,
+                coordinates + Vector2Int.down,
+                coordinates + Vector2Int.left
+            };
         }
     }
 }

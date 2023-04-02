@@ -992,6 +992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 258b5850b5a5f92439e3f1bcbbfd2a1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockedCellMarkingPrefab: {fileID: 2628453099235809261, guid: 90e6ec1ad1e11834fb7d9627d6465bc4, type: 3}
 --- !u!1001 &670139516
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1899,9 +1900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfbc99885a8660469ed716fa45ca4fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridTestPrefab: {fileID: 2639917824283387851, guid: 876590f601734e343a515cb7bc49a2a5, type: 3}
   numberOfRows: 7
-  drawTestGrid: 0
 --- !u!1001 &1221022762
 PrefabInstance:
   m_ObjectHideFlags: 0
