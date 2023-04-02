@@ -32,11 +32,8 @@ namespace UI
         {
             var newState = Instantiate(stateElementPrefab, transform);
             newState.Initialize(stateData);
-            newState.SetToAvailable();
             var numOfStates = _stateElements.Count;
-            if(numOfStates > 0)
-                _stateElements[^1].SetToUnavailable();
-            
+
             var newStateTransform = newState.GetComponent<RectTransform>();
             newStateTransform.SetSiblingIndex(numOfStates);
 
@@ -49,8 +46,6 @@ namespace UI
         public void RemoveState(StateUIPlaceElement stateUIPlaceElement)
         {
             _stateElements.Remove(stateUIPlaceElement);
-            if(_stateElements.Count > 0)
-                _stateElements[^1].SetToAvailable();
         }
 
         private void DestroyStates()

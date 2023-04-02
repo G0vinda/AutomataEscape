@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Helper;
@@ -14,6 +15,8 @@ namespace UI
         [SerializeField] private StartStateUIElement startStateUIElement;
         [SerializeField] private StateChartPanel stateChartPanel;
         [SerializeField] private Image selectPanel;
+
+        public static Action<bool> ViewStateChanged;
 
         private StateChartManager _stateChartManager;
         private StateChartUIGrid _stateChartUIGrid;
@@ -59,7 +62,7 @@ namespace UI
         
         private void SetupStateChartUI()
         {
-            var availableHorizontalSpace = selectPanel.transform.position.x - selectPanel.rectTransform.sizeDelta.x;
+            var availableHorizontalSpace = selectPanel.transform.position.x - ScaleFloat(selectPanel.rectTransform.sizeDelta.x);
             stateChartPanel.Initialize(availableHorizontalSpace);
 
             var startCoordinates = new Vector2Int(0, 3);
@@ -97,13 +100,23 @@ namespace UI
 
         public void ToggleUI()
         {
-            _uiActive = !_uiActive;
-            stateChartPanel.gameObject.SetActive(_uiActive);
-            selectPanel.gameObject.SetActive(_uiActive);
+            if (_uiActive)
+            {
+                SwitchLevelView();
+            }
+            else
+            {
+                SwitchToProgramView();
+            }
+        }
 
-            if (!_uiActive) 
-                return;
-
+        public void SwitchToProgramView()
+        {
+            _uiActive = true;
+            stateChartPanel.gameObject.SetActive(true);
+            selectPanel.gameObject.SetActive(true);
+            ViewStateChanged?.Invoke(true);
+            
             if (!_stateChartPanelInitialized)
             {
                 SetupStateChartUI();
@@ -115,6 +128,14 @@ namespace UI
                 EnableAvailableUIElements();
                 _availableSelectChanged = false;
             }
+        }
+
+        public void SwitchLevelView()
+        {
+            _uiActive = false;
+            stateChartPanel.gameObject.SetActive(false);
+            selectPanel.gameObject.SetActive(false);
+            ViewStateChanged?.Invoke(false);
         }
 
         public void ZoomStateChartPanel(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
@@ -157,6 +178,7 @@ namespace UI
                 i--;
             }
 
+            placeElement.SetImageToActive(false);
             _stateChartManager.RemoveState(placeElement.GetAssignedId());
             _placedStateElements.Remove(placeElement);
             placeElement.SetAssignedId(-1);
@@ -173,7 +195,7 @@ namespace UI
             var newKey = (sourceState, destinationState);
             if (_connectedTransitions.ContainsKey(newKey))
             {
-                RemoveTransition(sourceState, condition);   
+                RemoveTransition(sourceState, _connectedTransitions[newKey]);   
             }
 
             var transitionWithSameCondition =
@@ -192,6 +214,19 @@ namespace UI
             {
                 _stateChartManager.AddTransition(condition, sourceState.AssignedId, destinationState.GetAssignedId());
             }
+
+            if (sourceState.TryGetComponent<StateUIPlaceElement>(out var stateUIPlaceElement))
+            {
+                var sourceStateConnected = _stateChartManager.GetStateChart()
+                    .CheckIfStateIsConnected(stateUIPlaceElement.GetAssignedId());
+                
+                stateUIPlaceElement.SetImageToActive(sourceStateConnected);
+            }
+            
+            var destinationStateConnected = _stateChartManager.GetStateChart()
+                .CheckIfStateIsConnected(destinationState.GetAssignedId());
+                
+            destinationState.SetImageToActive(destinationStateConnected);
         }
 
         public void RemoveTransition(StateUIElement sourceState, TransitionCondition condition)
@@ -204,11 +239,18 @@ namespace UI
             if (condition == TransitionCondition.Default)
             {
                 _stateChartManager.RemoveDefaultTransition(sourceState.AssignedId);
+                if(sourceState.TryGetComponent<StateUIPlaceElement>(out var stateUIPlaceElement))
+                    stateUIPlaceElement.SetImageToActive(false);
             }
             else
             {
                 _stateChartManager.RemoveTransition(condition, sourceState.AssignedId);
             }
+
+            var destinationState = keyToRemove.Item2;
+            var destinationStateIsConnected = _stateChartManager.GetStateChart().CheckIfStateIsConnected(destinationState.GetAssignedId());
+            destinationState.SetImageToActive(destinationStateIsConnected);
+            TransitionLineDrawer.TransitionLineRemoved(condition);
         }
 
         public float UnscaleFloat(float downscaledFloat)

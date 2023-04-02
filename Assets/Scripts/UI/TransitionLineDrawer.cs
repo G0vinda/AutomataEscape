@@ -21,71 +21,28 @@ namespace UI
                 { StateChartManager.TransitionCondition.StandsOnPurple, 0 },
             };
 
-        private static Dictionary<StateChartManager.TransitionCondition, Color32[]> _colorSetsByCondition =
-            new Dictionary<StateChartManager.TransitionCondition, Color32[]>()
+        private static Dictionary<StateChartManager.TransitionCondition, (Color32 startColor, Color32 endColor)> _lineColors =
+            new Dictionary<StateChartManager.TransitionCondition, (Color32, Color32)>()
             {
-                { StateChartManager.TransitionCondition.Default, new Color32[] {
-                    new (0x50, 0x50, 0x50, 0xFF),
-                    new (0x44, 0x44, 0x44, 0xFF),
-                    new (0x68, 0x68, 0x68, 0xFF),
-                    new (0x49, 0x49, 0x49, 0xFF),
-                    new (0x5C, 0x5C, 0x5C, 0xFF),
-                    new (0x3E, 0x3E, 0x3E, 0xFF),
-                    new (0x75, 0x75, 0x75, 0xFF),
-                    new (0x38, 0x38, 0x38, 0xFF),
-                    new (0x2D, 0x2D, 0x2D, 0xFF),
-                    new (0x33, 0x33, 0x33, 0xFF)
-                }},
-                { StateChartManager.TransitionCondition.IsInFrontOfWall, new Color32[] {
-                    new (0xDF, 0x22, 0x22, 0xFF),
-                    new (0xDF, 0x22, 0x22, 0xFF),
-                    new (0xDF, 0x22, 0x22, 0xFF),
-                    new (0xDF, 0x22, 0x22, 0xFF),
-                    new (0xDF, 0x22, 0x22, 0xFF),
-                    new (0xDF, 0x22, 0x22, 0xFF),
-                    new (0xDF, 0x22, 0x22, 0xFF),
-                    new (0xDF, 0x22, 0x22, 0xFF),
-                    new (0xDF, 0x22, 0x22, 0xFF),
-                    new (0xDF, 0x22, 0x22, 0xFF)
-                }},
-                { StateChartManager.TransitionCondition.StandsOnKey, new Color32[] {
-                    new (0x10, 0x22, 0xDF, 0xFF),
-                    new (0x10, 0x22, 0xDF, 0xFF),
-                    new (0x10, 0x22, 0xDF, 0xFF),
-                    new (0x10, 0x22, 0xDF, 0xFF),
-                    new (0x10, 0x22, 0xDF, 0xFF),
-                    new (0x10, 0x22, 0xDF, 0xFF),
-                    new (0x10, 0x22, 0xDF, 0xFF),
-                    new (0x10, 0x22, 0xDF, 0xFF),
-                    new (0x10, 0x22, 0xDF, 0xFF),
-                    new (0x10, 0x22, 0xDF, 0xFF)
-                }},
-                { StateChartManager.TransitionCondition.StandsOnOrange, new Color32[] {
-                    new (0xE5, 0x8D, 0x1B, 0xFF),
-                    new (0xE5, 0x8D, 0x1B, 0xFF),
-                    new (0xE5, 0x8D, 0x1B, 0xFF),
-                    new (0xE5, 0x8D, 0x1B, 0xFF),
-                    new (0xE5, 0x8D, 0x1B, 0xFF),
-                    new (0xE5, 0x8D, 0x1B, 0xFF),
-                    new (0xE5, 0x8D, 0x1B, 0xFF),
-                    new (0xE5, 0x8D, 0x1B, 0xFF),
-                    new (0xE5, 0x8D, 0x1B, 0xFF),
-                    new (0xE5, 0x8D, 0x1B, 0xFF)
-                }},
-                { StateChartManager.TransitionCondition.StandsOnPurple, new Color32[] {
-                    new (0x56, 0x31, 0xBC, 0xFF),
-                    new (0x56, 0x31, 0xBC, 0xFF),
-                    new (0x56, 0x31, 0xBC, 0xFF),
-                    new (0x56, 0x31, 0xBC, 0xFF),
-                    new (0x56, 0x31, 0xBC, 0xFF),
-                    new (0x56, 0x31, 0xBC, 0xFF),
-                    new (0x56, 0x31, 0xBC, 0xFF),
-                    new (0x56, 0x31, 0xBC, 0xFF),
-                    new (0x56, 0x31, 0xBC, 0xFF),
-                    new (0x56, 0x31, 0xBC, 0xFF)
-                }},
+                { 
+                    StateChartManager.TransitionCondition.Default, (new Color32(0x2E, 0x2E, 0x2E, 0xFF), new Color32(0xE0, 0xE0, 0xE0, 0xFF) )
+                },
+                { 
+                    StateChartManager.TransitionCondition.IsInFrontOfWall, (new Color32(0x92, 0xF8, 0xFF, 0xFF), new Color32(0x10, 0x4B, 0x50, 0xFF))
+                },
+                { 
+                    StateChartManager.TransitionCondition.StandsOnKey, (new Color32(0x3C, 0xFA, 0x9E, 0xFF), new Color32(0x10, 0x4F, 0x24, 0xFF))
+                },
+                { 
+                    StateChartManager.TransitionCondition.StandsOnOrange, (new Color32(0xF8, 0x90, 0x41, 0xFF), new Color32(0x59, 0x26, 0x00, 0xFF))
+                },
+                { 
+                    StateChartManager.TransitionCondition.StandsOnPurple, (new Color32(0xB3, 0x4A, 0xA2, 0xFF), new Color32(0x24, 0x1A, 0x5B, 0xFF))
+                },
                 
             };
+
+        private static readonly float ColorStep = 1f / 9;
         
         private static Vector2 _currentSubCellPosition;
         private static Direction _previousDrawDirection;
@@ -113,9 +70,9 @@ namespace UI
             }
 
             var drawStartPosition = StateChartUIGrid.GetStateBorderPosition(sourceState.transform.position, inputPosition, inputDirection);
-            var colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition]++;
-            var lineColor = _colorSetsByCondition[CurrentTransitionCondition][colorIndex % 10];
-            CurrentTransitionLine = sourceState.DrawFirstTransitionLine(drawStartPosition, inputDirection, lineColor, CurrentTransitionCondition);
+            var colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition];
+            var lineColor = GetLineColor(CurrentTransitionCondition, colorIndex);
+            CurrentTransitionLine = sourceState.DrawFirstTransitionLineElement(drawStartPosition, inputDirection, lineColor, CurrentTransitionCondition);
             _currentSubCellPosition =
                 StateChartUIGrid.GetNextSubCellPositionInDirection(drawStartPosition, inputDirection, true);
             _previousDrawDirection = inputDirection;
@@ -139,13 +96,20 @@ namespace UI
                 
                 Debug.Log("State was detected");
                 DestinationStateElement = hoveredStateElement;
+                DestinationStateElement.HighlightAsTransitionDestination();
                 var stateCell = DestinationStateElement.GetComponent<StateUIElement>().ConnectedCell;
                 (_plugPosition, _plugDirection) =
                     StateChartUIGrid.GetPlugAttributesForAdjacentState(_currentSubCellPosition, stateCell);
                 return true;
             }
-            DestinationStateElement = null;
-            _plugPosition = Vector2.negativeInfinity;
+
+
+            if (DestinationStateElement != null)
+            {
+                DestinationStateElement.RemoveHighlight();
+                DestinationStateElement = null;
+                _plugPosition = Vector2.negativeInfinity;
+            }
 
             if (StateChartUIGrid.CheckIfSubCellIsAdjacentToSubCell(_currentSubCellPosition, inputPosition, out var newDirection))
             {
@@ -155,14 +119,14 @@ namespace UI
                     
                     var previousInputWasHorizontal = _previousDrawDirection == Direction.Left ||
                                                      _previousDrawDirection == Direction.Right;
-                    ref var hoveredSubCell = ref StateChartUIGrid.GetSubCellOnPosition(inputPosition);
+                    ref var previousSubCell = ref StateChartUIGrid.GetSubCellOnPosition(_currentSubCellPosition);
                     if (previousInputWasHorizontal)
                     {
-                        hoveredSubCell.PlacedHorizontalLine = null;
+                        previousSubCell.PlacedHorizontalLine = null;
                     }
                     else
                     {
-                        hoveredSubCell.PlacedVerticalLine = null;
+                        previousSubCell.PlacedVerticalLine = null;
                     }
 
                     if (!CurrentTransitionLine.TryGetLastElementDirection(out _previousDrawDirection))
@@ -207,9 +171,28 @@ namespace UI
             return false;
         }
 
+        public static void CancelDraw()
+        {
+            if(DestinationStateElement != null)
+                DestinationStateElement.RemoveHighlight();
+        }
+
         public static void FinishLine()
         {
+            _numberOfLinesByCondition[CurrentTransitionCondition]++;
             CurrentTransitionLine.CreatePlug(_plugPosition, _plugDirection.ToZRotation());
+            DestinationStateElement.RemoveHighlight();
+        }
+
+        public static void TransitionLineRemoved(StateChartManager.TransitionCondition condition)
+        {
+            _numberOfLinesByCondition[condition]--;
+        }
+
+        public static Color GetLineColor(StateChartManager.TransitionCondition condition, int colorIndex)
+        {
+            var (color1, color2) = _lineColors[condition];
+            return Color32.Lerp(color1, color2, ColorStep * colorIndex);
         }
     }
 }

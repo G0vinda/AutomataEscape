@@ -5,25 +5,27 @@ using UI;
 using UnityEngine;
 using static StateChartManager;
 
-
 public class StateChartRunner : MonoBehaviour
 {
-    [SerializeField] private GameObject keySprite;
-
     public static Action<StateAction> NextStateStarts;  
     
     public bool IsRunning { get; private set; }
     
     private GridManager _gridManager;
+    private RobotSpriteChanger _spriteChanger;
     private Vector2Int _currentCoordinates;
     private Direction _currentDirection;
-    private bool _isCarryingKey;
+    private GridManager.KeyType _grabbedKeyType;
 
     public void SetStartCoordinates(Vector2Int coordinates, Direction direction)
     {
         _currentCoordinates = coordinates;
         _currentDirection = direction;
-        _gridManager = FindObjectOfType<GridManager>();
+        _gridManager = FindObjectOfType<GridManager>(); // Todo: Fetch from GameManager
+        _spriteChanger = GetComponent<RobotSpriteChanger>();
+        _spriteChanger.SetCarryKeyType(GridManager.KeyType.None);
+        _spriteChanger.SetSpriteDirection(direction);
+        _spriteChanger.SetSpriteSortingOrder(GridManager.GetSpriteLayerFromCoordinates(coordinates));
     }
 
     public void StartRun(StateChart stateChart)
@@ -31,7 +33,7 @@ public class StateChartRunner : MonoBehaviour
         StartCoroutine(Run(stateChart));
     }
 
-    public IEnumerator Run(StateChart stateChart)
+    private IEnumerator Run(StateChart stateChart)
     {
         var currentState = stateChart.StartState;
         IsRunning = true;
@@ -119,6 +121,7 @@ public class StateChartRunner : MonoBehaviour
         
         transform.position = _gridManager.Grid[newCoordinates].transform.position;
         _currentCoordinates = newCoordinates;
+        _spriteChanger.SetSpriteSortingOrder(GridManager.GetSpriteLayerFromCoordinates(_currentCoordinates));
         
         if (_gridManager.CheckIfTileIsGoal(_currentCoordinates))
         {
@@ -130,30 +133,28 @@ public class StateChartRunner : MonoBehaviour
     private void Turn(bool turnClockwise)
     {
         _currentDirection = _currentDirection.Turn(turnClockwise);
-        transform.rotation = _currentDirection.ToZRotation();
+        _spriteChanger.SetSpriteDirection(_currentDirection);
     }
 
     private void Grab()
     {
-        if (!CheckIfOnKey() || _isCarryingKey)
+        if (!CheckIfOnKey() || _grabbedKeyType != GridManager.KeyType.None)
         {
             return;
         }
 
-        var key = GameObject.FindGameObjectWithTag("Key");
-        Destroy(key);
-        _isCarryingKey = true;
-        keySprite.SetActive(true);
+        _grabbedKeyType = GameManager.Instance.GrabKeyOnCoordinates(_currentCoordinates);
+        _spriteChanger.SetCarryKeyType(_grabbedKeyType);
     }
 
     private void Drop()
     {
-        if(!_isCarryingKey)
+        if(_grabbedKeyType == GridManager.KeyType.None || GameManager.Instance.IsKeyOnCoordinates(_currentCoordinates))
             return;
         
-        _gridManager.DropKey(_currentCoordinates);
-        _isCarryingKey = false;
-        keySprite.SetActive(false);
+        GameManager.Instance.DropKeyOnCoordinates(_currentCoordinates, _grabbedKeyType);
+        _grabbedKeyType = GridManager.KeyType.None;
+        _spriteChanger.SetCarryKeyType(GridManager.KeyType.None);
     }
 
     private bool CheckIfWayIsBlocked()
@@ -163,13 +164,6 @@ public class StateChartRunner : MonoBehaviour
 
     private bool CheckIfOnKey()
     {
-        var keyInstance = GameObject.FindWithTag("Key");
-        if (keyInstance == null)
-        {
-            return false;
-        }
-        
-        var key = keyInstance.GetComponent<Key>();
-        return key.Coordinates == _currentCoordinates;
+        return GameManager.Instance.IsKeyOnCoordinates(_currentCoordinates);
     }
 }

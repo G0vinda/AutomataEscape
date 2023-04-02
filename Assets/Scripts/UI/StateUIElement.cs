@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,10 +37,10 @@ namespace UI
             }
         }
         
-        [SerializeField] public Image image;
-        [SerializeField] public TextMeshProUGUI textElement;
-        [SerializeField] public float stateBufferSpace;
         [SerializeField] private TransitionLine transitionLinePrefab;
+
+        public Image image;
+        public List<Image> pins;
         
         public static SizeAttributes StateSizeAttributes;
         
@@ -74,6 +73,13 @@ namespace UI
             var scaleDelta = StateSizeAttributes.StateSize.x / _imageTransform.sizeDelta.x;
             UpdateTransitionLines(scaleDelta);
             _imageTransform.sizeDelta = StateSizeAttributes.StateSize;
+            _imageTransform.localScale = Vector2.one;
+        }
+
+        public void SetSizeToHighlight()
+        {
+            var highlightScaleFactor = 1.1f;
+            _imageTransform.localScale = Vector2.one * highlightScaleFactor;
         }
         
         private void UpdateTransitionLines(float scaleDelta)
@@ -92,19 +98,10 @@ namespace UI
             }
         }
 
-        public void SetText(string text)
-        {
-            textElement.text = text;
-        }
-
-        public void SetImageColor(Color color)
-        {
-            image.color = color;
-        }
-
-        public TransitionLine DrawFirstTransitionLine(Vector2 position, Direction direction, Color lineColor, StateChartManager.TransitionCondition condition)
+        public TransitionLine DrawFirstTransitionLineElement(Vector2 position, Direction direction, Color lineColor, StateChartManager.TransitionCondition condition)
         {
             var newTransitionLine = Instantiate(transitionLinePrefab, position, Quaternion.identity, transform);
+            image.transform.SetAsLastSibling(); // Always bring state image to front
             newTransitionLine.Initialize(
                 StateSizeAttributes.FirstLineElementLength,
                 StateSizeAttributes.LineElementLength, 

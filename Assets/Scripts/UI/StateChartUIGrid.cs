@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using Helper;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
     public class StateChartUIGrid : MonoBehaviour
     {
-        [SerializeField] private GameObject gridTestPrefab;
         [SerializeField] private int numberOfRows;
-        [SerializeField] private bool drawTestGrid;
 
-        private List<GameObject> _gridTestObjects = new ();
         private bool _initialized;
         private Dictionary<Vector2Int, StateChartCell> _gridCells = new ();
         private float _cellSize;
         private float _subCellSize;
         private float _gridHeight;
         private Vector2 _bottomLeftPosition;
+        private CanvasScaler deleteMe;
+        private Graphic deleteMe2;
 
         public void Initialize(float gridHeight, Vector2 bottomLeftPosition)
         {
@@ -32,9 +32,6 @@ namespace UI
                     _gridCells[cellCoordinates] = new StateChartCell();
                 }
             }
-            
-            if(drawTestGrid)
-                DrawGrid(1);
         }
 
         private void SetGridValues(float gridHeight, Vector2 bottomLeftPosition)
@@ -60,9 +57,6 @@ namespace UI
                 connectedStateElement.transform.position = newStatePosition;
                 connectedStateElement.UpdateScaling();
             }
-            
-            // if(drawTestGrid)
-            //     DrawGrid(zoomFactor);
         }
 
         public Vector2 CellToScreenCoordinates(Vector2Int cellCoordinates)
@@ -340,46 +334,32 @@ namespace UI
             }
         }
 
-        private void DrawGrid(float zoomFactor)
-        {
-            if (_gridTestObjects.Count != 0)
-            {
-                foreach (var gridTestObject in _gridTestObjects)
-                {
-                    Destroy(gridTestObject.gameObject);
-                }
-                _gridTestObjects.Clear();
-            }
-            
-            var testScaleFactor = GetComponentInParent<StateChartPanel>().GetScaleFactor() * zoomFactor;
-            foreach (var stateChartCell in _gridCells)
-            {
-                var gridTest = Instantiate(gridTestPrefab, CellToScreenCoordinates(stateChartCell.Key), Quaternion.identity, transform);
-                ((RectTransform)gridTest.transform).sizeDelta *= testScaleFactor;
-                _gridTestObjects.Add(gridTest);
-            }
-        }
-
         public bool IsPositionInsideGrid(Vector2 position)
         {
             return position.IsInsideSquare(_bottomLeftPosition, _gridHeight);
         }
 
-        public StateChartCell TryGetEmptyCellOnPosition(Vector2 screenPosition, out Vector3 cellPosition)
+        public StateChartCell TryGetEmptyCellOnPosition(Vector2 screenPosition, out Vector2 cellPosition)
         {
+            cellPosition = Vector2.zero;
             if (IsPositionInsideGrid(screenPosition))
             {
                 var cellCoordinates = ScreenToCellCoordinates(screenPosition);
                 var cell = _gridCells[cellCoordinates];
+
+                if (!cell.IsEmpty)
+                    return null;
                 
-                if (cell.PlacedStateElement == null)
+                foreach (var adjacentCell in GetAdjacentCells(cellCoordinates))
                 {
-                    cellPosition = CellToScreenCoordinates(cellCoordinates);
-                    return cell;
+                    if (!adjacentCell.IsEmpty)
+                        return null;
                 }
+                
+                cellPosition = CellToScreenCoordinates(cellCoordinates);
+                return cell;
             }
             
-            cellPosition = Vector3.zero;
             return null;
         }
 
@@ -395,5 +375,38 @@ namespace UI
                 stateChartCell.RemoveStateElement();
             }
         }
+
+        public List<Vector2> GetCellPositionsAdjacentToStates()
+        {
+            var positionList = new List<Vector2>();
+            foreach (var (coordinates, cell) in _gridCells)
+            {
+                if(cell.IsEmpty)
+                    continue;
+
+                foreach (var adjacentCoordinates in coordinates.GetAdjacentCoordinates())
+                {
+                    if(_gridCells.ContainsKey(adjacentCoordinates))
+                        positionList.Add(CellToScreenCoordinates(adjacentCoordinates));   
+                }
+            }
+
+            positionList = positionList.Distinct().ToList();
+            return positionList;
+        }
+
+        public List<StateChartCell> GetAdjacentCells(Vector2Int coordinates)
+        {
+            var adjacentCells = new List<StateChartCell>();
+            
+            foreach (var adjacentCoordinates in coordinates.GetAdjacentCoordinates())
+            {
+                if(_gridCells.ContainsKey(adjacentCoordinates))
+                    adjacentCells.Add(_gridCells[adjacentCoordinates]);    
+            }
+
+            return adjacentCells;
+        }
+        
     }
 }

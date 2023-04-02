@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b17fec52266c4502881488e9b6a9edcd, type: 3}
   m_Name: StandsOnKeyTransition
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
-  color: {r: 0.25720897, g: 0.53937894, b: 0.6415094, a: 1}
+  icon: {fileID: 21300000, guid: abcb7a5a77bc075408f543786e8303e5, type: 3}
+  color: {r: 0.23529413, g: 0.9803922, b: 0.61960787, a: 1}
   condition: 2

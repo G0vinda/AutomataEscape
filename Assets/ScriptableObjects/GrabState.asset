@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccc81209cdc05224d8609d6263d973e8, type: 3}
   m_Name: GrabState
   m_EditorClassIdentifier: 
-  text: Grab
-  image: {fileID: 0}
-  color: {r: 1, g: 0.8583265, b: 0.25943398, a: 1}
+  sprite: {fileID: 1112568108, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
+  inactiveSprite: {fileID: -1615403907, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
+  pinSprite: {fileID: 161619143, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
   action: 3

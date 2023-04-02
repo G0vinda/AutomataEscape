@@ -13,6 +13,8 @@ namespace UI
         
         public StateUIElement PlacedStateElement { get; private set; }
 
+        public bool IsEmpty => PlacedStateElement == null;
+
         public SubCell[] SubCells { get; }
 
         public StateChartCell()

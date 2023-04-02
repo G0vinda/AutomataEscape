@@ -1,5 +1,5 @@
 using System;
-using Helper;
+using System.Collections.Generic;
 using UI;
 using UnityEngine;
 
@@ -12,7 +12,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIManager uiManager;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private StateChartRunner robotStateChartRunnerPrefab;
-    [SerializeField] private GameObject keyObject;
+    [SerializeField] private GameObject redKeyPrefab;
+    [SerializeField] private GameObject blueKeyPrefab;
     [SerializeField] private CurrentStateIndicator currentStateIndicator;
     [SerializeField] private bool resetSaveSystemOnStart;
 
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     public Action<bool> StateChartRunnerStateChanged;
     
     private StateChartRunner _stateChartRunner;
+    private Dictionary<Vector2Int, (GridManager.KeyType, GameObject)> _currentKeyObjectData = new ();
     private int _currentLevelId = 0;
 
     private void Awake()
@@ -38,7 +40,7 @@ public class GameManager : MonoBehaviour
     {
         uiManager.Initialize();
         if(resetSaveSystemOnStart)
-            PlayerPrefs.SetInt("CurrentLevelId", 0);
+            PlayerPrefs.SetInt("CurrentLevelId", 5);
         _currentLevelId = PlayerPrefs.GetInt("CurrentLevelId", 0);
         LoadLevel(_currentLevelId);
     }
@@ -58,9 +60,40 @@ public class GameManager : MonoBehaviour
         return stateChartManager;
     }
 
-    public void ToggleStateChartView()
+    public bool IsKeyOnCoordinates(Vector2Int coordinates)
     {
-        uiManager.gameObject.SetActive(!uiManager.gameObject.activeSelf);
+        return _currentKeyObjectData.ContainsKey(coordinates);
+    }
+
+    public void DropKeyOnCoordinates(Vector2Int coordinates, GridManager.KeyType keyType)
+    {
+        if(gridManager.UnlockGateWithKeyIfPossible(coordinates, keyType))
+            return;
+        
+        GameObject newKey;   
+        var keyPosition = gridManager.GetTilePosition(coordinates);
+        if (keyType == GridManager.KeyType.Blue)
+        {
+            newKey = Instantiate(blueKeyPrefab, keyPosition, Quaternion.identity);
+        }
+        else if (keyType == GridManager.KeyType.Red)
+        {
+            newKey = Instantiate(redKeyPrefab, keyPosition, Quaternion.identity);
+        }
+        else
+        {
+            throw new ArgumentException();
+        }
+        
+        _currentKeyObjectData.Add(coordinates, (keyType, newKey));
+    }
+
+    public GridManager.KeyType GrabKeyOnCoordinates(Vector2Int coordinates)
+    {
+        var (keyType, keyObject) = _currentKeyObjectData[coordinates];
+        Destroy(keyObject);
+        _currentKeyObjectData.Remove(coordinates);
+        return keyType;
     }
 
     public void ToggleStateChartRunState()
@@ -80,12 +113,14 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log($"State {errorStateId}");
                 }
+                uiManager.SwitchToProgramView();
             }
             else
             {
                 currentStateIndicator.gameObject.SetActive(true);
                 _stateChartRunner.StartRun(stateChartManager.GetStateChart());
-                StateChartRunnerStateChanged?.Invoke(true);   
+                StateChartRunnerStateChanged?.Invoke(true);
+                uiManager.SwitchLevelView();
             }
         }
     }
@@ -93,12 +128,11 @@ public class GameManager : MonoBehaviour
     private void ReloadLevel()
     {
         Destroy(_stateChartRunner.gameObject);
-        LoadLevelGrid(LevelStorage.GetLevelData(_currentLevelId));
+        LoadLevelGrid(LevelDataStorage.GetLevelData(_currentLevelId));
     }
 
     public void LoadNextLevel()
     {
-        
         Destroy(_stateChartRunner.gameObject);
         StateChartRunnerStateChanged?.Invoke(false);
         currentStateIndicator.gameObject.SetActive(false);
@@ -109,7 +143,7 @@ public class GameManager : MonoBehaviour
 
     private void LoadLevel(int levelId)
     {
-        var level = LevelStorage.GetLevelData(levelId);
+        var level = LevelDataStorage.GetLevelData(levelId);
         LoadLevelGrid(level);
 
         // Setup StateChart
@@ -122,16 +156,14 @@ public class GameManager : MonoBehaviour
         gridManager.CreateLevelBasedOnGrid(level.Grid);
         var tileRenderers = gridManager.GetTileObjectRenderers();
         cameraController.AlignCameraWithLevel(tileRenderers);
-        Vector3 robotStartPositionOnGrid = gridManager.GetTilePosition(level.RobotStartPosition);
-        Quaternion robotStartRotation = level.RobotStartDirection.ToZRotation();
-        _stateChartRunner = Instantiate(robotStateChartRunnerPrefab, robotStartPositionOnGrid, robotStartRotation);
+        var robotStartPositionOnGrid = gridManager.GetTilePosition(level.RobotStartPosition);
+        _stateChartRunner = Instantiate(robotStateChartRunnerPrefab, robotStartPositionOnGrid, Quaternion.identity);
         _stateChartRunner.SetStartCoordinates(level.RobotStartPosition, level.RobotStartDirection);
-        if (level is LevelWithKeyData)
+
+        _currentKeyObjectData = new Dictionary<Vector2Int, (GridManager.KeyType, GameObject)>();
+        foreach (var (keyCoordinates, keyType) in level.KeyData)
         {
-            var keyCoordinates = ((LevelWithKeyData)level).KeyPosition;
-            Vector3 keyPositionOnGrid = gridManager.GetTilePosition(keyCoordinates);
-            var key = Instantiate(keyObject, keyPositionOnGrid, Quaternion.identity).GetComponent<Key>();
-            key.Coordinates = keyCoordinates;
+            DropKeyOnCoordinates(keyCoordinates, keyType);
         }
     }
 }

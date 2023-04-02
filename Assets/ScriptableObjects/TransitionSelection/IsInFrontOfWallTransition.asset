@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b17fec52266c4502881488e9b6a9edcd, type: 3}
   m_Name: IsInFrontOfWallTransition
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
-  color: {r: 0.735849, g: 0.21867211, b: 0.21867211, a: 1}
+  icon: {fileID: 21300000, guid: 38e3b6f7fab78db4aac18fce945567dc, type: 3}
+  color: {r: 0.41960785, g: 0.8980392, b: 0.93333334, a: 1}
   condition: 1

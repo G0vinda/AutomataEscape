@@ -3,17 +3,8 @@ using UnityEngine.EventSystems;
 
 namespace UI
 {
-    public class StateUIPlaceElement : MonoBehaviour, IPointerDownHandler
+    public class StateUIPlaceElement : MonoBehaviour
     {
-        private enum Mode
-        {
-            IsInSelectionUnavailable,
-            IsInSelectionAvailable,
-            IsBeingDragged,
-            IsPlaced
-        }
-        
-        private Mode _currentMode;
         private StateUIData _data;
         private StateUIElement _uiElement;
 
@@ -22,9 +13,7 @@ namespace UI
             _uiElement = GetComponent<StateUIElement>();
             _uiElement.Initialize(-1);
             _data = stateUIData;
-            _uiElement.SetText(_data.text);
-            _uiElement.SetImageColor(_data.color);
-            SetToUnavailable();
+            _uiElement.image.sprite = _data.inactiveSprite;
         }
 
         public int GetAssignedId()
@@ -42,66 +31,52 @@ namespace UI
             _uiElement.AssignedId = newId;
         }
 
-        public void SetToUnavailable()
-        {
-            _currentMode = Mode.IsInSelectionUnavailable;
-        }
-        
-        public void SetToAvailable()
-        {
-            _currentMode = Mode.IsInSelectionAvailable;
-        }
-        
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            if(_currentMode == Mode.IsInSelectionUnavailable)
-                return;
-            
-            _currentMode = Mode.IsBeingDragged;
-        }
-
-        private void SetColorsToDisabled()
+        private void SetColorToTransparent()
         {
             var imageColor = _uiElement.image.color;
-            var textColor = _uiElement.textElement.color;
             imageColor.a = 0.6f;
-            textColor.a = 0.6f;
             _uiElement.image.color = imageColor;
-            _uiElement.textElement.color = textColor;
         }
 
-        private void SetColorsToDefault()
+        private void SetColorToDefault()
         {
             var imageColor = _uiElement.image.color;
-            var textColor = _uiElement.textElement.color;
             imageColor.a = 1;
-            textColor.a = 1;
             _uiElement.image.color = imageColor;
-            _uiElement.textElement.color = textColor;
         }
-        
+
+        public void HighlightAsTransitionDestination()
+        {
+            _uiElement.SetSizeToHighlight();
+        }
+
+        public void RemoveHighlight()
+        {
+            _uiElement.UpdateScaling();
+        }
+
+        public void SetImageToActive(bool active)
+        {
+            _uiElement.image.sprite = active ? _data.sprite : _data.inactiveSprite;
+        }
+
         public void PlaceState(StateChartCell cellToPlaceOn, Transform newParent)
         {
             transform.SetParent(newParent);
             _uiElement.ConnectedCell = cellToPlaceOn;
-            //_uiElement.AddDefaultTransitionPlugToState();
+            
         }
 
         public void SwitchAppearanceToOnGrid()
         {
             _uiElement.UpdateScaling();
-            SetColorsToDefault();
+            SetColorToDefault();
         }
 
         public void SwitchAppearanceToOffGrid()
         {
             _uiElement.SetSizeToDefault();
-            SetColorsToDisabled();
-        }
-
-        public void SetSizeToBig()
-        {
-            _uiElement.image.rectTransform.localScale = new Vector2(1.15f, 1.15f);
+            SetColorToTransparent();
         }
     }
 }

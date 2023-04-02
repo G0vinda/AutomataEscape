@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 65, y: 0}
-  m_SizeDelta: {x: 130, y: 210}
+  m_SizeDelta: {x: 130, y: 175}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &5616124973732390944
 CanvasRenderer:
@@ -61,7 +61,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stateData: {fileID: 0}
   stateElementPrefab: {fileID: -1798996941539083538, guid: c940ff228ce3eff48a78774608fd049c, type: 3}
-  stateElementPlaceOffset: -30
+  stateElementPlaceOffset: -15
 --- !u!114 &-8846850885171274978
 MonoBehaviour:
   m_ObjectHideFlags: 0

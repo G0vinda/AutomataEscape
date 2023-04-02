@@ -16,16 +16,28 @@ PrefabInstance:
       value: PurpleTile
       objectReference: {fileID: 0}
     - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
+      propertyPath: m_Size.x
+      value: 4.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
+      propertyPath: m_Size.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7f50ae8a9ecda504da3daf3b83463c81, type: 3}
+    - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
       propertyPath: m_Color.b
-      value: 0.7735849
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
       propertyPath: m_Color.g
-      value: 0.39044145
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
       propertyPath: m_Color.r
-      value: 0.65190905
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7418705001458743379, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
       propertyPath: m_RootOrder

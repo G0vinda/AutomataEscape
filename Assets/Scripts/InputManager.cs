@@ -15,7 +15,7 @@ public class InputManager : MonoBehaviour
     public static Action StateChartPanelTapped;
     public static Action StateChartPanelDragStarted;
 
-    public static Action<StateChartManager.TransitionCondition> TransitionElementSelected;
+    public static Action<TransitionSelectElement> TransitionElementSelected;
     public static Action TransitionDeselected;
 
     public static Action DragEnded;
@@ -23,13 +23,11 @@ public class InputManager : MonoBehaviour
     public static Action<float, Vector2> ZoomInputChanged;
 
     private UIInput _uiInput;
-    private UIManager _uiManager;
     private bool _inputReleased;
 
     private void Awake()
     {
         _uiInput = new UIInput();
-        _uiManager = GameManager.Instance.GetUIManager();
     }
 
     private void OnEnable()
@@ -77,9 +75,9 @@ public class InputManager : MonoBehaviour
                 StartCoroutine(ProcessPressInput(state));
                 wasPossibleDrawInteraction = true;
             },
-            condition =>
+            transitionSelect =>
             {
-                TransitionElementSelected?.Invoke(condition);
+                TransitionElementSelected?.Invoke(transitionSelect);
                 wasPossibleDrawInteraction = true;
             },
             () =>
@@ -214,7 +212,7 @@ public class InputManager : MonoBehaviour
     private void ProcessInputOverElement(
         Vector2 inputPosition,
         Action<StateUIElement> inputOverStateAction,
-        Action<StateChartManager.TransitionCondition> inputOverTransitionAction,
+        Action<TransitionSelectElement> inputOverTransitionAction,
         Action inputOverPanelAction)
     {
         var raycastResults = HelperFunctions.GetRaycastResultsOnPosition(inputPosition);
@@ -231,7 +229,7 @@ public class InputManager : MonoBehaviour
 
             if (raycastResult.gameObject.TryGetComponent<TransitionSelectElement>(out var transitionSelectElement))
             {
-                inputOverTransitionAction(transitionSelectElement.Condition);
+                inputOverTransitionAction(transitionSelectElement);
                 return;
             }
 
