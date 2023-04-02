@@ -62,7 +62,7 @@ namespace UI
         
         private void SetupStateChartUI()
         {
-            var availableHorizontalSpace = selectPanel.transform.position.x - selectPanel.rectTransform.sizeDelta.x;
+            var availableHorizontalSpace = selectPanel.transform.position.x - ScaleFloat(selectPanel.rectTransform.sizeDelta.x);
             stateChartPanel.Initialize(availableHorizontalSpace);
 
             var startCoordinates = new Vector2Int(0, 3);

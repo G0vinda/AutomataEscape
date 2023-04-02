@@ -189,6 +189,8 @@ namespace UI
             {
                 var newBlockedCellMarking =
                     Instantiate(blockedCellMarkingPrefab, blockedCellPosition, Quaternion.identity, transform);
+                ((RectTransform)newBlockedCellMarking.transform).sizeDelta =
+                    StateUIElement.StateSizeAttributes.StateSize;
                 _blockedCellMarkings.Add(newBlockedCellMarking);
             }
         }
