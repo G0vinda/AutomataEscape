@@ -195,7 +195,7 @@ namespace UI
             var newKey = (sourceState, destinationState);
             if (_connectedTransitions.ContainsKey(newKey))
             {
-                RemoveTransition(sourceState, condition);   
+                RemoveTransition(sourceState, _connectedTransitions[newKey]);   
             }
 
             var transitionWithSameCondition =
@@ -250,6 +250,7 @@ namespace UI
             var destinationState = keyToRemove.Item2;
             var destinationStateIsConnected = _stateChartManager.GetStateChart().CheckIfStateIsConnected(destinationState.GetAssignedId());
             destinationState.SetImageToActive(destinationStateIsConnected);
+            TransitionLineDrawer.TransitionLineRemoved(condition);
         }
 
         public float UnscaleFloat(float downscaledFloat)

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class StateGridLayout : LayoutGroup
+    public class StateStackLayout : LayoutGroup
     {
         [SerializeField] private Vector2 padding;
         [SerializeField] private Vector2 spacing;

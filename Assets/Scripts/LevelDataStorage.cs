@@ -115,6 +115,34 @@ public static class LevelDataStorage
             new Dictionary<Vector2Int, GridManager.KeyType>()
             {
                 {new Vector2Int(2, 0), GridManager.KeyType.Red}
+            }),
+        new LevelData(
+            new Vector2Int(0, 0),
+            Direction.Right,
+            new[,]
+            {
+                { GridManager.TileType.Floor, GridManager.TileType.Floor, GridManager.TileType.Floor, GridManager.TileType.RedGateRight, GridManager.TileType.Goal }
+            },
+            new List<LevelData.AvailableStateInfo>()
+            {
+                new (StateChartManager.StateAction.MoveForward, 4),
+                new (StateChartManager.StateAction.TurnLeft, 4),
+                new (StateChartManager.StateAction.TurnRight, 4),
+                new (StateChartManager.StateAction.Grab, 4),
+                new (StateChartManager.StateAction.Drop, 4)
+            },
+            new List<StateChartManager.TransitionCondition>()
+            {
+                StateChartManager.TransitionCondition.Default,
+                StateChartManager.TransitionCondition.IsInFrontOfWall,
+                StateChartManager.TransitionCondition.StandsOnKey,
+                StateChartManager.TransitionCondition.StandsOnOrange,
+                StateChartManager.TransitionCondition.StandsOnPurple,
+                
+            },
+            new Dictionary<Vector2Int, GridManager.KeyType>()
+            {
+                {new Vector2Int(2, 0), GridManager.KeyType.Red}
             })
         
     };

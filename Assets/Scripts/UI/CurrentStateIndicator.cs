@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,18 +7,21 @@ namespace UI
 {
     public class CurrentStateIndicator : MonoBehaviour
     {
-        [SerializeField] private Color startColor;
-        [SerializeField] private Color forwardColor;
-        [SerializeField] private Color turnLeftColor;
-        [SerializeField] private Color turnRightColor;
-        [SerializeField] private Color grabColor;
-        [SerializeField] private Color dropColor;
+        [SerializeField] private Sprite startStateSprite;
+        [SerializeField] private List<StateUIData> stateUIData;
 
         private Image _image;
-        
+        private Dictionary<StateChartManager.StateAction, Sprite> _stateSprites;
+
         private void Awake()
         {
             _image = GetComponent<Image>();
+            _stateSprites = new Dictionary<StateChartManager.StateAction, Sprite>();
+            _stateSprites.Add(StateChartManager.StateAction.None, startStateSprite);
+            foreach (var data in stateUIData)
+            {
+                _stateSprites.Add(data.action, data.sprite);
+            }
         }
 
         private void OnEnable()
@@ -32,16 +36,7 @@ namespace UI
 
         private void OnNextState(StateChartManager.StateAction action)
         {
-            _image.color = action switch
-            {
-                StateChartManager.StateAction.MoveForward => forwardColor,
-                StateChartManager.StateAction.TurnLeft => turnLeftColor,
-                StateChartManager.StateAction.TurnRight => turnRightColor,
-                StateChartManager.StateAction.Grab => grabColor,
-                StateChartManager.StateAction.Drop => dropColor,
-                StateChartManager.StateAction.None => startColor,
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            _image.sprite = _stateSprites[action];
         }
     }
 }

@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
     {
         uiManager.Initialize();
         if(resetSaveSystemOnStart)
-            PlayerPrefs.SetInt("CurrentLevelId", 4);
+            PlayerPrefs.SetInt("CurrentLevelId", 5);
         _currentLevelId = PlayerPrefs.GetInt("CurrentLevelId", 0);
         LoadLevel(_currentLevelId);
     }
