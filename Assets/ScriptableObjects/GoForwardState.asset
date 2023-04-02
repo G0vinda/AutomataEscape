@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccc81209cdc05224d8609d6263d973e8, type: 3}
   m_Name: GoForwardState
   m_EditorClassIdentifier: 
-  text: Go Forward
-  image: {fileID: 0}
-  color: {r: 1, g: 0.6779441, b: 0.23113209, a: 1}
+  sprite: {fileID: -1677403040, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
+  inactiveSprite: {fileID: -1495069477, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
+  pinSprite: {fileID: 314903776, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
   action: 0

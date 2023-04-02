@@ -115,7 +115,7 @@ namespace UI
             var drawStartPosition = StateChartUIGrid.GetStateBorderPosition(sourceState.transform.position, inputPosition, inputDirection);
             var colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition]++;
             var lineColor = _colorSetsByCondition[CurrentTransitionCondition][colorIndex % 10];
-            CurrentTransitionLine = sourceState.DrawFirstTransitionLine(drawStartPosition, inputDirection, lineColor, CurrentTransitionCondition);
+            CurrentTransitionLine = sourceState.DrawFirstTransitionLineElement(drawStartPosition, inputDirection, lineColor, CurrentTransitionCondition);
             _currentSubCellPosition =
                 StateChartUIGrid.GetNextSubCellPositionInDirection(drawStartPosition, inputDirection, true);
             _previousDrawDirection = inputDirection;
@@ -139,13 +139,20 @@ namespace UI
                 
                 Debug.Log("State was detected");
                 DestinationStateElement = hoveredStateElement;
+                DestinationStateElement.HighlightAsTransitionDestination();
                 var stateCell = DestinationStateElement.GetComponent<StateUIElement>().ConnectedCell;
                 (_plugPosition, _plugDirection) =
                     StateChartUIGrid.GetPlugAttributesForAdjacentState(_currentSubCellPosition, stateCell);
                 return true;
             }
-            DestinationStateElement = null;
-            _plugPosition = Vector2.negativeInfinity;
+
+
+            if (DestinationStateElement != null)
+            {
+                DestinationStateElement.RemoveHighlight();
+                DestinationStateElement = null;
+                _plugPosition = Vector2.negativeInfinity;
+            }
 
             if (StateChartUIGrid.CheckIfSubCellIsAdjacentToSubCell(_currentSubCellPosition, inputPosition, out var newDirection))
             {
@@ -207,9 +214,16 @@ namespace UI
             return false;
         }
 
+        public static void CancelDraw()
+        {
+            if(DestinationStateElement != null)
+                DestinationStateElement.RemoveHighlight();
+        }
+
         public static void FinishLine()
         {
             CurrentTransitionLine.CreatePlug(_plugPosition, _plugDirection.ToZRotation());
+            DestinationStateElement.RemoveHighlight();
         }
     }
 }

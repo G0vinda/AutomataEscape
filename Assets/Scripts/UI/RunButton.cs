@@ -1,30 +1,35 @@
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
     public class RunButton : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI textObject;
+        [SerializeField] private Sprite runSprite;
+        [SerializeField] private Sprite stopSprite;
+        
+        private Image _image;
+
+        private void Awake()
+        {
+            _image = GetComponent<Image>();
+        }
 
         private void OnEnable()
         {
-            ListenToGameManager();
+            GameManager.Instance.StateChartRunnerStateChanged += ChangeImage;   
         }
 
-        private void ListenToGameManager()
-        {
-            GameManager.Instance.StateChartRunnerStateChanged += ToggleText;   
-        }
-        
         private void OnDisable()
         {
-            GameManager.Instance.StateChartRunnerStateChanged -= ToggleText;
+            GameManager.Instance.StateChartRunnerStateChanged -= ChangeImage;
         }
 
-        private void ToggleText(bool isRunning)
+        private void ChangeImage(bool isRunning)
         {
-            textObject.text = isRunning ? "Stop" : "Run";
+            _image.sprite = isRunning ? stopSprite : runSprite;
         }
     }
 }

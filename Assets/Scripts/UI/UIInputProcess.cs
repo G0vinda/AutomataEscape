@@ -23,7 +23,7 @@ public class UIInputProcess : MonoBehaviour
 
 
     // Variables for drawing transition line
-    private TransitionCondition? _selectedTransitionCondition;
+    private TransitionSelectElement _selectedTransitionElement;
     private StateUIElement _selectedDrawStateElement;
     private StateChartCell _selectedDrawStateCell;
     private Vector2Int _selectedDrawStateCellCoordinates;
@@ -113,6 +113,8 @@ public class UIInputProcess : MonoBehaviour
     private void HandleDragEnded()
     {
         InputManager.DragEnded -= HandleDragEnded;
+        if(_selectedDrawStateElement != null)
+            _selectedDrawStateElement.UpdateScaling();
         Debug.Log("Input was released.");
         _dragEnded = true;
     }
@@ -148,10 +150,11 @@ public class UIInputProcess : MonoBehaviour
         InputManager.DragEnded += HandleDragEnded;
         if (stateElement.ConnectedCell != null)
         {
-            if (_selectedTransitionCondition != null)
+            if (_selectedTransitionElement != null)
             {
                 _inputState = UIInputState.InitiateTransitionLineDraw;
                 _selectedDrawStateElement = stateElement;
+                _selectedDrawStateElement.SetSizeToHighlight();
                 _selectedDrawStateCell = _selectedDrawStateElement.ConnectedCell;
                 _selectedDrawStateCellCoordinates = _stateChartUIGrid.GetCoordinatesFromCell(_selectedDrawStateCell);
 
@@ -171,7 +174,7 @@ public class UIInputProcess : MonoBehaviour
         else
         {
             _selectedDragStateElement = stateElement.GetComponent<StateUIPlaceElement>();
-            _selectedTransitionCondition = null; // TODO: unhighlight transitionSelectElement 
+            HandleTransitionDeselected(); 
             _uiManager.RemoveStateElementFromStack(_selectedDragStateElement);
         }
 
@@ -188,18 +191,23 @@ public class UIInputProcess : MonoBehaviour
         _previousDragPosition = _inputManager.GetPointerPosition();
     }
 
-    private void HandleTransitionSelected(TransitionCondition condition)
+    private void HandleTransitionSelected(TransitionSelectElement transitionSelectElement)
     {
-        // TODO: Highlight new transitionElement, Unhighlight old transitionElement
-        Debug.Log($"New TransitionCondition is now {condition}");
-        _selectedTransitionCondition = condition;
-        TransitionLineDrawer.CurrentTransitionCondition = condition;
+        if(_selectedTransitionElement != null)
+            _selectedTransitionElement.HideSelectionMarking();
+        
+        _selectedTransitionElement = transitionSelectElement;
+        _selectedTransitionElement.ShowSelectionMarking();
+        TransitionLineDrawer.CurrentTransitionCondition = transitionSelectElement.GetCondition();
     }
     
     private void HandleTransitionDeselected()
     {
-        // TODO: Unhighlight transitionElement
-        _selectedTransitionCondition = null;
+        if (_selectedTransitionElement == null) 
+            return;
+        
+        _selectedTransitionElement.HideSelectionMarking();
+        _selectedTransitionElement = null;
     }
 
     private bool StartDrawTransitionLine(Vector2 inputPosition)
@@ -285,10 +293,11 @@ public class UIInputProcess : MonoBehaviour
         {
             var destinationState = TransitionLineDrawer.DestinationStateElement;
             TransitionLineDrawer.FinishLine();
-            _uiManager.AddTransition(_selectedDrawStateElement, destinationState, _selectedTransitionCondition.Value);
+            _uiManager.AddTransition(_selectedDrawStateElement, destinationState, _selectedTransitionElement.GetCondition());
         }
         else
         {
+            TransitionLineDrawer.CancelDraw();
             _selectedDrawStateElement.RemoveTransition(currentTransitionLine);
         }
     }

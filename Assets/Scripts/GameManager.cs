@@ -113,12 +113,14 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log($"State {errorStateId}");
                 }
+                uiManager.SwitchToProgramView();
             }
             else
             {
                 currentStateIndicator.gameObject.SetActive(true);
                 _stateChartRunner.StartRun(stateChartManager.GetStateChart());
-                StateChartRunnerStateChanged?.Invoke(true);   
+                StateChartRunnerStateChanged?.Invoke(true);
+                uiManager.SwitchLevelView();
             }
         }
     }

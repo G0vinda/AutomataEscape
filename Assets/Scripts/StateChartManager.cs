@@ -141,36 +141,40 @@ public class StateChartManager : MonoBehaviour
 
             foreach (var activeState in _activeStates)
             {
-                if (activeState.DefaultTransitionDestinationId < 0)
+                var stateId = activeState.StateId;
+                if (!CheckIfStateIsConnected(stateId))
                     stateIdsWithError.Add(activeState.StateId);
             }
-
-            foreach (var destinationState in _activeStates)
-            {
-                var destinationId = destinationState.StateId;
-                if(destinationId == 0)
-                    continue;
-                
-                var isDestinationOfTransition = false;
-                foreach (var sourceState in _activeStates)
-                {
-                    if (destinationState == sourceState)
-                        continue;
-
-                    if (sourceState.Transitions.Any(transition => transition.DestinationId == destinationId) ||
-                        sourceState.DefaultTransitionDestinationId == destinationId)
-                    {
-                        isDestinationOfTransition = true;
-                        break;
-                    }
-                }
-
-                if (!isDestinationOfTransition)
-                    stateIdsWithError.Add(destinationState.StateId);
-            }
-
+            
             stateIdsWithError = stateIdsWithError.Distinct().ToList();
             return stateIdsWithError.Count == 0;
+        }
+
+        public bool CheckIfStateIsConnected(int stateId)
+        {
+            var state = GetStateById(stateId);
+
+            if (state.DefaultTransitionDestinationId < 0)
+                return false;
+
+            if (stateId == 0)
+                return true;
+            
+            var isDestinationOfTransition = false;
+            foreach (var sourceState in _activeStates)
+            {
+                if (state == sourceState)
+                    continue;
+
+                if (sourceState.Transitions.Any(transition => transition.DestinationId == stateId) ||
+                    sourceState.DefaultTransitionDestinationId == stateId)
+                {
+                    isDestinationOfTransition = true;
+                    break;
+                }
+            }
+
+            return isDestinationOfTransition;
         }
     }
 

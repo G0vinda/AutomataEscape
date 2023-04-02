@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b17fec52266c4502881488e9b6a9edcd, type: 3}
   m_Name: StandsOnPurpleTransition
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
-  color: {r: 0.31673676, g: 0.21560162, b: 0.5377358, a: 1}
+  icon: {fileID: 21300000, guid: 7531b4a478e32ef4dbafcce15c38a517, type: 3}
+  color: {r: 0.427451, g: 0.38431376, b: 0.6745098, a: 1}
   condition: 4

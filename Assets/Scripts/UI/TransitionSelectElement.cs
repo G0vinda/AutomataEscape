@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Codice.Client.BaseCommands.Import;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace UI
@@ -8,16 +7,40 @@ namespace UI
     public class TransitionSelectElement : MonoBehaviour
     {
         [SerializeField] private TransitionUIData data;
+        [SerializeField] private Image icon;
+        [SerializeField] private Image background;
+        [SerializeField] private Image selectionMarking;
         
         public StateChartManager.TransitionCondition Condition { get; private set; }
-        
-        private Image _image;
 
         private void Awake()
         {
-            _image = GetComponent<Image>();
-            _image.color = data.color;
+            background.color = data.color;
+            if (data.icon != null)
+            {
+                icon.sprite = data.icon;   
+            }
+            else
+            {
+                Destroy(icon);
+            }
+
             Condition = data.condition;
+        }
+
+        public StateChartManager.TransitionCondition GetCondition()
+        {
+            return data.condition;
+        }
+
+        public void ShowSelectionMarking()
+        {
+            selectionMarking.gameObject.SetActive(true);
+        }
+        
+        public void HideSelectionMarking()
+        {
+            selectionMarking.gameObject.SetActive(false);
         }
     }
 }
