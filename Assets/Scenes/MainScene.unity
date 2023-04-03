@@ -269,7 +269,7 @@ RectTransform:
   - {fileID: 1053980142}
   - {fileID: 670139517}
   m_Father: {fileID: 2067352784}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -295,9 +295,9 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 3
   padding: {x: 40, y: 57.2}
-  spacing: {x: 29.5, y: 71.7}
+  minXSpacing: 20
   panelTransform: {fileID: 2067352784}
-  availableStateStackTransform: {fileID: 5616124973732390945, guid: 120e659cafb05af4ea61d90cebb3c6c4, type: 3}
+  _spacing: {x: 0, y: 0}
 --- !u!222 &362081096
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -383,7 +383,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5616124973732390945, guid: 120e659cafb05af4ea61d90cebb3c6c4, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -57.2
+      value: -57.19995
       objectReference: {fileID: 0}
     - target: {fileID: 5616124973732390945, guid: 120e659cafb05af4ea61d90cebb3c6c4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -551,7 +551,7 @@ RectTransform:
   - {fileID: 1987749122}
   - {fileID: 626845518}
   m_Father: {fileID: 2067352784}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -1279,7 +1279,6 @@ GameObject:
   m_Component:
   - component: {fileID: 868897336}
   - component: {fileID: 868897337}
-  - component: {fileID: 868897338}
   - component: {fileID: 868897339}
   m_Layer: 0
   m_Name: GameManager
@@ -1315,28 +1314,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7669f94b1c430454980af43db28cebfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridManager: {fileID: 1040296883}
+  levelGridManager: {fileID: 1040296883}
   cameraController: {fileID: 519420033}
-  stateChartManager: {fileID: 868897338}
+  stateChartManager: {fileID: 0}
   uiManager: {fileID: 654531688}
   inputManager: {fileID: 868897339}
-  robotStateChartRunnerPrefab: {fileID: 5906237375931738515, guid: 4e1cc2fbe5a373345aea51e3bbf8a233, type: 3}
+  robotPrefab: {fileID: 5433890059064342942, guid: 4e1cc2fbe5a373345aea51e3bbf8a233, type: 3}
   redKeyPrefab: {fileID: 7906716610573137442, guid: 681d2070f6dce1444af8213016f4dcbd, type: 3}
   blueKeyPrefab: {fileID: 9051665487658809036, guid: 457731d3619972b48987801078d25961, type: 3}
   currentStateIndicator: {fileID: 2127462071}
   resetSaveSystemOnStart: 1
---- !u!114 &868897338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 868897335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64505c956996a3545879771c32fe5667, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &868897339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1427,7 +1414,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5616124973732390945, guid: 120e659cafb05af4ea61d90cebb3c6c4, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -57.2
+      value: -57.19995
       objectReference: {fileID: 0}
     - target: {fileID: 5616124973732390945, guid: 120e659cafb05af4ea61d90cebb3c6c4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1619,7 +1606,7 @@ GameObject:
   - component: {fileID: 1040296884}
   - component: {fileID: 1040296883}
   m_Layer: 0
-  m_Name: GridManager
+  m_Name: LevelGridManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2292,8 +2279,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 362081094}
   - {fileID: 582005165}
+  - {fileID: 362081094}
   m_Father: {fileID: 654531687}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2417,7 +2404,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5616124973732390945, guid: 120e659cafb05af4ea61d90cebb3c6c4, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -57.2
+      value: -57.19995
       objectReference: {fileID: 0}
     - target: {fileID: 5616124973732390945, guid: 120e659cafb05af4ea61d90cebb3c6c4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

@@ -1,3 +1,5 @@
+using UI.Grid;
+using UI.State;
 using UnityEngine;
 
 namespace UI
@@ -9,7 +11,8 @@ namespace UI
 
         private UIManager _uiManager;
         private RectTransform _rectTransform;
-        private StateChartUIGrid _stateChartUIGrid;
+        private UIGridManager _uiGridManager;
+        
         private Vector2 _defaultSize;
         private float _scaleFactor;
         private float _gridHeight;
@@ -24,13 +27,14 @@ namespace UI
         public void Initialize(float availableHorizontalSpace)
         {
             _rectTransform = GetComponent<RectTransform>();
-            _stateChartUIGrid = GetComponent<StateChartUIGrid>();
+            _uiGridManager = GetComponent<UIGridManager>();
             _uiManager = GameManager.Instance.GetUIManager();
-            ScaleChartToFitScreen(availableHorizontalSpace);
+            
             _zoomFactor = 1f;
+            ScaleChartToFitScreen(availableHorizontalSpace);
             _scaledPadding = _uiManager.ScaleFloat(padding) * _scaleFactor;
             CalculateGridValues();
-            _stateChartUIGrid.Initialize(_gridHeight, _bottomLeftGridPosition);
+            _uiGridManager.Initialize(_gridHeight, _bottomLeftGridPosition);
         }
         
         public float GetScaleFactor()
@@ -43,14 +47,13 @@ namespace UI
             var newPosition = (Vector2)transform.position + moveVector;
             transform.position = _movementBoundaries.ClampVector2(newPosition);
             CalculateGridValues();
-            _stateChartUIGrid.UpdateGrid(_gridHeight, _bottomLeftGridPosition);
+            _uiGridManager.UpdateGrid(_gridHeight, _bottomLeftGridPosition);
         }
 
         private void CalculateGridValues()
         {
             _gridHeight = _uiManager.ScaleFloat(_rectTransform.sizeDelta.y) - 2 * _scaledPadding;
-            _bottomLeftGridPosition = (Vector2)transform.position +
-                                      new Vector2(-_gridHeight * 0.5f, -_gridHeight * 0.5f);
+            _bottomLeftGridPosition = (Vector2)transform.position + Vector2.one * -_gridHeight * 0.5f;
         }
 
         private void ScaleChartToFitScreen(float availableHorizontalSpace)
@@ -72,14 +75,17 @@ namespace UI
             _zoomFactor = zoomFactor;
             _rectTransform.sizeDelta = _defaultSize * _zoomFactor;
             _scaledPadding = _uiManager.ScaleFloat(padding) * _scaleFactor * _zoomFactor; 
-            _movementBoundaries.SetBoundaries((_rectTransform.sizeDelta.x - _defaultSize.x)*0.5f);
+            
             var panelPosition = (Vector2)_rectTransform.position;
             var zoomCenterDifference = zoomCenter - panelPosition;
             var newPosition = panelPosition - zoomCenterDifference * zoomDelta;
+            
+            _movementBoundaries.SetBoundaries((_rectTransform.sizeDelta.x - _defaultSize.x)*0.5f);
             _rectTransform.position = _movementBoundaries.ClampVector2(newPosition);
+            
             CalculateGridValues();
             StateUIElement.StateSizeAttributes.SetScaling(zoomFactor);
-            _stateChartUIGrid.UpdateGrid(_gridHeight,_bottomLeftGridPosition);
+            _uiGridManager.UpdateGrid(_gridHeight,_bottomLeftGridPosition);
         }
 
         public struct MovementBoundaries

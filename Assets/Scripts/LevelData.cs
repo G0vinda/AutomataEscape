@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Robot;
 using Tiles;
 using UI;
+using UI.Transition;
 using UnityEngine;
 
 public class LevelData
@@ -19,19 +21,19 @@ public class LevelData
     
     public Vector2Int RobotStartPosition { get; }
     public Direction RobotStartDirection { get; }
-    public GridManager.TileType[,] Grid { get; }
+    public LevelGridManager.TileType[,] Grid { get; }
 
     public List<AvailableStateInfo> AvailableActions;
     public List<StateChartManager.TransitionCondition> AvailableTransitionConditions;
-    public Dictionary<Vector2Int, GridManager.KeyType> KeyData;
+    public Dictionary<Vector2Int, LevelGridManager.KeyType> KeyData;
 
     public LevelData(
         Vector2Int startPos, 
         Direction startDirection, 
-        GridManager.TileType[,] grid,
+        LevelGridManager.TileType[,] grid,
         List<AvailableStateInfo> actions, 
         List<StateChartManager.TransitionCondition> conditions,
-        Dictionary<Vector2Int, GridManager.KeyType> keyData)
+        Dictionary<Vector2Int, LevelGridManager.KeyType> keyData)
     {
         RobotStartPosition = startPos;
         RobotStartDirection = startDirection;

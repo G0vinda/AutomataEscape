@@ -4,6 +4,8 @@ using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Helper;
+using UI.State;
+using UI.Transition;
 
 public class InputManager : MonoBehaviour
 {

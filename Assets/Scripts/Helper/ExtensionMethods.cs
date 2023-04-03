@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UI;
+using UI.Transition;
 using UnityEngine;
 
 namespace Helper
@@ -15,6 +16,18 @@ namespace Helper
                 Direction.Down => Vector2Int.down,
                 Direction.Left => Vector2Int.left,
                 Direction.Right => Vector2Int.right,
+                _ => throw new ArgumentException()
+            };
+        }
+
+        public static Vector2 ToVector2(this Direction direction)
+        {
+            return direction switch
+            {
+                Direction.Up => Vector2.up,
+                Direction.Down => Vector2.down,
+                Direction.Left => Vector2.left,
+                Direction.Right => Vector2.right,
                 _ => throw new ArgumentException()
             };
         }
@@ -38,40 +51,8 @@ namespace Helper
                 return Direction.Right;
             }
 
-            throw new ArgumentException();
+            throw new ArgumentOutOfRangeException();
         }
-
-        public static Direction ToDirection(this Vector2 vector)
-        {
-            if (Mathf.Approximately(vector.y, 0))
-            {
-                switch (vector.x)
-                {
-                    case > 0 :
-                        return Direction.Right;
-                    case < 0 :
-                        return Direction.Left;
-                    default:
-                        throw new ArgumentException();
-                }   
-            }
-            
-            if (Mathf.Approximately(vector.x, 0))
-            {
-                switch (vector.y)
-                {
-                    case > 0 :
-                        return Direction.Up;
-                    case < 0 :
-                        return Direction.Down;
-                    default:
-                        throw new ArgumentException();
-                }   
-            }
-            
-            throw new ArgumentException();
-        }
-
         public static Direction Turn(this Direction direction, bool turnClockwise)
         {
             if (turnClockwise)

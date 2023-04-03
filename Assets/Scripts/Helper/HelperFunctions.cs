@@ -7,35 +7,6 @@ namespace Helper
 {
     public static class HelperFunctions 
     {
-        public static bool CheckIfMouseIsOverObjectWithTag(string searchTag)
-        {
-            var raycastResults = GetRaycastResultsOnPosition(Input.mousePosition);
-            foreach (var raycastResult in raycastResults)
-            {
-                if (raycastResult.gameObject.CompareTag(searchTag))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static T CheckIfMouseIsOverObjectWithComponent<T>()
-        {
-            var raycastResults = GetRaycastResultsOnPosition(Input.mousePosition);
-            foreach (var raycastResult in raycastResults)
-            {
-                var resultParent = raycastResult.gameObject.transform.parent;
-                if (resultParent.gameObject.TryGetComponent(out T outComponent))
-                {
-                    return outComponent;
-                }
-            }
-            
-            return default;
-        }
-
         public static List<RaycastResult> GetRaycastResultsOnPosition(Vector2 position)
         {
             var pointerEventData = new PointerEventData(EventSystem.current);

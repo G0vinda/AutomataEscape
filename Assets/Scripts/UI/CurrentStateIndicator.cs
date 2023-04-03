@@ -1,5 +1,6 @@
-using System;
 using System.Collections.Generic;
+using Robot;
+using UI.UIData;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +18,7 @@ namespace UI
         {
             _image = GetComponent<Image>();
             _stateSprites = new Dictionary<StateChartManager.StateAction, Sprite>();
-            _stateSprites.Add(StateChartManager.StateAction.None, startStateSprite);
+            _stateSprites.Add(StateChartManager.StateAction.Start, startStateSprite);
             foreach (var data in stateUIData)
             {
                 _stateSprites.Add(data.action, data.sprite);
@@ -26,12 +27,12 @@ namespace UI
 
         private void OnEnable()
         {
-            StateChartRunner.NextStateStarts += OnNextState;
+            Robot.Robot.NextStateStarts += OnNextState;
         }
 
         private void OnDisable()
         {
-            StateChartRunner.NextStateStarts -= OnNextState;
+            Robot.Robot.NextStateStarts -= OnNextState;
         }
 
         private void OnNextState(StateChartManager.StateAction action)
