@@ -1,4 +1,5 @@
-﻿using UI;
+﻿using LevelGrid;
+using UI;
 using UI.Transition;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Robot.Transitions
     {
         public StandsOnKeyTransition(int destinationId) : base(destinationId) {}
 
-        public override int Priority => 2;
+        public override int Priority => 3;
 
         public override bool CheckCondition(Vector2Int coordinates, Direction direction, LevelGridManager levelGridManager)
         {

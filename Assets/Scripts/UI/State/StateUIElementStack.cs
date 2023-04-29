@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Robot;
 using UI.UIData;
@@ -12,12 +13,20 @@ namespace UI.State
         [SerializeField] private float stateElementPlaceOffset;
     
         private List<StateUIPlaceElement> _stateElements;
+        private Vector2 _originalSize;
+        private float _originalPlaceOffset;
 
-        public void Initialize(int numberOfStates, float gridScaleFactor)
+        private void Awake()
+        {
+            _originalSize = GetComponent<RectTransform>().sizeDelta;
+            _originalPlaceOffset = stateElementPlaceOffset;
+        }
+
+        public void Setup(int numberOfStates, float gridScaleFactor)
         {
             _stateElements = new List<StateUIPlaceElement>();
-            GetComponent<RectTransform>().sizeDelta *= gridScaleFactor;
-            stateElementPlaceOffset *= gridScaleFactor;
+            GetComponent<RectTransform>().sizeDelta = _originalSize * gridScaleFactor;
+            stateElementPlaceOffset = _originalPlaceOffset * gridScaleFactor;
             DestroyStates();
             for (var i = 0; i < numberOfStates; i++)
             {

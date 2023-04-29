@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
+using LevelGrid;
 using Robot;
-using Tiles;
-using UI;
 using UI.Transition;
 using UnityEngine;
 
 public class LevelData
 {
-    public class AvailableStateInfo
+    public readonly struct AvailableStateInfo
     {
         public StateChartManager.StateAction Action { get; }
         public int Amount { get; }
@@ -23,9 +22,9 @@ public class LevelData
     public Direction RobotStartDirection { get; }
     public LevelGridManager.TileType[,] Grid { get; }
 
-    public List<AvailableStateInfo> AvailableActions;
-    public List<StateChartManager.TransitionCondition> AvailableTransitionConditions;
-    public Dictionary<Vector2Int, LevelGridManager.KeyType> KeyData;
+    public readonly List<AvailableStateInfo> AvailableActions;
+    public readonly List<StateChartManager.TransitionCondition> AvailableTransitionConditions;
+    public readonly Dictionary<Vector2Int, LevelGridManager.KeyType> KeyData;
 
     public LevelData(
         Vector2Int startPos, 

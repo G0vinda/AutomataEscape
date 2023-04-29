@@ -1,4 +1,5 @@
-﻿using UI;
+﻿using LevelGrid;
+using UI;
 using UI.Transition;
 using UnityEngine;
 
@@ -6,10 +7,7 @@ namespace Robot.States
 {
     public class DropState : KeyHandleState
     {
-        private LevelGridManager.KeyType _grabbedKeyType;
-        
-        public DropState(LevelGridManager levelGridManager, SpriteChanger spriteChanger, ref LevelGridManager.KeyType grabbedKeyType) 
-            : base(levelGridManager, spriteChanger, grabbedKeyType) {}
+        public DropState(LevelGridManager levelGridManager, SpriteChanger spriteChanger) : base(levelGridManager, spriteChanger) {}
 
         public override bool ProcessState(ref Vector2Int coordinates, ref Direction direction)
         {

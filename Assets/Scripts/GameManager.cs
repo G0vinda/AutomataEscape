@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using LevelGrid;
 using Robot;
 using UI;
+using UI.Transition;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [DefaultExecutionOrder(-1)] // Game Manager will be executed before all other scripts
 public class GameManager : MonoBehaviour
@@ -15,10 +18,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject redKeyPrefab;
     [SerializeField] private GameObject blueKeyPrefab;
     [SerializeField] private CurrentStateIndicator currentStateIndicator;
-    [SerializeField] private bool resetSaveSystemOnStart; // Todo: remove until release
 
     public static GameManager Instance { get; private set; }
     public Action<bool> RobotStateChanged;
+    
+    private const int FinishSceneIndex = 2;
     
     private Dictionary<Vector2Int, (LevelGridManager.KeyType, GameObject)> _currentKeyObjectData = new ();
     private int _currentLevelId;
@@ -27,15 +31,12 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // Todo: mention why this is enough
         Instance = this;
     }
 
     void Start()
     {
         uiManager.Initialize();
-        if(resetSaveSystemOnStart)
-            PlayerPrefs.SetInt("CurrentLevelId", 5);
         _currentLevelId = PlayerPrefs.GetInt("CurrentLevelId", 0);
         LoadLevel(_currentLevelId);
     }
@@ -91,7 +92,7 @@ public class GameManager : MonoBehaviour
         return keyType;
     }
 
-    public void ToggleStateChartRunState()
+    public void ToggleRobotRunState()
     {
         if (_robot.IsRunning)
         {
@@ -111,7 +112,7 @@ public class GameManager : MonoBehaviour
                 currentStateIndicator.gameObject.SetActive(true);
                 _robot.StartRun();
                 RobotStateChanged?.Invoke(true);
-                uiManager.SwitchLevelView();
+                uiManager.SwitchToLevelView();
             }
         }
     }
@@ -134,6 +135,9 @@ public class GameManager : MonoBehaviour
         currentStateIndicator.gameObject.SetActive(false);
         
         _currentLevelId++;
+        if (_currentLevelId >= LevelDataStorage.LevelCount)
+            SceneManager.LoadScene(FinishSceneIndex);
+        
         PlayerPrefs.SetInt("CurrentLevelId", _currentLevelId);
         LoadLevel(_currentLevelId);
     }
@@ -146,14 +150,14 @@ public class GameManager : MonoBehaviour
         var level = LevelDataStorage.GetLevelData(levelId);
         LoadLevelGrid(level);
 
-        // Setup StateChart
+        TransitionLineDrawer.ResetColors();
         uiManager.SetupUIForLevel(level.AvailableActions, level.AvailableTransitionConditions, _stateChartManager);
     }
 
     private void LoadLevelGrid(LevelData level)
     {
-        levelGridManager.CreateLevelBasedOnGrid(level.Grid);
-        var tileRenderers = levelGridManager.GetTileObjectRenderers();
+        levelGridManager.CreateLevelGrid(level.Grid);
+        var tileRenderers = levelGridManager.GetTileSpriteRenderers();
         cameraController.AlignCameraWithLevel(tileRenderers);
         
         var robotStartPositionOnGrid = levelGridManager.GetTilePosition(level.RobotStartPosition);

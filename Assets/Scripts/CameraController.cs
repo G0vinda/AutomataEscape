@@ -12,8 +12,7 @@ public class CameraController : MonoBehaviour
     {
         _camera = GetComponent<Camera>();
     }
-
-    // TODO: Write where you got this code from or change enough
+    
     public void AlignCameraWithLevel(List<SpriteRenderer> tileRenderers)
     {
         var newCameraBounds = new Bounds();

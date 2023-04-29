@@ -2,7 +2,7 @@
     "name": "UIInput",
     "maps": [
         {
-            "name": "Input",
+            "name": "DragAndSelect",
             "id": "938eaf69-95e0-45cb-95cf-b33ea68ed567",
             "actions": [
                 {
@@ -128,54 +128,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Press",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "MouseZoom",
-            "id": "967676d8-a0b6-473b-84ee-9c53e6fbccc2",
-            "actions": [
-                {
-                    "name": "Zoom",
-                    "type": "Value",
-                    "id": "31daed2f-4804-427a-9d40-e5652eac7bba",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "MousePosition",
-                    "type": "Value",
-                    "id": "cfd01534-22f6-410d-9804-f8c914cbfe11",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "27bad8fd-d9e8-4174-a5b2-47432a6af401",
-                    "path": "<Mouse>/scroll/y",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Zoom",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1d1e7344-9989-4b61-86a4-1aa656d2dfac",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MousePosition",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

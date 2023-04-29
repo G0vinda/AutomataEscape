@@ -257,7 +257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileRenderer: {fileID: 8915286618914946344}
   gateWall: {fileID: 7779312665146626063}
-  placedKeyIndicator: {fileID: 3886846427086389511}
+  placedKey: {fileID: 3886846427086389511}
   neededKeyType: 0
 --- !u!4 &4635164840714426446 stripped
 Transform:

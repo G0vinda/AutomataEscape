@@ -71,7 +71,7 @@ namespace UI.Grid
         
         public bool TryScreenPositionToCellCoordinates(Vector2 screenPosition, out Vector2Int coordinates) 
         {
-            coordinates = new Vector2Int();
+            coordinates = Vector2Int.zero;
             if (!IsPositionInsideGrid(screenPosition))
                 return false;
             
@@ -228,17 +228,30 @@ namespace UI.Grid
             state = null;
             directionToState = 0;
 
-            if (!TryScreenPositionToCellCoordinates(subCellPosition, out var sourceCoordinates))
+            if (!TryScreenPositionToCellCoordinates(subCellPosition, out var sourceCellCoordinates))
                 return false;
 
             if (!TryScreenPositionToCellCoordinates(positionOnState, out var checkedCoordinates))
                 return false;
 
-            var positionDiff = checkedCoordinates - sourceCoordinates;
+            var positionDiff = checkedCoordinates - sourceCellCoordinates;
             if (!Mathf.Approximately(positionDiff.magnitude, 1f))
                 return false;
 
             directionToState = positionDiff.ToDirection();
+            var subCellOffset = subCellPosition - CellCoordinatesToScreenPosition(sourceCellCoordinates);
+            var subCellIsAdjacent = directionToState switch
+                {
+                    Direction.Up => subCellOffset.y > 0,
+                    Direction.Right => subCellOffset.x > 0,
+                    Direction.Down => subCellOffset.y < 0,
+                    Direction.Left => subCellOffset. x < 0,
+                    _ => throw new ArgumentOutOfRangeException(nameof(directionToState), directionToState, null)
+                };
+
+            if (!subCellIsAdjacent)
+                return false;
+            
             state = GetCellOnCoordinates(checkedCoordinates).PlacedStateElement;
 
             return state != null;

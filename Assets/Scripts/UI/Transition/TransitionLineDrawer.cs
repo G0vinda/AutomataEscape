@@ -14,18 +14,10 @@ namespace UI.Transition
         public static TransitionLine CurrentTransitionLine { get; private set; }
         public static StateUIPlaceElement DestinationStateElement { get; set; }
 
-        private static Dictionary<StateChartManager.TransitionCondition, int> _numberOfLinesByCondition =
-            new Dictionary<StateChartManager.TransitionCondition, int>()
-            {
-                { StateChartManager.TransitionCondition.Default, 0 },
-                { StateChartManager.TransitionCondition.IsInFrontOfWall, 0 },
-                { StateChartManager.TransitionCondition.StandsOnKey, 0 },
-                { StateChartManager.TransitionCondition.StandsOnOrange, 0 },
-                { StateChartManager.TransitionCondition.StandsOnPurple, 0 },
-            };
+        private static Dictionary<StateChartManager.TransitionCondition, int> _numberOfLinesByCondition;
 
         private static Dictionary<StateChartManager.TransitionCondition, (Color32 startColor, Color32 endColor)> _lineColors =
-            new Dictionary<StateChartManager.TransitionCondition, (Color32, Color32)>()
+            new ()
             {
                 { 
                     StateChartManager.TransitionCondition.Default, (new Color32(0x2E, 0x2E, 0x2E, 0xFF), new Color32(0xE0, 0xE0, 0xE0, 0xFF) )
@@ -58,19 +50,14 @@ namespace UI.Transition
             if (!UIGridManager.IsPositionInsideGrid(inputPosition))
                 return false;
 
-            var hoveredSubCell = UIGridManager.GetSubCellOnPosition(inputPosition);
+            ref var hoveredSubCell = ref UIGridManager.GetSubCellOnPosition(inputPosition);
 
-            if (inputIsHorizontal)
-            {
-                if (hoveredSubCell.PlacedHorizontalLine != null)
-                    return false;
-            }
-            else
-            {
-                if (hoveredSubCell.PlacedVerticalLine != null)
-                    return false;
-            }
-
+            if (inputIsHorizontal && hoveredSubCell.PlacedHorizontalLine != null)
+                return false;
+            
+            if(!inputIsHorizontal && hoveredSubCell.PlacedVerticalLine != null)
+                return false;
+            
             var drawStartPosition = UIGridManager.GetStateBorderPosition(sourceState.transform.position, inputPosition, inputDirection);
             var colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition];
             var lineColor = GetLineColor(CurrentTransitionCondition, colorIndex);
@@ -78,7 +65,16 @@ namespace UI.Transition
             _currentSubCellPosition =
                 UIGridManager.GetNextSubCellPositionInDirection(drawStartPosition, inputDirection, true);
             _previousDrawDirection = inputDirection;
-            
+
+            if (inputIsHorizontal)
+            {
+                hoveredSubCell.PlacedHorizontalLine = CurrentTransitionLine;
+            }
+            else
+            {
+                hoveredSubCell.PlacedVerticalLine = CurrentTransitionLine;
+            }
+
             return true;
         }
 
@@ -109,8 +105,7 @@ namespace UI.Transition
                     UIGridManager.GetPlugAttributesForAdjacentState(_currentSubCellPosition, stateCell);
                 return true;
             }
-
-
+            
             if (DestinationStateElement != null)
             {
                 DestinationStateElement.RemoveHighlight();
@@ -123,20 +118,14 @@ namespace UI.Transition
                 if (newDirection.IsOpposite(_previousDrawDirection))
                 {
                     CurrentTransitionLine.RemoveLastElement();
-                    
-                    var previousInputWasHorizontal = _previousDrawDirection == Direction.Left ||
-                                                     _previousDrawDirection == Direction.Right;
 
                     ref var previousSubCell = ref UIGridManager.GetSubCellOnPosition(_currentSubCellPosition);
 
-                    if (previousInputWasHorizontal)
-                    {
+                    if (previousSubCell.PlacedHorizontalLine == CurrentTransitionLine)
                         previousSubCell.PlacedHorizontalLine = null;
-                    }
-                    else
-                    {
+
+                    if (previousSubCell.PlacedVerticalLine == CurrentTransitionLine)
                         previousSubCell.PlacedVerticalLine = null;
-                    }
 
                     if (!CurrentTransitionLine.TryGetLastElementDirection(out _previousDrawDirection))
                     {
@@ -190,13 +179,29 @@ namespace UI.Transition
         public static void FinishLine()
         {
             _numberOfLinesByCondition[CurrentTransitionCondition]++;
-            CurrentTransitionLine.CreatePlug(_plugPosition, _plugDirection.ToZRotation());
             DestinationStateElement.RemoveHighlight();
+            
+            CurrentTransitionLine.CreatePlug(_plugPosition, _plugDirection.ToZRotation());
+            ref var plugSubCell = ref UIGridManager.GetSubCellOnPosition(_currentSubCellPosition);
+            plugSubCell.PlacedHorizontalLine = CurrentTransitionLine;
+            plugSubCell.PlacedVerticalLine = CurrentTransitionLine;
         }
 
         public static void TransitionLineRemoved(StateChartManager.TransitionCondition condition)
         {
             _numberOfLinesByCondition[condition]--;
+        }
+
+        public static void ResetColors()
+        {
+            _numberOfLinesByCondition = new ()
+            {
+                { StateChartManager.TransitionCondition.Default, 0 },
+                { StateChartManager.TransitionCondition.IsInFrontOfWall, 0 },
+                { StateChartManager.TransitionCondition.StandsOnKey, 0 },
+                { StateChartManager.TransitionCondition.StandsOnOrange, 0 },
+                { StateChartManager.TransitionCondition.StandsOnPurple, 0 },
+            };
         }
 
         public static Color GetLineColor(StateChartManager.TransitionCondition condition, int colorIndex)

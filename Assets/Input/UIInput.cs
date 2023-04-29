@@ -24,7 +24,7 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
     ""name"": ""UIInput"",
     ""maps"": [
         {
-            ""name"": ""Input"",
+            ""name"": ""DragAndSelect"",
             ""id"": ""938eaf69-95e0-45cb-95cf-b33ea68ed567"",
             ""actions"": [
                 {
@@ -156,54 +156,6 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""MouseZoom"",
-            ""id"": ""967676d8-a0b6-473b-84ee-9c53e6fbccc2"",
-            ""actions"": [
-                {
-                    ""name"": ""Zoom"",
-                    ""type"": ""Value"",
-                    ""id"": ""31daed2f-4804-427a-9d40-e5652eac7bba"",
-                    ""expectedControlType"": ""Axis"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""MousePosition"",
-                    ""type"": ""Value"",
-                    ""id"": ""cfd01534-22f6-410d-9804-f8c914cbfe11"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""27bad8fd-d9e8-4174-a5b2-47432a6af401"",
-                    ""path"": ""<Mouse>/scroll/y"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Zoom"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1d1e7344-9989-4b61-86a4-1aa656d2dfac"",
-                    ""path"": ""<Mouse>/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""MousePosition"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
-        },
-        {
             ""name"": ""TouchZoom"",
             ""id"": ""966bde99-81a3-46ba-9b63-2364fc5d683b"",
             ""actions"": [
@@ -274,16 +226,12 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
     ],
     ""controlSchemes"": []
 }");
-        // Input
-        m_Input = asset.FindActionMap("Input", throwIfNotFound: true);
-        m_Input_Position = m_Input.FindAction("Position", throwIfNotFound: true);
-        m_Input_PressRelease = m_Input.FindAction("PressRelease", throwIfNotFound: true);
-        m_Input_PositionDelta = m_Input.FindAction("PositionDelta", throwIfNotFound: true);
-        m_Input_Press = m_Input.FindAction("Press", throwIfNotFound: true);
-        // MouseZoom
-        m_MouseZoom = asset.FindActionMap("MouseZoom", throwIfNotFound: true);
-        m_MouseZoom_Zoom = m_MouseZoom.FindAction("Zoom", throwIfNotFound: true);
-        m_MouseZoom_MousePosition = m_MouseZoom.FindAction("MousePosition", throwIfNotFound: true);
+        // DragAndSelect
+        m_DragAndSelect = asset.FindActionMap("DragAndSelect", throwIfNotFound: true);
+        m_DragAndSelect_Position = m_DragAndSelect.FindAction("Position", throwIfNotFound: true);
+        m_DragAndSelect_PressRelease = m_DragAndSelect.FindAction("PressRelease", throwIfNotFound: true);
+        m_DragAndSelect_PositionDelta = m_DragAndSelect.FindAction("PositionDelta", throwIfNotFound: true);
+        m_DragAndSelect_Press = m_DragAndSelect.FindAction("Press", throwIfNotFound: true);
         // TouchZoom
         m_TouchZoom = asset.FindActionMap("TouchZoom", throwIfNotFound: true);
         m_TouchZoom_PrimaryFingerPosition = m_TouchZoom.FindAction("PrimaryFingerPosition", throwIfNotFound: true);
@@ -345,44 +293,44 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // Input
-    private readonly InputActionMap m_Input;
-    private IInputActions m_InputActionsCallbackInterface;
-    private readonly InputAction m_Input_Position;
-    private readonly InputAction m_Input_PressRelease;
-    private readonly InputAction m_Input_PositionDelta;
-    private readonly InputAction m_Input_Press;
-    public struct InputActions
+    // DragAndSelect
+    private readonly InputActionMap m_DragAndSelect;
+    private IDragAndSelectActions m_DragAndSelectActionsCallbackInterface;
+    private readonly InputAction m_DragAndSelect_Position;
+    private readonly InputAction m_DragAndSelect_PressRelease;
+    private readonly InputAction m_DragAndSelect_PositionDelta;
+    private readonly InputAction m_DragAndSelect_Press;
+    public struct DragAndSelectActions
     {
         private @UIInput m_Wrapper;
-        public InputActions(@UIInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Position => m_Wrapper.m_Input_Position;
-        public InputAction @PressRelease => m_Wrapper.m_Input_PressRelease;
-        public InputAction @PositionDelta => m_Wrapper.m_Input_PositionDelta;
-        public InputAction @Press => m_Wrapper.m_Input_Press;
-        public InputActionMap Get() { return m_Wrapper.m_Input; }
+        public DragAndSelectActions(@UIInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Position => m_Wrapper.m_DragAndSelect_Position;
+        public InputAction @PressRelease => m_Wrapper.m_DragAndSelect_PressRelease;
+        public InputAction @PositionDelta => m_Wrapper.m_DragAndSelect_PositionDelta;
+        public InputAction @Press => m_Wrapper.m_DragAndSelect_Press;
+        public InputActionMap Get() { return m_Wrapper.m_DragAndSelect; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(InputActions set) { return set.Get(); }
-        public void SetCallbacks(IInputActions instance)
+        public static implicit operator InputActionMap(DragAndSelectActions set) { return set.Get(); }
+        public void SetCallbacks(IDragAndSelectActions instance)
         {
-            if (m_Wrapper.m_InputActionsCallbackInterface != null)
+            if (m_Wrapper.m_DragAndSelectActionsCallbackInterface != null)
             {
-                @Position.started -= m_Wrapper.m_InputActionsCallbackInterface.OnPosition;
-                @Position.performed -= m_Wrapper.m_InputActionsCallbackInterface.OnPosition;
-                @Position.canceled -= m_Wrapper.m_InputActionsCallbackInterface.OnPosition;
-                @PressRelease.started -= m_Wrapper.m_InputActionsCallbackInterface.OnPressRelease;
-                @PressRelease.performed -= m_Wrapper.m_InputActionsCallbackInterface.OnPressRelease;
-                @PressRelease.canceled -= m_Wrapper.m_InputActionsCallbackInterface.OnPressRelease;
-                @PositionDelta.started -= m_Wrapper.m_InputActionsCallbackInterface.OnPositionDelta;
-                @PositionDelta.performed -= m_Wrapper.m_InputActionsCallbackInterface.OnPositionDelta;
-                @PositionDelta.canceled -= m_Wrapper.m_InputActionsCallbackInterface.OnPositionDelta;
-                @Press.started -= m_Wrapper.m_InputActionsCallbackInterface.OnPress;
-                @Press.performed -= m_Wrapper.m_InputActionsCallbackInterface.OnPress;
-                @Press.canceled -= m_Wrapper.m_InputActionsCallbackInterface.OnPress;
+                @Position.started -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPosition;
+                @Position.performed -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPosition;
+                @Position.canceled -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPosition;
+                @PressRelease.started -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPressRelease;
+                @PressRelease.performed -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPressRelease;
+                @PressRelease.canceled -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPressRelease;
+                @PositionDelta.started -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPositionDelta;
+                @PositionDelta.performed -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPositionDelta;
+                @PositionDelta.canceled -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPositionDelta;
+                @Press.started -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPress;
+                @Press.performed -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPress;
+                @Press.canceled -= m_Wrapper.m_DragAndSelectActionsCallbackInterface.OnPress;
             }
-            m_Wrapper.m_InputActionsCallbackInterface = instance;
+            m_Wrapper.m_DragAndSelectActionsCallbackInterface = instance;
             if (instance != null)
             {
                 @Position.started += instance.OnPosition;
@@ -400,48 +348,7 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
             }
         }
     }
-    public InputActions @Input => new InputActions(this);
-
-    // MouseZoom
-    private readonly InputActionMap m_MouseZoom;
-    private IMouseZoomActions m_MouseZoomActionsCallbackInterface;
-    private readonly InputAction m_MouseZoom_Zoom;
-    private readonly InputAction m_MouseZoom_MousePosition;
-    public struct MouseZoomActions
-    {
-        private @UIInput m_Wrapper;
-        public MouseZoomActions(@UIInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Zoom => m_Wrapper.m_MouseZoom_Zoom;
-        public InputAction @MousePosition => m_Wrapper.m_MouseZoom_MousePosition;
-        public InputActionMap Get() { return m_Wrapper.m_MouseZoom; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(MouseZoomActions set) { return set.Get(); }
-        public void SetCallbacks(IMouseZoomActions instance)
-        {
-            if (m_Wrapper.m_MouseZoomActionsCallbackInterface != null)
-            {
-                @Zoom.started -= m_Wrapper.m_MouseZoomActionsCallbackInterface.OnZoom;
-                @Zoom.performed -= m_Wrapper.m_MouseZoomActionsCallbackInterface.OnZoom;
-                @Zoom.canceled -= m_Wrapper.m_MouseZoomActionsCallbackInterface.OnZoom;
-                @MousePosition.started -= m_Wrapper.m_MouseZoomActionsCallbackInterface.OnMousePosition;
-                @MousePosition.performed -= m_Wrapper.m_MouseZoomActionsCallbackInterface.OnMousePosition;
-                @MousePosition.canceled -= m_Wrapper.m_MouseZoomActionsCallbackInterface.OnMousePosition;
-            }
-            m_Wrapper.m_MouseZoomActionsCallbackInterface = instance;
-            if (instance != null)
-            {
-                @Zoom.started += instance.OnZoom;
-                @Zoom.performed += instance.OnZoom;
-                @Zoom.canceled += instance.OnZoom;
-                @MousePosition.started += instance.OnMousePosition;
-                @MousePosition.performed += instance.OnMousePosition;
-                @MousePosition.canceled += instance.OnMousePosition;
-            }
-        }
-    }
-    public MouseZoomActions @MouseZoom => new MouseZoomActions(this);
+    public DragAndSelectActions @DragAndSelect => new DragAndSelectActions(this);
 
     // TouchZoom
     private readonly InputActionMap m_TouchZoom;
@@ -491,17 +398,12 @@ public partial class @UIInput : IInputActionCollection2, IDisposable
         }
     }
     public TouchZoomActions @TouchZoom => new TouchZoomActions(this);
-    public interface IInputActions
+    public interface IDragAndSelectActions
     {
         void OnPosition(InputAction.CallbackContext context);
         void OnPressRelease(InputAction.CallbackContext context);
         void OnPositionDelta(InputAction.CallbackContext context);
         void OnPress(InputAction.CallbackContext context);
-    }
-    public interface IMouseZoomActions
-    {
-        void OnZoom(InputAction.CallbackContext context);
-        void OnMousePosition(InputAction.CallbackContext context);
     }
     public interface ITouchZoomActions
     {

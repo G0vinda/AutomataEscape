@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using LevelGrid;
 using Mono.Collections.Generic;
 using Robot.Transitions;
 using UI;
@@ -35,7 +38,7 @@ namespace Robot.States
                     return transition.DestinationId;
             }
 
-            return -1;
+            throw new Exception("State is missing default transition!");
         }
 
         public void AddTransition(RobotTransition newTransition)
@@ -49,7 +52,7 @@ namespace Robot.States
                 listIndex++;
             }
             
-            if(listIndex >= _transitions.Count)
+            if(listIndex == _transitions.Count)
             {
                 _transitions.Add(newTransition);
             }

@@ -59,12 +59,14 @@ namespace UI
         private void ScaleChartToFitScreen(float availableHorizontalSpace)
         {
             var scaledHeight = _uiManager.ScaleFloat(_rectTransform.sizeDelta.y + 2 * yMargin);
-            _scaleFactor = Screen.height < scaledHeight ? Screen.height / scaledHeight : 1f;
+            _scaleFactor = Screen.height < scaledHeight ? Screen.height / scaledHeight : 1f; // If the screen height isn't big enough _scaleFactor will be < 0
             
             _rectTransform.sizeDelta *= _scaleFactor;
             _defaultSize = _rectTransform.sizeDelta;
-            transform.position = new Vector2(availableHorizontalSpace * 0.5f, transform.position.y);
+            transform.position = new Vector2(availableHorizontalSpace * 0.5f, transform.position.y); // Position panel at center in available space
             _movementBoundaries = new MovementBoundaries(transform.position);
+            
+            // The StateUIElement size has to scale with uiGrid
             StateUIElement.StateSizeAttributes.SetDefaults(
                 _defaultStateSize * _scaleFactor,
                 _defaultLineWidth * _scaleFactor);

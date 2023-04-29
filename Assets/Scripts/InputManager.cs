@@ -9,20 +9,18 @@ using UI.Transition;
 
 public class InputManager : MonoBehaviour
 {
-    [SerializeField] private bool useTouch;
+    public static event Action<StateUIElement> StateElementTapped;
+    public static event Action<StateUIElement> StateElementDragStarted;
 
-    public static Action<StateUIElement> StateElementTapped;
-    public static Action<StateUIElement> StateElementDragStarted;
+    public static event Action StateChartPanelTapped;
+    public static event Action StateChartPanelDragStarted;
 
-    public static Action StateChartPanelTapped;
-    public static Action StateChartPanelDragStarted;
+    public static event Action<TransitionSelectElement> TransitionElementSelected;
+    public static event Action TransitionElementDeselected;
 
-    public static Action<TransitionSelectElement> TransitionElementSelected;
-    public static Action TransitionDeselected;
+    public static event Action DragEnded;
 
-    public static Action DragEnded;
-
-    public static Action<float, Vector2> ZoomInputChanged;
+    public static event Action<float, Vector2> ZoomInputChanged;
 
     private UIInput _uiInput;
     private bool _inputReleased;
@@ -34,36 +32,22 @@ public class InputManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _uiInput.Input.Enable();
-        _uiInput.Input.Press.started += HandlePress;
-        _uiInput.Input.PressRelease.performed += HandlePressRelease;
-        if (!useTouch)
-        {
-            _uiInput.MouseZoom.Enable();
-            _uiInput.MouseZoom.Zoom.performed += HandleMouseZoom;
-        }
-        else
-        {
-            _uiInput.TouchZoom.Enable();
-            _uiInput.TouchZoom.SecondaryFingerPressed.performed += EnterZoomMode;
-        }
+        _uiInput.DragAndSelect.Enable();
+        _uiInput.DragAndSelect.Press.started += HandlePress;
+        _uiInput.DragAndSelect.PressRelease.performed += HandlePressRelease;
+        
+        _uiInput.TouchZoom.Enable();
+        _uiInput.TouchZoom.SecondaryFingerPressed.performed += EnterZoomMode;
     }
 
     private void OnDisable()
     {
-        _uiInput.Input.Disable();
-        _uiInput.Input.Press.started -= HandlePress;
-        _uiInput.Input.PressRelease.performed -= HandlePressRelease;
-        if (!useTouch)
-        {
-            _uiInput.MouseZoom.Disable();
-            _uiInput.MouseZoom.Zoom.performed -= HandleMouseZoom;
-        }
-        else
-        {
-            _uiInput.TouchZoom.Disable();
-            _uiInput.TouchZoom.SecondaryFingerPressed.performed -= EnterZoomMode;
-        }
+        _uiInput.DragAndSelect.Disable();
+        _uiInput.DragAndSelect.Press.started -= HandlePress;
+        _uiInput.DragAndSelect.PressRelease.performed -= HandlePressRelease;
+        
+        _uiInput.TouchZoom.Disable();
+        _uiInput.TouchZoom.SecondaryFingerPressed.performed -= EnterZoomMode;
     }
 
     private void HandlePress(InputAction.CallbackContext context)
@@ -71,7 +55,7 @@ public class InputManager : MonoBehaviour
         _inputReleased = false;
         var wasPossibleDrawInteraction = false;
         ProcessInputOverElement(
-            _uiInput.Input.Position.ReadValue<Vector2>(),
+            _uiInput.DragAndSelect.Position.ReadValue<Vector2>(),
             state =>
             {
                 StartCoroutine(ProcessPressInput(state));
@@ -88,7 +72,7 @@ public class InputManager : MonoBehaviour
             });
         
         if(!wasPossibleDrawInteraction)
-            TransitionDeselected?.Invoke();
+            TransitionElementDeselected?.Invoke();
     }
 
     private IEnumerator ProcessPressInput(StateUIElement selectedStateElement = null)
@@ -109,7 +93,7 @@ public class InputManager : MonoBehaviour
                 break;
             }
 
-            if (_uiInput.Input.PositionDelta.ReadValue<Vector2>() != Vector2.zero) // Player input is drag
+            if (_uiInput.DragAndSelect.PositionDelta.ReadValue<Vector2>() != Vector2.zero) // Player input is drag
             {
                 if (selectedStateElement != null)
                 {
@@ -141,16 +125,16 @@ public class InputManager : MonoBehaviour
 
     public Vector2 GetPointerPosition()
     {
-        return _uiInput.Input.Position.ReadValue<Vector2>();
+        return _uiInput.DragAndSelect.Position.ReadValue<Vector2>();
     }
 
     private void EnterZoomMode(InputAction.CallbackContext callbackContext)
     {
         Debug.Log("Second Finger detected");
         DragEnded?.Invoke();
-        _uiInput.Input.Disable();
-        _uiInput.Input.Press.started -= HandlePress;
-        _uiInput.Input.PressRelease.performed -= HandlePressRelease;
+        _uiInput.DragAndSelect.Disable();
+        _uiInput.DragAndSelect.Press.started -= HandlePress;
+        _uiInput.DragAndSelect.PressRelease.performed -= HandlePressRelease;
 
         var fingerOnePosition = GetFingerOnePosition();
         var fingerTwoPosition = GetFingerTwoPosition();
@@ -164,15 +148,14 @@ public class InputManager : MonoBehaviour
 
     private void ExitZoomMode()
     {
-        _uiInput.Input.Enable();
-        _uiInput.Input.Press.started += HandlePress;
-        _uiInput.Input.PressRelease.performed += HandlePressRelease;
+        _uiInput.DragAndSelect.Enable();
+        _uiInput.DragAndSelect.Press.started += HandlePress;
+        _uiInput.DragAndSelect.PressRelease.performed += HandlePressRelease;
     }
 
     private IEnumerator HandleTouchZoom(Vector2 zoomCenter)
     {
         float secondaryFingerPress;
-        Debug.Log($"will start to zoom around center: {zoomCenter}");
         var previousFingerDistance = Vector2.Distance(GetFingerOnePosition(), GetFingerTwoPosition());
         do
         {
@@ -190,8 +173,7 @@ public class InputManager : MonoBehaviour
                 _uiInput.TouchZoom.SecondaryFingerPressed
                     .ReadValue<float>(); // If = 1, then secondary finger is pressed down
         } while (Mathf.Approximately(secondaryFingerPress, 1f));
-
-        Debug.Log("Zoom canceled");
+        
         ExitZoomMode();
     }
 
@@ -203,12 +185,6 @@ public class InputManager : MonoBehaviour
     private Vector2 GetFingerTwoPosition()
     {
         return _uiInput.TouchZoom.SecondaryFingerPosition.ReadValue<Vector2>();
-    }
-
-    private void HandleMouseZoom(InputAction.CallbackContext context)
-    {
-        var zoomDelta = context.ReadValue<float>() > 0 ? 0.15f : -0.15f;
-        ZoomInputChanged?.Invoke(zoomDelta, _uiInput.MouseZoom.MousePosition.ReadValue<Vector2>());
     }
 
     private void ProcessInputOverElement(

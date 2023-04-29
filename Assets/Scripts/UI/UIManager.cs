@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Helper;
 using Robot;
-using Robot.States;
-using Robot.Transitions;
 using UI.Grid;
 using UI.State;
 using UI.Transition;
 using UnityEngine;
 using UnityEngine.UI;
-using static Robot.StateChartManager;
+using TransitionCondition = Robot.StateChartManager.TransitionCondition;
 
 namespace UI
 {
@@ -21,12 +19,14 @@ namespace UI
         [SerializeField] private StartStateUIElement startStateUIElement;
         [SerializeField] private StateChartPanel stateChartPanel;
         [SerializeField] private Image selectPanel;
+        [SerializeField] private GameObject menuButton;
 
         public static Action<bool> ViewStateChanged;
 
         private StateChartManager _stateChartManager;
         private UIGridManager _uiGridManager;
         private UIInputProcess _inputProcess;
+        private InputManager _inputManager;
         private Canvas _canvas;
 
         private List<StateUIPlaceElement> _placedStateElements;
@@ -47,6 +47,12 @@ namespace UI
         {
             StateChartManager.StateIsActive -= SetStateImageToActive;
             StateChartManager.StateIsInactive -= SetStateImageToInactive;
+
+            if (_inputProcess == null) 
+                return;
+            
+            _inputProcess.InputStarted -= SetMenuButtonToInactive;
+            _inputProcess.InputEnded -= SetMenuButtonToActive;
         }
 
         public void Initialize()
@@ -54,9 +60,13 @@ namespace UI
             _canvas = GetComponent<Canvas>();
             _inputProcess = GetComponent<UIInputProcess>();
             _inputProcess.Initialize(stateChartPanel);
+            _inputManager = GameManager.Instance.GetInputManager();
             _uiGridManager = stateChartPanel.GetComponent<UIGridManager>();
             TransitionLineDrawer.UIGridManager = _uiGridManager;
             _placedStateElements = new List<StateUIPlaceElement>();
+
+            _inputProcess.InputStarted += SetMenuButtonToInactive;
+            _inputProcess.InputEnded += SetMenuButtonToActive;
         }
 
         public void SetupUIForLevel(List<LevelData.AvailableStateInfo> availableStateInfo,
@@ -69,7 +79,7 @@ namespace UI
             _stateChartManager = stateChartManager;
             if (_uiActive)
             {
-                EnableAvailableUIElements();
+                EnableAvailableSelection();
             }
             else
             {
@@ -91,17 +101,18 @@ namespace UI
             startStateUIElement.transform.position = startCellPosition;
         }
 
-        private void EnableAvailableUIElements()
+        private void EnableAvailableSelection()
         {
             var stateChartPanelScaleFactor = stateChartPanel.GetScaleFactor();
+            stateUIElementStacks.ForEach(stack => stack.gameObject.SetActive(false));
             foreach (var availableStateInfo in _availableStateInfo)
             {
                 var availableStack =
                     stateUIElementStacks.First(stack => stack.GetAction() == availableStateInfo.Action);
                 availableStack.gameObject.SetActive(true);
-                availableStack.Initialize(availableStateInfo.Amount, stateChartPanelScaleFactor);
+                availableStack.Setup(availableStateInfo.Amount, stateChartPanelScaleFactor);
             }
-
+            
             foreach (var transitionSelectElement in transitionSelectElements)
             {
                 transitionSelectElement.gameObject.SetActive(
@@ -121,7 +132,7 @@ namespace UI
         {
             if (_uiActive)
             {
-                SwitchLevelView();
+                SwitchToLevelView();
             }
             else
             {
@@ -135,7 +146,8 @@ namespace UI
             stateChartPanel.gameObject.SetActive(true);
             selectPanel.gameObject.SetActive(true);
             ViewStateChanged?.Invoke(true);
-
+            _inputManager.enabled = true;
+            
             if (!_stateChartPanelInitialized)
             {
                 SetupStateChartUI();
@@ -144,17 +156,18 @@ namespace UI
 
             if (_availableSelectChanged)
             {
-                EnableAvailableUIElements();
+                EnableAvailableSelection();
                 _availableSelectChanged = false;
             }
         }
 
-        public void SwitchLevelView()
+        public void SwitchToLevelView()
         {
             _uiActive = false;
             stateChartPanel.gameObject.SetActive(false);
             selectPanel.gameObject.SetActive(false);
             ViewStateChanged?.Invoke(false);
+            _inputManager.enabled = false;
         }
 
         public void ZoomStateChartPanel(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
@@ -186,7 +199,7 @@ namespace UI
 
         public void RemoveStateElementFromGrid(StateUIPlaceElement placeElement)
         {
-            for (var i = 0; i < _connectedTransitions.Count; i++) // Todo: redo this
+            for (var i = 0; i < _connectedTransitions.Count; i++)
             {
                 var connectedTransition = _connectedTransitions.ElementAt(i);
                 if (connectedTransition.Key.Item2 != placeElement &&
@@ -255,6 +268,16 @@ namespace UI
         public float ScaleFloat(float scaledFloat)
         {
             return scaledFloat * _canvas.scaleFactor;
+        }
+
+        public void SetMenuButtonToInactive()
+        {
+            menuButton.SetActive(false);
+        }
+        
+        public void SetMenuButtonToActive()
+        {
+            menuButton.SetActive(true);
         }
     }
 }

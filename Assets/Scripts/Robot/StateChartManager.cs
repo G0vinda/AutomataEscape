@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using Helper;
+using LevelGrid;
 using Robot.States;
 using Robot.Transitions;
 using UnityEngine;
@@ -32,11 +31,10 @@ namespace Robot
             StandsOnPurple
         }
 
-        public static Action<int> StateIsActive;
-        public static Action<int> StateIsInactive;
+        public static event Action<int> StateIsActive;
+        public static event Action<int> StateIsInactive;
         public StartState StartState => (StartState)_stateChart.ElementAt(0);
-
-        private Robot _robot;
+        
         private LevelGridManager _levelGridManager;
         private SpriteChanger _spriteChanger;
         private List<RobotState> _stateChart;
@@ -44,7 +42,6 @@ namespace Robot
 
         private void Awake()
         {
-            _robot = GetComponent<Robot>();
             _levelGridManager = GameManager.Instance.GetLevelGridManager();
             _spriteChanger = GetComponent<SpriteChanger>();
             _stateChart = new List<RobotState> { new StartState() };
@@ -57,8 +54,8 @@ namespace Robot
                 StateAction.GoForward => new GoForwardState(_levelGridManager, _spriteChanger, transform),
                 StateAction.TurnLeft => new TurnLeftState(_levelGridManager, _spriteChanger),
                 StateAction.TurnRight => new TurnRightState(_levelGridManager, _spriteChanger),
-                StateAction.Grab => new GrabState(_levelGridManager, _spriteChanger, ref _robot.GetGrabbedKeyReference()),
-                StateAction.Drop => new DropState(_levelGridManager, _spriteChanger, ref _robot.GetGrabbedKeyReference()),
+                StateAction.Grab => new GrabState(_levelGridManager, _spriteChanger),
+                StateAction.Drop => new DropState(_levelGridManager, _spriteChanger),
                 _ => throw new ArgumentOutOfRangeException()
             };
         
@@ -89,7 +86,7 @@ namespace Robot
             do
             {
                 id = _randomId.Next(1, int.MaxValue);
-            } while (_stateChart.Any(x => x.Id == id));
+            } while (_stateChart.Any(state => state.Id == id));
 
             return id;
         }
@@ -126,7 +123,7 @@ namespace Robot
 
         public bool CheckIfStatesAreConnected()
         {
-            List<RobotState> statesToCheck = new () { _stateChart[0] };
+            List<RobotState> statesToCheck = new () { _stateChart[0] }; // StartState
             List<RobotState> checkedStates = new();
             List<RobotState> activeStates = new();
 

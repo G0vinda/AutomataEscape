@@ -1,8 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.Buttons
 {
     public class ViewButton : MonoBehaviour
     {
@@ -10,25 +9,35 @@ namespace UI
         [SerializeField] private Sprite levelViewSprite;
 
         private Image _image;
+        private Button _button;
 
         private void Awake()
         {
             _image = GetComponent<Image>();
+            _button = GetComponent<Button>();
         }
 
         private void OnEnable()
         {
-            UIManager.ViewStateChanged += ChangeImage;   
+            UIManager.ViewStateChanged += ChangeImage;
+            GameManager.Instance.RobotStateChanged += SetButtonToInteractable;
+
         }
 
         private void OnDisable()
         {
             UIManager.ViewStateChanged -= ChangeImage;
+            GameManager.Instance.RobotStateChanged -= SetButtonToInteractable;
         }
 
         private void ChangeImage(bool programmingViewActive)
         {
             _image.sprite = programmingViewActive ? levelViewSprite : programViewSprite;
+        }
+
+        private void SetButtonToInteractable(bool isRunning)
+        {
+            _button.interactable = !isRunning;
         }
     }
 }
