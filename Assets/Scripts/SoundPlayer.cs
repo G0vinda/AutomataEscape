@@ -24,6 +24,11 @@ public class SoundPlayer : MonoBehaviour
     private EventInstance _atmoLevelInstance;
     private EventInstance _musicLevelInstance;
 
+    private const string WalkStateParameterName = "Walkstate";
+    private const string IdleLabelName = "Idle";
+    private const string WalkingLabelName = "Walking";
+    private const string GoalReachedLabelName = "Goal Reached";
+
     private void Awake()
     {
         Instance = this;
@@ -44,19 +49,15 @@ public class SoundPlayer : MonoBehaviour
 
     private void HandleRobotStateChanged(bool startsWalking)
     {
-        if (startsWalking)
-        {
-            
-        }
-        else
-        {
-            
-        }
+        var newLabelName = startsWalking ? WalkingLabelName : IdleLabelName;
+        Debug.Log(newLabelName);
+        
+        _musicLevelInstance.setParameterByNameWithLabel(WalkStateParameterName, newLabelName);
     }
 
     private void Start() // Todo: Change me later
     {
-        PlayAtmoLevel();
+        //PlayAtmoLevel();
     }
 
     public void PlayButtonClick()
