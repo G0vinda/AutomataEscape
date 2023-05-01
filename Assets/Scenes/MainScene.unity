@@ -390,6 +390,27 @@ MonoBehaviour:
       Data3: -585372784
       Data4: 1007769277
     Path: event:/Foleys/Cable Connected UI
+  cableHoldEvent:
+    Guid:
+      Data1: -1240663785
+      Data2: 1113322120
+      Data3: 639941819
+      Data4: -1923213097
+    Path: event:/Foleys/Cable Hold UI
+  cableStartEvent:
+    Guid:
+      Data1: -1183706111
+      Data2: 1112570481
+      Data3: -1027561060
+      Data4: -875878837
+    Path: event:/Foleys/Cable Start UI
+  cableReleaseEvent:
+    Guid:
+      Data1: 1348734419
+      Data2: 1292766742
+      Data3: -590664274
+      Data4: 2114277176
+    Path: event:/Foleys/Cable Release UI
 --- !u!1001 &399028308
 PrefabInstance:
   m_ObjectHideFlags: 0
