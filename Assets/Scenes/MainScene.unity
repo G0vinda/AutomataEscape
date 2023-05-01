@@ -400,6 +400,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de4abc3bdd367af49b2e406c65506d6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonClickEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
 --- !u!1001 &399028308
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1632,6 +1639,18 @@ MonoBehaviour:
       - m_Target: {fileID: 654531688}
         m_TargetAssemblyTypeName: UI.UIManager, Scripts
         m_MethodName: ToggleUI
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 395633766}
+        m_TargetAssemblyTypeName: SoundPlayer, Scripts
+        m_MethodName: PlayButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
