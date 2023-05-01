@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
+using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public class SoundPlayer : MonoBehaviour
 {
@@ -14,6 +16,8 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference cableReleaseEvent;
     
     public static SoundPlayer Instance;
+
+    private EventInstance _cableHoldInstance;
 
     private void Awake()
     {
@@ -40,18 +44,19 @@ public class SoundPlayer : MonoBehaviour
     public void PlayCableConnect()
     {
         RuntimeManager.PlayOneShot(cableConnectEvent);
-        // Stop cable hold sound here
+        _cableHoldInstance.stop(STOP_MODE.IMMEDIATE);
     }
 
     private void StartCableHold()
     {
-        RuntimeManager.PlayOneShot(cableHoldEvent);
+        _cableHoldInstance = RuntimeManager.CreateInstance(cableHoldEvent);
+        _cableHoldInstance.start();
     }
 
     public void PlayCableRelease()
     {
         RuntimeManager.PlayOneShot(cableReleaseEvent);
-        // Stop cable hold sound here
+        _cableHoldInstance.stop(STOP_MODE.IMMEDIATE);
     }
 
 }
