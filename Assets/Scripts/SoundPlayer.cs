@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
@@ -20,9 +17,9 @@ public class SoundPlayer : MonoBehaviour
     
     public static SoundPlayer Instance;
 
+    private EventInstance _musicInstance;
     private EventInstance _cableHoldInstance;
     private EventInstance _atmoLevelInstance;
-    private EventInstance _musicLevelInstance;
 
     private const string WalkStateParameterName = "Walkstate";
     private const string IdleLabelName = "Idle";
@@ -52,12 +49,12 @@ public class SoundPlayer : MonoBehaviour
         var newLabelName = startsWalking ? WalkingLabelName : IdleLabelName;
         Debug.Log(newLabelName);
         
-        _musicLevelInstance.setParameterByNameWithLabel(WalkStateParameterName, newLabelName);
+        _musicInstance.setParameterByNameWithLabel(WalkStateParameterName, newLabelName);
     }
 
     private void Start() // Todo: Change me later
     {
-        //PlayAtmoLevel();
+        PlayAtmoLevel();
     }
 
     public void PlayButtonClick()
@@ -73,9 +70,9 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayMusicLevel()
     {
-        _musicLevelInstance.stop(STOP_MODE.IMMEDIATE);
-        _musicLevelInstance = RuntimeManager.CreateInstance(musicLevelEvent);
-        _musicLevelInstance.start();
+        _musicInstance.stop(STOP_MODE.IMMEDIATE);
+        _musicInstance = RuntimeManager.CreateInstance(musicLevelEvent);
+        _musicInstance.start();
     }
 
     public void PlayCableStart()

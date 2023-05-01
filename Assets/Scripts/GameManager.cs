@@ -146,6 +146,7 @@ public class GameManager : MonoBehaviour
     {
         _robot = Instantiate(robotPrefab);
         _stateChartManager = _robot.GetComponent<StateChartManager>();
+        SoundPlayer.Instance.PlayMusicLevel();
         
         var level = LevelDataStorage.GetLevelData(levelId);
         LoadLevelGrid(level);
@@ -169,7 +170,5 @@ public class GameManager : MonoBehaviour
         {
             DropKeyOnCoordinates(keyCoordinates, keyType);
         }
-        
-        SoundPlayer.Instance.PlayMusicLevel();
     }
 }
