@@ -169,5 +169,7 @@ public class GameManager : MonoBehaviour
         {
             DropKeyOnCoordinates(keyCoordinates, keyType);
         }
+        
+        SoundPlayer.Instance.PlayMusicLevel();
     }
 }

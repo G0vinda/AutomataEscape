@@ -340,6 +340,7 @@ MonoBehaviour:
   Banks:
   - Atmos
   - Foley
+  - Music
   CollisionTag: 
   PreloadSamples: 0
 --- !u!4 &395633765
@@ -376,13 +377,6 @@ MonoBehaviour:
       Data3: -418409809
       Data4: -101654633
     Path: event:/Foleys/Switch UI
-  atmoLevelEvent:
-    Guid:
-      Data1: -26895183
-      Data2: 1267870298
-      Data3: -1636686433
-      Data4: -123889763
-    Path: event:/Atmo/Atmo Level
   cableConnectEvent:
     Guid:
       Data1: -438105875
@@ -411,6 +405,20 @@ MonoBehaviour:
       Data3: -590664274
       Data4: 2114277176
     Path: event:/Foleys/Cable Release UI
+  atmoLevelEvent:
+    Guid:
+      Data1: -26895183
+      Data2: 1267870298
+      Data3: -1636686433
+      Data4: -123889763
+    Path: event:/Atmo/Atmo Level
+  musicLevelEvent:
+    Guid:
+      Data1: -162176668
+      Data2: 1316187699
+      Data3: -256894071
+      Data4: 2077778011
+    Path: event:/Music/Level Music
 --- !u!1001 &399028308
 PrefabInstance:
   m_ObjectHideFlags: 0
