@@ -9,6 +9,9 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference buttonClickEvent; 
     [SerializeField] private EventReference atmoLevelEvent;
     [SerializeField] private EventReference cableConnectEvent;
+    [SerializeField] private EventReference cableHoldEvent;
+    [SerializeField] private EventReference cableStartEvent;
+    [SerializeField] private EventReference cableReleaseEvent;
     
     public static SoundPlayer Instance;
 
@@ -30,7 +33,7 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayCableStart()
     {
-        // Play sound here
+        RuntimeManager.PlayOneShot(cableStartEvent);
         StartCableHold();
     }
     
@@ -42,12 +45,12 @@ public class SoundPlayer : MonoBehaviour
 
     private void StartCableHold()
     {
-        // Play sound here
+        RuntimeManager.PlayOneShot(cableHoldEvent);
     }
 
     public void PlayCableRelease()
     {
-        // Play Sound here
+        RuntimeManager.PlayOneShot(cableReleaseEvent);
         // Stop cable hold sound here
     }
 
