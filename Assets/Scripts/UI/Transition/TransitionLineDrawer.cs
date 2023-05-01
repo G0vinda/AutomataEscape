@@ -180,6 +180,7 @@ namespace UI.Transition
         {
             _numberOfLinesByCondition[CurrentTransitionCondition]++;
             DestinationStateElement.RemoveHighlight();
+            SoundPlayer.Instance.PlayCableConnect();
             
             CurrentTransitionLine.CreatePlug(_plugPosition, _plugDirection.ToZRotation());
             ref var plugSubCell = ref UIGridManager.GetSubCellOnPosition(_currentSubCellPosition);

@@ -7,8 +7,8 @@ using UnityEngine;
 public class SoundPlayer : MonoBehaviour
 {
     [SerializeField] private EventReference buttonClickEvent; 
-    [SerializeField] private EventReference AtmoLevelEvent;
-    [SerializeField] private EventReference CableConnectEvent;
+    [SerializeField] private EventReference atmoLevelEvent;
+    [SerializeField] private EventReference cableConnectEvent;
     
     public static SoundPlayer Instance;
 
@@ -25,12 +25,12 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayAtmoLevel()
     {
-        RuntimeManager.PlayOneShot(AtmoLevelEvent);
+        RuntimeManager.PlayOneShot(atmoLevelEvent);
     }
     
-    public void PlayAtmoLevel()
+    public void PlayCableConnect()
     {
-        RuntimeManager.PlayOneShot(CableConnectEvent);
+        RuntimeManager.PlayOneShot(cableConnectEvent);
     }
     
 }
