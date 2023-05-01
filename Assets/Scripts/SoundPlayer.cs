@@ -27,10 +27,28 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(atmoLevelEvent);
     }
+
+    public void PlayCableStart()
+    {
+        // Play sound here
+        StartCableHold();
+    }
     
     public void PlayCableConnect()
     {
         RuntimeManager.PlayOneShot(cableConnectEvent);
+        // Stop cable hold sound here
     }
-    
+
+    private void StartCableHold()
+    {
+        // Play sound here
+    }
+
+    public void PlayCableRelease()
+    {
+        // Play Sound here
+        // Stop cable hold sound here
+    }
+
 }
