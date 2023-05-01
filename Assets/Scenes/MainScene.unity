@@ -315,7 +315,6 @@ GameObject:
   m_Component:
   - component: {fileID: 395633765}
   - component: {fileID: 395633764}
-  - component: {fileID: 395633763}
   - component: {fileID: 395633766}
   m_Layer: 0
   m_Name: SoundPlayer
@@ -324,37 +323,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &395633763
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 395633762}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CollisionTag: 
-  EventReference:
-    Guid:
-      Data1: 274826833
-      Data2: 1269408942
-      Data3: 976647862
-      Data4: -1947256804
-    Path: event:/Menu Button
-  Event: 
-  PlayEvent: 1
-  StopEvent: 0
-  AllowFadeout: 1
-  TriggerOnce: 0
-  Preload: 0
-  AllowNonRigidbodyDoppler: 0
-  Params: []
-  OverrideAttenuation: 0
-  OverrideMinDistance: 1
-  OverrideMaxDistance: 20
 --- !u!114 &395633764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -402,11 +370,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonClickEvent:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: 1925506511
+      Data2: 1300274434
+      Data3: -418409809
+      Data4: -101654633
+    Path: event:/Foleys/Switch UI
+  AtmoLevelEvent:
+    Guid:
+      Data1: -26895183
+      Data2: 1267870298
+      Data3: -1636686433
+      Data4: -123889763
+    Path: event:/Atmo/Atmo Level
 --- !u!1001 &399028308
 PrefabInstance:
   m_ObjectHideFlags: 0
