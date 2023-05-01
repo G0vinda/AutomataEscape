@@ -75,6 +75,7 @@ namespace UI.Transition
                 hoveredSubCell.PlacedVerticalLine = CurrentTransitionLine;
             }
 
+            SoundPlayer.Instance.PlayCableStart();
             return true;
         }
 
@@ -172,6 +173,7 @@ namespace UI.Transition
 
         public static void CancelDraw()
         {
+            SoundPlayer.Instance.PlayCableRelease();
             if(DestinationStateElement != null)
                 DestinationStateElement.RemoveHighlight();
         }
