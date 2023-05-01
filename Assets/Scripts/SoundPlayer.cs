@@ -1,5 +1,6 @@
 using FMOD.Studio;
 using FMODUnity;
+using UI;
 using UnityEngine;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
 
@@ -19,12 +20,16 @@ public class SoundPlayer : MonoBehaviour
 
     private EventInstance _musicInstance;
     private EventInstance _cableHoldInstance;
-    private EventInstance _atmoLevelInstance;
+    private EventInstance _atmoInstance;
 
     private const string WalkStateParameterName = "Walkstate";
     private const string IdleLabelName = "Idle";
     private const string WalkingLabelName = "Walking";
     private const string GoalReachedLabelName = "Goal Reached";
+
+    private const string ViewStateParameterName = "View";
+    private const string ProgramViewLabelName = "ProgramView";
+    private const string LevelViewLabelName = "LevelView";
 
     private void Awake()
     {
@@ -36,6 +41,7 @@ public class SoundPlayer : MonoBehaviour
     private void OnEnable()
     {
         GameManager.Instance.RobotStateChanged += HandleRobotStateChanged;
+        UIManager.ViewStateChanged += HandleViewStateChanged;
     }
 
     private void OnDisable()
@@ -47,9 +53,14 @@ public class SoundPlayer : MonoBehaviour
     private void HandleRobotStateChanged(bool startsWalking)
     {
         var newLabelName = startsWalking ? WalkingLabelName : IdleLabelName;
-        Debug.Log(newLabelName);
-        
         _musicInstance.setParameterByNameWithLabel(WalkStateParameterName, newLabelName);
+    }
+
+    private void HandleViewStateChanged(bool isInProgramView)
+    {
+        var newLabelName = isInProgramView ? ProgramViewLabelName : LevelViewLabelName;
+        _atmoInstance.setParameterByNameWithLabel(ViewStateParameterName, newLabelName);
+        _musicInstance.setParameterByNameWithLabel(ViewStateParameterName, newLabelName);
     }
 
     private void Start() // Todo: Change me later
@@ -64,8 +75,8 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayAtmoLevel()
     {
-        _atmoLevelInstance = RuntimeManager.CreateInstance(atmoLevelEvent);
-        _atmoLevelInstance.start();
+        _atmoInstance = RuntimeManager.CreateInstance(atmoLevelEvent);
+        _atmoInstance.start();
     }
 
     public void PlayMusicLevel()
