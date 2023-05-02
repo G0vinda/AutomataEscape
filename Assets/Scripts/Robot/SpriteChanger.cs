@@ -1,4 +1,5 @@
 ﻿using System;
+using DG.Tweening;
 using LevelGrid;
 using UI;
 using UI.Transition;
@@ -8,6 +9,7 @@ namespace Robot
 {
     public class SpriteChanger : MonoBehaviour
     {
+        [Header("RobotSprites")]
         [SerializeField] private Sprite upRobot;
         [SerializeField] private Sprite sideRobot;
         [SerializeField] private Sprite downRobot;
@@ -19,7 +21,16 @@ namespace Robot
         [SerializeField] private Sprite upRobotWithRedKey;
         [SerializeField] private Sprite sideRobotWithRedKey;
         [SerializeField] private Sprite downRobotWithRedKey;
-    
+
+        [Header("BeamParticles")] 
+        [SerializeField] private ParticleSystem frontParticles;
+        [SerializeField] private ParticleSystem backParticles;
+
+        [Header("BeamValues")] 
+        [SerializeField] private Color beamTransparentColor;
+        [SerializeField] private Color beamSolidColor;
+        [SerializeField] private float beamTime;
+
         private Sprite upSprite;
         private Sprite sideSprite;
         private Sprite downSprite;
@@ -30,6 +41,25 @@ namespace Robot
         private void Awake()
         {
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
+        #region OnEnable/OnDisable
+
+        private void OnEnable()
+        {
+            GameManager.Instance.GoalReached += StartBeamDespawnEffect;
+        }
+
+        private void OnDisable()
+        {
+            GameManager.Instance.GoalReached -= StartBeamDespawnEffect;
+        }
+        
+        #endregion
+
+        private void Start()
+        {
+            StartBeamSpawnEffect();
         }
 
         public void SetCarryKeyType(LevelGridManager.KeyType keyType)
@@ -89,6 +119,22 @@ namespace Robot
         public void SetSpriteSortingOrder(int sortingOrder)
         {
             _spriteRenderer.sortingOrder = sortingOrder;
+            frontParticles.GetComponent<Renderer>().sortingOrder = sortingOrder + 1;
+            backParticles.GetComponent<Renderer>().sortingOrder = sortingOrder - 1;
+        }
+
+        private void StartBeamSpawnEffect()
+        {
+            DOVirtual.Color(beamTransparentColor, beamSolidColor, beamTime, value => _spriteRenderer.color = value);
+            frontParticles.Play();
+            backParticles.Play();
+        }
+
+        public void StartBeamDespawnEffect()
+        {
+            DOVirtual.Color(beamSolidColor, beamTransparentColor, beamTime, value => _spriteRenderer.color = value);
+            frontParticles.Play();
+            backParticles.Play();
         }
     }
 }

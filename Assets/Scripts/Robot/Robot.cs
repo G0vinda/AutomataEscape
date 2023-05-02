@@ -63,7 +63,7 @@ namespace Robot
                 yield return _waitForSecond;
             } while (true);
             
-            GameManager.Instance.LoadNextLevel();
+            GameManager.Instance.ReachGoal();
         }
 
         private StateChartManager.StateAction DetermineStateAction(RobotState robotState)

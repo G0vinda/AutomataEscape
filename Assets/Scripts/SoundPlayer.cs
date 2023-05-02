@@ -110,4 +110,19 @@ public class SoundPlayer : MonoBehaviour
         _cableHoldInstance.stop(STOP_MODE.IMMEDIATE);
     }
 
+    public void PlayGoalMusic()
+    {
+        // Switch Music to Goal music
+    }
+
+    public void PlayBeamSpawn()
+    {
+        // Play this sound when robot appears in level (atm. ~2 seconds)
+    }
+
+    public void PlayBeamDespawn()
+    {
+        // Play this sound when robot disappears on goal (atm. ~2 seconds)
+    }
+
 }

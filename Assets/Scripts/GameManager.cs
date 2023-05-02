@@ -1,11 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using LevelGrid;
 using Robot;
 using UI;
 using UI.Transition;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 [DefaultExecutionOrder(-1)] // Game Manager will be executed before all other scripts
 public class GameManager : MonoBehaviour
@@ -18,9 +21,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject redKeyPrefab;
     [SerializeField] private GameObject blueKeyPrefab;
     [SerializeField] private CurrentStateIndicator currentStateIndicator;
+    [SerializeField] private Image levelFadeImage;
+    [SerializeField] private Color levelFadeColor;
+    [SerializeField] private float levelFadeTime;
+    [SerializeField] private int startLevelId;
+    [SerializeField] private bool resetLevelOnStart;
 
     public static GameManager Instance { get; private set; }
-    public Action<bool> RobotStateChanged;
+    public event Action<bool> RobotStateChanged;
+    public event Action GoalReached;
     
     private const int FinishSceneIndex = 2;
     
@@ -37,8 +46,10 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         uiManager.Initialize();
+        if(resetLevelOnStart)
+            PlayerPrefs.SetInt("CurrentLevelId", startLevelId);
         _currentLevelId = PlayerPrefs.GetInt("CurrentLevelId", 0);
-        LoadLevel(_currentLevelId);
+        StartCoroutine(LoadLevel(_currentLevelId));
     }
 
     public UIManager GetUIManager()
@@ -125,7 +136,9 @@ public class GameManager : MonoBehaviour
             Destroy(keyObject);
         }
 
-        LoadLevelGrid(LevelDataStorage.GetLevelData(_currentLevelId));
+        var level = LevelDataStorage.GetLevelData(_currentLevelId);
+        LoadLevelGrid(level);
+        PositionRobotInLevel(level);
     }
 
     public void LoadNextLevel()
@@ -139,20 +152,37 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(FinishSceneIndex);
         
         PlayerPrefs.SetInt("CurrentLevelId", _currentLevelId);
-        LoadLevel(_currentLevelId);
+        StartCoroutine(LoadLevel(_currentLevelId));
     }
 
-    private void LoadLevel(int levelId)
+    private IEnumerator LoadLevel(int levelId)
     {
-        _robot = Instantiate(robotPrefab);
-        _stateChartManager = _robot.GetComponent<StateChartManager>();
         SoundPlayer.Instance.PlayMusicLevel();
         
         var level = LevelDataStorage.GetLevelData(levelId);
         LoadLevelGrid(level);
 
+        var transparent = levelFadeColor;
+        transparent.a = 0;
+        DOVirtual.Color(levelFadeColor, transparent, levelFadeTime, value => levelFadeImage.color = value)
+            .SetEase(Ease.OutCirc);
+
+        var levelWaitTime = levelFadeTime - 0.4f;
+        yield return new WaitForSeconds(levelWaitTime);
+        
+        _robot = Instantiate(robotPrefab);
+        _stateChartManager = _robot.GetComponent<StateChartManager>();
+        PositionRobotInLevel(level);
+        
         TransitionLineDrawer.ResetColors();
         uiManager.SetupUIForLevel(level.AvailableActions, level.AvailableTransitionConditions, _stateChartManager);
+    }
+
+    private void PositionRobotInLevel(LevelData level)
+    {
+        var robotStartPositionOnGrid = levelGridManager.GetTilePosition(level.RobotStartPosition);
+        _robot.transform.position = robotStartPositionOnGrid;
+        _robot.Initialize(level.RobotStartPosition, level.RobotStartDirection);
     }
 
     private void LoadLevelGrid(LevelData level)
@@ -161,14 +191,24 @@ public class GameManager : MonoBehaviour
         var tileRenderers = levelGridManager.GetTileSpriteRenderers();
         cameraController.AlignCameraWithLevel(tileRenderers);
         
-        var robotStartPositionOnGrid = levelGridManager.GetTilePosition(level.RobotStartPosition);
-        _robot.transform.position = robotStartPositionOnGrid;
-        _robot.Initialize(level.RobotStartPosition, level.RobotStartDirection);
-
         _currentKeyObjectData = new Dictionary<Vector2Int, (LevelGridManager.KeyType, GameObject)>();
         foreach (var (keyCoordinates, keyType) in level.KeyData)
         {
             DropKeyOnCoordinates(keyCoordinates, keyType);
         }
+    }
+
+    public void ReachGoal()
+    {
+        SoundPlayer.Instance.PlayGoalMusic();
+        GoalReached?.Invoke();
+        Invoke(nameof(FadeLevelOut), 2.7f);
+    }
+
+    private void FadeLevelOut()
+    {
+        var transparent = levelFadeImage.color;
+        DOVirtual.Color(transparent, levelFadeColor, levelFadeTime, value => levelFadeImage.color = value);
+        Invoke(nameof(LoadNextLevel), levelFadeTime);
     }
 }
