@@ -125,6 +125,7 @@ namespace Robot
 
         private void StartBeamSpawnEffect()
         {
+            SoundPlayer.Instance.PlayBeamSpawn();
             DOVirtual.Color(beamTransparentColor, beamSolidColor, beamTime, value => _spriteRenderer.color = value);
             frontParticles.Play();
             backParticles.Play();
@@ -132,6 +133,7 @@ namespace Robot
 
         public void StartBeamDespawnEffect()
         {
+            SoundPlayer.Instance.PlayBeamDespawn();
             DOVirtual.Color(beamSolidColor, beamTransparentColor, beamTime, value => _spriteRenderer.color = value);
             frontParticles.Play();
             backParticles.Play();
