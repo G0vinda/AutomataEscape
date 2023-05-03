@@ -13,6 +13,8 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference cableStartEvent;
     [SerializeField] private EventReference cableReleaseEvent;
     
+    [SerializeField] private EventReference robotBeamEvent;
+    
     [SerializeField] private EventReference atmoLevelEvent;
     [SerializeField] private EventReference musicLevelEvent;
     
@@ -117,7 +119,7 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayBeamSpawn()
     {
-        // Play this sound when robot appears in level (atm. ~2 seconds)
+        RuntimeManager.PlayOneShot(robotBeamEvent);
     }
 
     public void PlayBeamDespawn()

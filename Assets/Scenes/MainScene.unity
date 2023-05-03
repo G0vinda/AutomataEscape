@@ -405,6 +405,13 @@ MonoBehaviour:
       Data3: -590664274
       Data4: 2114277176
     Path: event:/Foleys/Cable Release UI
+  robotBeamEvent:
+    Guid:
+      Data1: -1101501727
+      Data2: 1085691642
+      Data3: 505986688
+      Data4: 949805867
+    Path: event:/Foleys/Robot Beam
   atmoLevelEvent:
     Guid:
       Data1: -26895183
