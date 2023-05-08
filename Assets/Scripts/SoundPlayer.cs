@@ -119,12 +119,17 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayBeamSpawn()
     {
-        RuntimeManager.PlayOneShot(robotBeamEvent);
+        PlayBeam();
     }
 
     public void PlayBeamDespawn()
     {
-        // Play this sound when robot disappears on goal (atm. ~2 seconds)
+        PlayBeam();
+    }
+
+    private void PlayBeam()
+    {
+        RuntimeManager.PlayOneShot(robotBeamEvent);   
     }
 
 }
