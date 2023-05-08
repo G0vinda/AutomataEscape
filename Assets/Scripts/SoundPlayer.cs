@@ -70,6 +70,12 @@ public class SoundPlayer : MonoBehaviour
         PlayAtmoLevel();
     }
 
+    public void SetLevelBackgroundVolume(float volume)
+    {
+        _musicInstance.setVolume(volume);
+        _atmoInstance.setVolume(volume);
+    }
+
     public void PlayButtonClick()
     {
         RuntimeManager.PlayOneShot(buttonClickEvent);
@@ -131,5 +137,27 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(robotBeamEvent);   
     }
+
+    public void PlayStateDragStart()
+    {
+        // Play sound at the moment when a state element gets grabbed
+    }
+
+    public void PlayStateDragEnd()
+    {
+        // Play sound at the moment when a state element gets dropped
+    }
+
+    public void PlayRunStart()
+    {
+        // Play sound when the run button gets successfully pressed
+    }
+
+    public void PlayRunError()
+    {
+        // Play sound when the run button gets pressed, but the state chart is invalid
+    }
+    
+    
 
 }

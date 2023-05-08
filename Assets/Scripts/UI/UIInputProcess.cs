@@ -210,6 +210,7 @@ namespace UI
             _selectedDragStateElement.SwitchAppearanceToOffGrid();
             _selectedDragStateElement.transform.SetAsLastSibling();
             ChangeInputPhase(UIInputPhase.DraggingStateElement);
+            SoundPlayer.Instance.PlayStateDragStart();
 
             var blockedCellPositions = _uiGridManager.GetCellPositionsAdjacentToStates();
             foreach (var blockedCellPosition in blockedCellPositions)
@@ -328,6 +329,7 @@ namespace UI
             if (_dragStateElementWasOnGrid)
             {
                 _uiManager.PlaceStateElementOnGrid(_selectedDragStateElement, _hoveredDragStateChartCell);
+                SoundPlayer.Instance.PlayStateDragEnd();
                 _selectedDragStateElement = null;
             }
             else

@@ -865,6 +865,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runSprite: {fileID: 21300000, guid: e044a056f2a47ac42bf6d27245393789, type: 3}
   stopSprite: {fileID: 21300000, guid: c8bbb99649365834bbee3bcd642fd40b, type: 3}
+  errorEffectTime: 1
 --- !u!1001 &626845517
 PrefabInstance:
   m_ObjectHideFlags: 0

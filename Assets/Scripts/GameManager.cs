@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
     public event Action<bool> RobotStateChanged;
+    public event Action InvalidRunPress;
     public event Action GoalReached;
     
     private const int FinishSceneIndex = 2;
@@ -117,9 +118,12 @@ public class GameManager : MonoBehaviour
             if (!_stateChartManager.CheckIfStatesAreConnected())
             {
                 uiManager.SwitchToProgramView();
+                SoundPlayer.Instance.PlayRunError();
+                InvalidRunPress?.Invoke();
             }
             else
             {
+                SoundPlayer.Instance.PlayRunStart();
                 currentStateIndicator.gameObject.SetActive(true);
                 _robot.StartRun();
                 RobotStateChanged?.Invoke(true);
@@ -162,10 +166,7 @@ public class GameManager : MonoBehaviour
         var level = LevelDataStorage.GetLevelData(levelId);
         LoadLevelGrid(level);
 
-        var transparent = levelFadeColor;
-        transparent.a = 0;
-        DOVirtual.Color(levelFadeColor, transparent, levelFadeTime, value => levelFadeImage.color = value)
-            .SetEase(Ease.OutCirc);
+        FadeLevelIn();
 
         var levelWaitTime = levelFadeTime - 0.4f;
         yield return new WaitForSeconds(levelWaitTime);
@@ -205,10 +206,26 @@ public class GameManager : MonoBehaviour
         Invoke(nameof(FadeLevelOut), 2.7f);
     }
 
+    private void FadeLevelIn()
+    {
+        var transparent = levelFadeColor;
+        transparent.a = 0;
+        var fadeSequence = DOTween.Sequence();
+        fadeSequence.Append(DOVirtual.Color(levelFadeColor, transparent, levelFadeTime,
+            value => levelFadeImage.color = value));
+        fadeSequence.Join(DOVirtual.Float(0, 1, levelFadeTime,
+            value => SoundPlayer.Instance.SetLevelBackgroundVolume(value)));
+        fadeSequence.SetEase(Ease.InCirc);
+    }
+
     private void FadeLevelOut()
     {
         var transparent = levelFadeImage.color;
-        DOVirtual.Color(transparent, levelFadeColor, levelFadeTime, value => levelFadeImage.color = value);
-        Invoke(nameof(LoadNextLevel), levelFadeTime);
+        var fadeSequence = DOTween.Sequence();
+        fadeSequence.Append(DOVirtual.Color(transparent, levelFadeColor, levelFadeTime,
+            value => levelFadeImage.color = value));
+        fadeSequence.Join(DOVirtual.Float(1, 0, levelFadeTime,
+            value => SoundPlayer.Instance.SetLevelBackgroundVolume(value)));
+        fadeSequence.SetEase(Ease.InCirc).OnComplete(LoadNextLevel);
     }
 }
