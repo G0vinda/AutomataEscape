@@ -13,24 +13,22 @@ public static class LevelDataStorage
     
     private static List<LevelData> _levels = new ()
     {
-        new LevelData( 
+        new LevelData( // Level 1
             new Vector2Int(0, 0),
-            Direction.Down,
+            Direction.Right,
             new[,]
             {
-                { Floor, Floor, Floor, Goal },
-                { Floor, Floor, None, Floor }
+                { Floor, Floor, Floor, Floor, Goal }
             },
             new List<LevelData.AvailableStateInfo>()
             {
                 new (GoForward, 1), 
-                new (TurnLeft, 1)
             },
             new List<StateChartManager.TransitionCondition>()
             {
                 Default
             },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+            new Dictionary<Vector2Int, LevelGridManager.KeyType>()), // <-- Wenn keine Gears 
         new LevelData( 
             new Vector2Int(2, 0),
             Direction.Down,
@@ -140,7 +138,7 @@ public static class LevelDataStorage
             },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>()
             {
-                {new Vector2Int(0, -1), LevelGridManager.KeyType.Red}
+                {new Vector2Int(0, -1), LevelGridManager.KeyType.Red}  // <-- Wenn Gears 
             }),
         new LevelData(
             new Vector2Int(4, -4),
