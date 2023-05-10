@@ -12,8 +12,12 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference cableHoldEvent;
     [SerializeField] private EventReference cableStartEvent;
     [SerializeField] private EventReference cableReleaseEvent;
+    [SerializeField] private EventReference stateDragEvent;
+    [SerializeField] private EventReference stateDropEvent;
     
     [SerializeField] private EventReference robotBeamEvent;
+    [SerializeField] private EventReference levelStartSuccessEvent;
+    [SerializeField] private EventReference levelStartFailEvent;
     
     [SerializeField] private EventReference atmoLevelEvent;
     [SerializeField] private EventReference musicLevelEvent;
@@ -140,21 +144,23 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayStateDragStart()
     {
-        // Play sound at the moment when a state element gets grabbed
+        RuntimeManager.PlayOneShot(stateDragEvent);
     }
 
     public void PlayStateDragEnd()
     {
-        // Play sound at the moment when a state element gets dropped
+        RuntimeManager.PlayOneShot(stateDropEvent);
     }
 
     public void PlayRunStart()
     {
+        RuntimeManager.PlayOneShot(levelStartSuccessEvent);
         // Play sound when the run button gets successfully pressed
     }
 
     public void PlayRunError()
     {
+        RuntimeManager.PlayOneShot(levelStartFailEvent);
         // Play sound when the run button gets pressed, but the state chart is invalid
     }
     

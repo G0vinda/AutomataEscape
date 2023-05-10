@@ -405,6 +405,20 @@ MonoBehaviour:
       Data3: -590664274
       Data4: 2114277176
     Path: event:/Foleys/Cable Release UI
+  stateDragEvent:
+    Guid:
+      Data1: -344485164
+      Data2: 1178422852
+      Data3: -432229704
+      Data4: -2124588571
+    Path: event:/Foleys/State Drag UI
+  stateDropEvent:
+    Guid:
+      Data1: 210200903
+      Data2: 1207234408
+      Data3: -2054680652
+      Data4: 713835992
+    Path: event:/Foleys/State Drop UI
   robotBeamEvent:
     Guid:
       Data1: -1101501727
@@ -412,6 +426,20 @@ MonoBehaviour:
       Data3: 505986688
       Data4: 949805867
     Path: event:/Foleys/Robot Beam
+  levelStartSuccessEvent:
+    Guid:
+      Data1: -326005227
+      Data2: 1161647616
+      Data3: -221461321
+      Data4: 542993873
+    Path: event:/Foleys/Level Start Successful
+  levelStartFailEvent:
+    Guid:
+      Data1: 397173941
+      Data2: 1101430407
+      Data3: -291672444
+      Data4: -1624591332
+    Path: event:/Foleys/Level Start Fail
   atmoLevelEvent:
     Guid:
       Data1: -26895183
