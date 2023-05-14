@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Helper;
+using PlasticPipe.PlasticProtocol.Messages;
 using Robot;
 using UI.Grid;
 using UI.State;
@@ -40,6 +41,9 @@ namespace UI.Transition
         private static readonly float ColorStep = 1f / 9;
         
         private static Vector2 _currentSubCellPosition;
+        private static SubCell _currentSubCell;
+        private static SubCell _startSubCell;
+        private static StateUIElement _currentSourceState;
         private static Direction _previousDrawDirection;
         private static Vector2 _plugPosition;
         private static Direction _plugDirection;
@@ -50,12 +54,12 @@ namespace UI.Transition
             if (!UIGridManager.IsPositionInsideGrid(inputPosition))
                 return false;
 
-            ref var hoveredSubCell = ref UIGridManager.GetSubCellOnPosition(inputPosition);
+            var hoveredSubCell = UIGridManager.GetSubCellOnPosition(inputPosition);
 
-            if (inputIsHorizontal && hoveredSubCell.PlacedHorizontalLine != null)
+            if (inputIsHorizontal && hoveredSubCell.BlockingHorizontalLine != null)
                 return false;
             
-            if(!inputIsHorizontal && hoveredSubCell.PlacedVerticalLine != null)
+            if (!inputIsHorizontal && hoveredSubCell.BlockingVerticalLine != null)
                 return false;
             
             var drawStartPosition = UIGridManager.GetStateBorderPosition(sourceState.transform.position, inputPosition, inputDirection);
@@ -64,15 +68,18 @@ namespace UI.Transition
             CurrentTransitionLine = sourceState.CreateFirstTransitionLineElement(drawStartPosition, lineColor, inputDirection, CurrentTransitionCondition);
             _currentSubCellPosition =
                 UIGridManager.GetNextSubCellPositionInDirection(drawStartPosition, inputDirection, true);
+            _currentSubCell = UIGridManager.GetNextSubCellInDirection(drawStartPosition, inputDirection, true);
+            _startSubCell = _currentSubCell;
+            _currentSourceState = sourceState;
             _previousDrawDirection = inputDirection;
 
             if (inputIsHorizontal)
             {
-                hoveredSubCell.PlacedHorizontalLine = CurrentTransitionLine;
+                hoveredSubCell.BlockingHorizontalLine = CurrentTransitionLine;
             }
             else
             {
-                hoveredSubCell.PlacedVerticalLine = CurrentTransitionLine;
+                hoveredSubCell.BlockingVerticalLine = CurrentTransitionLine;
             }
 
             SoundPlayer.Instance.PlayCableStart();
@@ -84,26 +91,39 @@ namespace UI.Transition
             if (!UIGridManager.IsPositionInsideGrid(inputPosition))
                 return true;
             
-            if(UIGridManager.IsPositionInsideSubCell(_currentSubCellPosition, inputPosition))
+            if(UIGridManager.IsPositionInsideSubCell(_currentSubCell, inputPosition)) // Input did not move
                 return true;
 
-            if (UIGridManager.CheckIfStateIsAdjacentToSubCell(_currentSubCellPosition, inputPosition,
-                out var hoveredStateElement, out var directionToState))
+            var hoveredStateElement = UIGridManager.GetStateUIElementOnPosition(inputPosition);
+            LinePathFinder pathFinder;
+            
+            if (hoveredStateElement != null)
             {
-                // The same stateElement was already hovered
+                // is hovered state start state or already hovered
                 var hoveredStatePlaceElement = hoveredStateElement.GetComponent<StateUIPlaceElement>();
                 if (hoveredStatePlaceElement == null || hoveredStatePlaceElement == DestinationStateElement) 
                     return true;
-
-                // Line returned to source state
-                if (directionToState.IsOpposite(_previousDrawDirection))
+                
+                // is hovered state source state
+                // TODO: instead of canceling this case could be handled otherwise
+                if (hoveredStateElement == _currentSourceState)
                     return false;
                 
+                // hovered state is valid destination state
+                UIGridManager.TryScreenPositionToCellCoordinates(inputPosition, out var stateCoordinates);
+                var statePosition = UIGridManager.CellCoordinatesToScreenPosition(stateCoordinates);
+                var stateCenterSubCell = UIGridManager.GetSubCellOnPosition(statePosition);
+                pathFinder = new LinePathFinder(SubCell.Grid, _startSubCell, stateCenterSubCell, CurrentTransitionLine, hoveredStateElement);
+                var linePath = pathFinder.Path;
+                CurrentTransitionLine.ParsePathToCreateLine(linePath);
+
+                _currentSubCell = linePath[^1]; 
                 DestinationStateElement = hoveredStatePlaceElement;
                 DestinationStateElement.HighlightAsTransitionDestination();
                 var stateCell = DestinationStateElement.GetComponent<StateUIElement>().ConnectedCell;
                 (_plugPosition, _plugDirection) =
                     UIGridManager.GetPlugAttributesForAdjacentState(_currentSubCellPosition, stateCell);
+                
                 return true;
             }
             
@@ -113,62 +133,13 @@ namespace UI.Transition
                 DestinationStateElement = null;
                 _plugPosition = Vector2.negativeInfinity;
             }
-
-            if (UIGridManager.CheckIfSubCellIsAdjacentToSubCell(_currentSubCellPosition, inputPosition, out var newDirection))
-            {
-                if (newDirection.IsOpposite(_previousDrawDirection))
-                {
-                    CurrentTransitionLine.RemoveLastElement();
-
-                    ref var previousSubCell = ref UIGridManager.GetSubCellOnPosition(_currentSubCellPosition);
-
-                    if (previousSubCell.PlacedHorizontalLine == CurrentTransitionLine)
-                        previousSubCell.PlacedHorizontalLine = null;
-
-                    if (previousSubCell.PlacedVerticalLine == CurrentTransitionLine)
-                        previousSubCell.PlacedVerticalLine = null;
-
-                    if (!CurrentTransitionLine.TryGetLastElementDirection(out _previousDrawDirection))
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    var inputIsHorizontal = newDirection == Direction.Left || newDirection == Direction.Right;
-                    var previousInputWasHorizontal = _previousDrawDirection == Direction.Left ||
-                                                     _previousDrawDirection == Direction.Right;
-
-                    ref var hoveredSubCell = ref UIGridManager.GetSubCellOnPosition(inputPosition);
-                    ref var previousSubCell = ref UIGridManager.GetSubCellOnPosition(_currentSubCellPosition);
-
-                    if (inputIsHorizontal)
-                    {
-                        if (hoveredSubCell.PlacedHorizontalLine != null)
-                            return true;
-
-                        hoveredSubCell.PlacedHorizontalLine = CurrentTransitionLine;
-                        if (!previousInputWasHorizontal)
-                            previousSubCell.PlacedHorizontalLine = CurrentTransitionLine;
-                    }
-                    else
-                    {
-                        if (hoveredSubCell.PlacedVerticalLine != null)
-                            return true;
-
-                        hoveredSubCell.PlacedVerticalLine = CurrentTransitionLine;
-                        if (previousInputWasHorizontal)
-                            previousSubCell.PlacedVerticalLine = CurrentTransitionLine;
-                    }
-                    CurrentTransitionLine.DrawLineElement(newDirection);
-                    _previousDrawDirection = newDirection;
-                }
-                
-                _currentSubCellPosition = UIGridManager.GetNextSubCellPositionInDirection(_currentSubCellPosition, newDirection);
-                return true;
-            }
             
-            return false;
+            var hoveredSubCell = UIGridManager.GetSubCellOnPosition(inputPosition);
+            pathFinder = new LinePathFinder(SubCell.Grid, _startSubCell, hoveredSubCell, CurrentTransitionLine);
+            CurrentTransitionLine.ParsePathToCreateLine(pathFinder.Path);
+
+            _currentSubCell = hoveredSubCell;
+            return true;
         }
 
         public static void CancelDraw()
@@ -176,6 +147,10 @@ namespace UI.Transition
             SoundPlayer.Instance.PlayCableRelease();
             if(DestinationStateElement != null)
                 DestinationStateElement.RemoveHighlight();
+
+            DestinationStateElement = null;
+            _currentSubCell = null;
+            _currentSourceState = null;
         }
 
         public static void FinishLine()
@@ -185,9 +160,13 @@ namespace UI.Transition
             SoundPlayer.Instance.PlayCableConnect();
             
             CurrentTransitionLine.CreatePlug(_plugPosition, _plugDirection.ToZRotation());
-            ref var plugSubCell = ref UIGridManager.GetSubCellOnPosition(_currentSubCellPosition);
-            plugSubCell.PlacedHorizontalLine = CurrentTransitionLine;
-            plugSubCell.PlacedVerticalLine = CurrentTransitionLine;
+            
+            _currentSubCell.BlockingHorizontalLine = CurrentTransitionLine;
+            _currentSubCell.BlockingVerticalLine = CurrentTransitionLine;
+            
+            DestinationStateElement = null;
+            _currentSubCell = null;
+            _currentSourceState = null;
         }
 
         public static void TransitionLineRemoved(StateChartManager.TransitionCondition condition)

@@ -31,6 +31,8 @@ namespace UI.Grid
                     _gridCells[cellCoordinates] = new StateChartCell();
                 }
             }
+
+            SubCell.CreateSubCellGrid();
         }
 
         private void SetGridValues(float gridHeight, Vector2 bottomLeftPosition)
@@ -68,6 +70,11 @@ namespace UI.Grid
             var positionOffset = new Vector2(_cellSize * 0.5f, _cellSize * 0.5f);
             return new Vector2(cellCoordinates.x * _cellSize, cellCoordinates.y * _cellSize) + _bottomLeftPosition + positionOffset;
         }
+
+        public Vector2Int CellCoordinatesToSubCellCoordinates(Vector2Int cellCoordinates)
+        {
+            return cellCoordinates * 3 + Vector2Int.one;
+        }
         
         public bool TryScreenPositionToCellCoordinates(Vector2 screenPosition, out Vector2Int coordinates) 
         {
@@ -91,43 +98,27 @@ namespace UI.Grid
         {
             return _gridCells[cellCoordinates];
         }
-        
 
-        public ref StateChartCell.SubCell GetSubCellOnPosition(Vector2 position) // Check if position is inside grid before
+        public SubCell GetSubCellOnPosition(Vector2 position) // Check if position is inside grid before
         {
-            if (!TryScreenPositionToCellCoordinates(position, out var parentCellCoordinates))
-                throw new ArgumentException();
+            if (!IsPositionInsideGrid(position))
+                return null;
             
-            var parentCell = GetCellOnCoordinates(parentCellCoordinates);
-            var parentCellPosition = CellCoordinatesToScreenPosition(parentCellCoordinates);
+            var relativePosition = position - _bottomLeftPosition;
+            var xCoordinate = (int)Mathf.Floor(relativePosition.x / _subCellSize);
+            var yCoordinate = (int)Mathf.Floor(relativePosition.y / _subCellSize);
+            var subCellCoordinates = new Vector2Int(xCoordinate, yCoordinate);
 
-            var positionDifference = position - parentCellPosition;
-            var cellSizeDividedBy6 = _cellSize / 6;
-            
-            var subCellCoordinates = new Vector2Int(0,0);
-            if (positionDifference.x > cellSizeDividedBy6)
-            {
-                subCellCoordinates.x = 1;
-            }else if (positionDifference.x < -cellSizeDividedBy6)
-            {
-                subCellCoordinates.x = -1;
-            }
-            
-            if (positionDifference.y > cellSizeDividedBy6)
-            {
-                subCellCoordinates.y = 1;
-            }else if (positionDifference.y < -cellSizeDividedBy6)
-            {
-                subCellCoordinates.y = -1;
-            }
-
-            Vector2Int subCellCoordinatesInSubCellPresentation = subCellCoordinates + Vector2Int.one;
-            return ref parentCell.GetSubCellOnCoordinates(subCellCoordinatesInSubCellPresentation);
+            return SubCell.Grid[subCellCoordinates];
         }
 
-        public bool IsPositionInsideSubCell(Vector2 subCellPosition, Vector2 checkPosition)
+        public bool IsPositionInsideSubCell(SubCell subCell, Vector2 checkPosition)
         {
             var halfSubCellSize = _subCellSize * 0.5f;
+            var subCellPosition = _bottomLeftPosition + new Vector2(
+                                        halfSubCellSize + subCell.Coordinates.x * _subCellSize,
+                                        halfSubCellSize + subCell.Coordinates.y * _subCellSize);
+            
             return checkPosition.x > subCellPosition.x - halfSubCellSize &&
                    checkPosition.x < subCellPosition.x + halfSubCellSize &&
                    checkPosition.y > subCellPosition.y - halfSubCellSize &&
@@ -174,108 +165,42 @@ namespace UI.Grid
                    positionOnSubCell.y > cellYBorderPosition - _subCellSize;
         }
 
-        public bool CheckIfSubCellIsAdjacentToSubCell(Vector2 subCellPosition, Vector2 positionOnOtherSubCell, out Direction direction)
-        {
-            var halfSubCellSize = _subCellSize * 0.5f;
-            var sameColumnAsSubCell = positionOnOtherSubCell.x > subCellPosition.x - halfSubCellSize &&
-                                      positionOnOtherSubCell.x < subCellPosition.x + halfSubCellSize;
-            var sameRowAsSubCell = positionOnOtherSubCell.y > subCellPosition.y - halfSubCellSize &&
-                                   positionOnOtherSubCell.y < subCellPosition.y + halfSubCellSize;
-            direction = 0; // Is invalid if returns false
-
-            if (sameColumnAsSubCell)
-            {
-                if (positionOnOtherSubCell.y > subCellPosition.y &&
-                    positionOnOtherSubCell.y < subCellPosition.y + _subCellSize * 1.5f)
-                {
-                    direction = Direction.Up;
-                    return true;
-                }
-
-                if (positionOnOtherSubCell.y < subCellPosition.y &&
-                    positionOnOtherSubCell.y > subCellPosition.y - _subCellSize * 1.5f)
-                {
-                    direction = Direction.Down;
-                    return true;
-                }
-                
-                return false;
-            }
-
-            if (!sameRowAsSubCell) 
-                return false;
-            
-            if (positionOnOtherSubCell.x > subCellPosition.x &&
-                positionOnOtherSubCell.x < subCellPosition.x + _subCellSize * 1.5f)
-            {
-                direction = Direction.Right;
-                return true;
-            }
-
-            if (positionOnOtherSubCell.x < subCellPosition.x &&
-                positionOnOtherSubCell.x > subCellPosition.x - _subCellSize * 1.5f)
-            {
-                direction = Direction.Left;
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool CheckIfStateIsAdjacentToSubCell(Vector2 subCellPosition, Vector2 positionOnState,
-            out StateUIElement state, out Direction directionToState)
-        {
-            state = null;
-            directionToState = 0;
-
-            if (!TryScreenPositionToCellCoordinates(subCellPosition, out var sourceCellCoordinates))
-                return false;
-
-            if (!TryScreenPositionToCellCoordinates(positionOnState, out var checkedCoordinates))
-                return false;
-
-            var positionDiff = checkedCoordinates - sourceCellCoordinates;
-            if (!Mathf.Approximately(positionDiff.magnitude, 1f))
-                return false;
-
-            directionToState = positionDiff.ToDirection();
-            var subCellOffset = subCellPosition - CellCoordinatesToScreenPosition(sourceCellCoordinates);
-            var subCellIsAdjacent = directionToState switch
-                {
-                    Direction.Up => subCellOffset.y > 0,
-                    Direction.Right => subCellOffset.x > 0,
-                    Direction.Down => subCellOffset.y < 0,
-                    Direction.Left => subCellOffset. x < 0,
-                    _ => throw new ArgumentOutOfRangeException(nameof(directionToState), directionToState, null)
-                };
-
-            if (!subCellIsAdjacent)
-                return false;
-            
-            state = GetCellOnCoordinates(checkedCoordinates).PlacedStateElement;
-
-            return state != null;
-        }
-
         public List<TransitionLine> GetCellTransitionLines(StateChartCell cell)
         {
-            List<TransitionLine> transitionLines = new List<TransitionLine>();
-            foreach (var subCell in cell.SubCells)
+            var transitionLines = new List<TransitionLine>();
+
+            var cellCoordinates = GetCoordinatesFromCell(cell);
+            var leftSubCellCoordinate = CellCoordinatesToSubCellCoordinates(cellCoordinates) - Vector2Int.one;
+            var currentCoordinates = leftSubCellCoordinate;
+            for (var i = 0; i < 3; i++)
             {
-                transitionLines.AddRange(GetSubCellTransitionLines(subCell));
+                currentCoordinates = leftSubCellCoordinate + Vector2Int.right * i;
+                for (var j = 0; j < 3; j++)
+                {
+                    transitionLines.AddRange(GetSubCellTransitionLines(SubCell.Grid[currentCoordinates]));
+                    currentCoordinates += Vector2Int.up;
+                }
             }
 
             return transitionLines.Distinct().ToList();
         }
 
-        private IEnumerable<TransitionLine> GetSubCellTransitionLines(StateChartCell.SubCell subCell)
+        public StateUIElement GetStateUIElementOnPosition(Vector2 position)
+        {
+            if (!TryScreenPositionToCellCoordinates(position, out var cellCoordinates))
+                return null;
+
+            return _gridCells[cellCoordinates].PlacedStateElement;
+        }
+
+        private IEnumerable<TransitionLine> GetSubCellTransitionLines(SubCell subCell)
         {
             List<TransitionLine> transitionLines = new List<TransitionLine>();
-            if(subCell.PlacedHorizontalLine != null)
-                transitionLines.Add(subCell.PlacedHorizontalLine);
+            if(subCell.BlockingHorizontalLine != null)
+                transitionLines.Add(subCell.BlockingHorizontalLine);
             
-            if(subCell.PlacedVerticalLine != null)
-                transitionLines.Add(subCell.PlacedVerticalLine);
+            if(subCell.BlockingVerticalLine != null)
+                transitionLines.Add(subCell.BlockingVerticalLine);
 
             return transitionLines.Distinct();
         }
@@ -294,6 +219,12 @@ namespace UI.Grid
                 plugDirection);
 
             return (plugPosition, plugDirection);
+        }
+        
+        public SubCell GetNextSubCellInDirection(Vector2 startPosition, Direction direction, bool fromBorder = false)
+        {
+            var distanceFactor = fromBorder ? 0.5f : 1;
+            return GetSubCellOnPosition(startPosition + direction.ToVector2() * _subCellSize * distanceFactor);
         }
 
         public Vector2 GetNextSubCellPositionInDirection(Vector2 startPosition, Direction direction, bool fromBorder = false)
@@ -360,8 +291,6 @@ namespace UI.Grid
             }
         }
 
-        
-
         public bool TryGetEmptyCellOnPosition(Vector2 screenPosition, out StateChartCell emptyCell, out Vector2 cellPosition)
         {
             cellPosition = Vector2.zero;
@@ -385,16 +314,49 @@ namespace UI.Grid
             return true;
         }
 
+        public void RemoveStateElementFromGrid(StateUIElement stateUIElement)
+        {
+            var cell = stateUIElement.ConnectedCell;
+            cell.RemoveStateElement();
+            
+            var cellCoordinates = GetCoordinatesFromCell(cell);
+            var bottomLeftSubCellCoordinates = CellCoordinatesToSubCellCoordinates(cellCoordinates) - Vector2Int.one;
+            for (var x = 0; x < 3; x++)
+            {
+                for (var y = 0; y < 3; y++)
+                {
+                    var currentCoordinates = bottomLeftSubCellCoordinates + new Vector2Int(x, y);
+                    SubCell.Grid[currentCoordinates].BlockingState = null;
+                }
+            }
+            
+        }
+
         public void RemoveStateElementsFromGrid()
         {
-            foreach (var (key, stateChartCell) in _gridCells)
+            foreach (var (cellCoordinates, stateChartCell) in _gridCells)
             {
                 if (stateChartCell.PlacedStateElement == null || 
                     stateChartCell.PlacedStateElement.GetComponent<StateUIPlaceElement>() == null) 
                     continue;
                 
+                RemoveStateElementFromGrid(stateChartCell.PlacedStateElement);
                 Destroy(stateChartCell.PlacedStateElement.gameObject);
-                stateChartCell.RemoveStateElement();
+            }
+        }
+
+        public void PlaceStateElementOnCell(StateUIPlaceElement stateUIElement, StateChartCell cell)
+        {
+            cell.PlaceStateElement(stateUIElement);
+            var cellCoordinates = GetCoordinatesFromCell(cell);
+            var bottomLeftSubCellCoordinates = CellCoordinatesToSubCellCoordinates(cellCoordinates) - Vector2Int.one;
+            for (var x = 0; x < 3; x++)
+            {
+                for (var y = 0; y < 3; y++)
+                {
+                    var currentCoordinates = bottomLeftSubCellCoordinates + new Vector2Int(x, y);
+                    SubCell.Grid[currentCoordinates].BlockingState = stateUIElement.GetComponent<StateUIElement>();
+                }
             }
         }
 

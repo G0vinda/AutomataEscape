@@ -177,7 +177,7 @@ namespace UI
 
         public void PlaceStateElementOnGrid(StateUIPlaceElement placeElement, StateChartCell connectedCell)
         {
-            connectedCell.PlaceStateElement(placeElement);
+            _uiGridManager.PlaceStateElementOnCell(placeElement, connectedCell);
             placeElement.PlaceOnCell(connectedCell, stateChartPanel.transform);
             var assignedId = _stateChartManager.AddState(placeElement.GetAction());
             placeElement.SetAssignedId(assignedId);
@@ -214,6 +214,7 @@ namespace UI
             placeElement.SetImageToActive(false);
             _stateChartManager.RemoveStateById(placeElement.GetAssignedId());
             _placedStateElements.Remove(placeElement);
+            _uiGridManager.RemoveStateElementFromGrid(placeElement.GetComponent<StateUIElement>());
             placeElement.SetAssignedId(-1);
         }
 

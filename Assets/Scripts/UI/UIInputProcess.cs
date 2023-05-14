@@ -192,7 +192,6 @@ namespace UI
                 }
 
                 _uiManager.RemoveStateElementFromGrid(_selectedDragStateElement);
-                stateElement.ConnectedCell.RemoveStateElement();
             }
             else
             {

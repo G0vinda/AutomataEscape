@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Helper;
 using Robot;
+using UI.Grid;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -51,6 +53,18 @@ namespace UI.Transition
             UpdateGeometry();
         }
 
+        public void ParsePathToCreateLine(List<SubCell> path)
+        {
+            _lineElements.RemoveRange(1, _lineElements.Count - 1);
+
+            for (var i = 0; i < path.Count - 1; i++)
+            {
+                var direction = (path[i + 1].Coordinates - path[i].Coordinates).ToDirection();
+                _lineElements.Add(CreateLineElement(direction, _lineElements[^1]));
+            }
+            UpdateGeometry();
+        }
+
         public void UpdateSize(float newFirstElementLength, float newElementLength, float newWidth)
         {
             var scaleFactor = newElementLength / _elementLength;
@@ -74,16 +88,6 @@ namespace UI.Transition
             }
             
             UpdateGeometry();
-        }
-
-        public bool TryGetLastElementDirection(out Direction lastElementDirection)
-        {
-            lastElementDirection = 0; // Is invalid if returns false
-            if (_lineElements.Count == 0)
-                return false;
-            
-            lastElementDirection = _lineElements[^1].Direction;
-            return true;
         }
 
         protected override void OnPopulateMesh(VertexHelper vh)
@@ -157,19 +161,6 @@ namespace UI.Transition
             _plugTransform.sizeDelta = new Vector2(_width * 1.3f, _width * 1.5f);
         }
 
-        public void RemoveLastElement()
-        {
-            _lineElements.RemoveAt(_lineElements.Count - 1);
-            UpdateGeometry();
-        }
-
-        public void DrawLineElement(Direction direction)
-        {
-            var newLineElement = CreateLineElement(direction, _lineElements[^1]);
-            _lineElements.Add(newLineElement);
-            UpdateGeometry();
-        }
-        
         private LineElement CreateLineElement(Direction direction, LineElement lastLineElement)
         {
             return direction switch
