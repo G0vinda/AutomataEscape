@@ -124,7 +124,7 @@ namespace UI.State
         public void RemoveTransition(TransitionLine transitionLine)
         {
             _outgoingTransitionLines.Remove(transitionLine);
-            Destroy(transitionLine.gameObject);
+            transitionLine.FadeColorToDestroy();
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Helper
                 return Direction.Right;
             }
 
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentException($"{vector} is not a direction vector");
         }
         public static Direction Turn(this Direction direction, bool turnClockwise)
         {

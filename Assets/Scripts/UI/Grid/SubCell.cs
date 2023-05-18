@@ -17,8 +17,6 @@ namespace UI.Grid
         public StateUIElement BlockingState;
         public TransitionLine BlockingHorizontalLine;
         public TransitionLine BlockingVerticalLine;
-        
-        private List<SubCell> _neighbors = new ();
 
         public static void CreateSubCellGrid()
         {
@@ -38,70 +36,69 @@ namespace UI.Grid
             Coordinates = coordinates;
         }
 
-        public static void ResetAllNeighbors()
-        {
-            foreach (var (_, subCell) in Grid)
-            {
-                subCell.ResetNeighbors();
-            }
-        }
-        
         public List<SubCell> GetNeighbors(TransitionLine allowedTransitionLine, StateUIElement allowedStateUIElement)
         {
-            if (_neighbors.Count == 0)
+            var neighbors = new List<SubCell>();
+            if (Coordinates.x > MINGridSize) // Add left neighbor
             {
-                _neighbors = new List<SubCell>();
-                if (Coordinates.x > MINGridSize) // Add left neighbor
-                {
-                    var leftNeighbor = Grid[Coordinates + Vector2Int.left];
-                    if (CheckForHorizontalNeighbor(leftNeighbor, allowedStateUIElement, allowedTransitionLine))
-                        _neighbors.Add(leftNeighbor);
-                }
-
-                if (Coordinates.x < MAXGridSize - 1) // Add right neighbor
-                {
-                    var rightNeighbor = Grid[Coordinates + Vector2Int.right];
-                    if (CheckForHorizontalNeighbor(rightNeighbor, allowedStateUIElement, allowedTransitionLine))
-                        _neighbors.Add(rightNeighbor);
-                }
-
-                if (Coordinates.y > MINGridSize) // Add bottom neighbor 
-                {
-                    var bottomNeighbor = Grid[Coordinates + Vector2Int.down];
-                    if (CheckForVerticalNeighbor(bottomNeighbor, allowedStateUIElement, allowedTransitionLine))
-                        _neighbors.Add(bottomNeighbor);
-                }
-
-                if (Coordinates.y < MAXGridSize - 1) // Add top neighbor
-                {
-                    var topNeighbor = Grid[Coordinates + Vector2Int.up];
-                    if (CheckForVerticalNeighbor(topNeighbor, allowedStateUIElement, allowedTransitionLine))
-                        _neighbors.Add(topNeighbor);
-                }
+                var leftNeighbor = Grid[Coordinates + Vector2Int.left];
+                if (CheckForHorizontalNeighbor(leftNeighbor, allowedStateUIElement, allowedTransitionLine))
+                    neighbors.Add(leftNeighbor);
             }
 
-            return _neighbors;
+            if (Coordinates.x < MAXGridSize - 1) // Add right neighbor
+            {
+                var rightNeighbor = Grid[Coordinates + Vector2Int.right];
+                if (CheckForHorizontalNeighbor(rightNeighbor, allowedStateUIElement, allowedTransitionLine))
+                    neighbors.Add(rightNeighbor);
+            }
+
+            if (Coordinates.y > MINGridSize) // Add bottom neighbor 
+            {
+                var bottomNeighbor = Grid[Coordinates + Vector2Int.down];
+                if (CheckForVerticalNeighbor(bottomNeighbor, allowedStateUIElement, allowedTransitionLine))
+                    neighbors.Add(bottomNeighbor);
+            }
+
+            if (Coordinates.y < MAXGridSize - 1) // Add top neighbor
+            {
+                var topNeighbor = Grid[Coordinates + Vector2Int.up];
+                if (CheckForVerticalNeighbor(topNeighbor, allowedStateUIElement, allowedTransitionLine))
+                    neighbors.Add(topNeighbor);
+            }
+
+            return neighbors;
         }
 
         private bool CheckForHorizontalNeighbor(SubCell neighbor, StateUIElement allowedStateUIElement, TransitionLine allowedTransitionLine)
         {
-            return BlockingHorizontalLine != allowedTransitionLine &&
-                   (neighbor.BlockingState == null || neighbor.BlockingState == allowedStateUIElement) &&
-                   (neighbor.BlockingHorizontalLine == null ||
-                    neighbor.BlockingHorizontalLine == allowedTransitionLine);
+            if(neighbor.BlockingState != null)
+                Debug.Log("block detected");
+            var originSubCellLineBlock =
+                BlockingHorizontalLine == null || BlockingHorizontalLine == allowedTransitionLine;
+            var neighborStateBlock = neighbor.BlockingState == null || neighbor.BlockingState == allowedStateUIElement;
+            var neighborLineBlock = neighbor.BlockingHorizontalLine == null ||
+                                    neighbor.BlockingHorizontalLine == allowedTransitionLine;
+            
+            return originSubCellLineBlock &&
+                   neighborStateBlock &&
+                   neighborLineBlock;
         }
 
         private bool CheckForVerticalNeighbor(SubCell neighbor, StateUIElement allowedStateUIElement, TransitionLine allowedTransitionLine)
         {
-            return BlockingVerticalLine != allowedTransitionLine &&
+            return (BlockingVerticalLine == null || BlockingVerticalLine == allowedTransitionLine) &&
                    (neighbor.BlockingState == null || neighbor.BlockingState == allowedStateUIElement) &&
-                   (neighbor.BlockingVerticalLine == null ||
-                    neighbor.BlockingVerticalLine == allowedTransitionLine);
+                   (neighbor.BlockingVerticalLine == null || neighbor.BlockingVerticalLine == allowedTransitionLine);
         }
 
-        private void ResetNeighbors()
+        public void RemoveBlockingLine(TransitionLine transitionLine)
         {
-            _neighbors.Clear();
+            if (BlockingVerticalLine == transitionLine)
+                BlockingVerticalLine = null;
+
+            if (BlockingHorizontalLine == transitionLine)
+                BlockingHorizontalLine = null;
         }
     }
 }

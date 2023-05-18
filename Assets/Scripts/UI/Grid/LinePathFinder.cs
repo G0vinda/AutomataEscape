@@ -10,8 +10,8 @@ namespace UI.Grid
     public class LinePathFinder
     {
         public List<SubCell> Path;
-        private Dictionary<SubCell, SubCell> _cameFrom = new Dictionary<SubCell, SubCell>();
-        private Dictionary<SubCell, int> _costSoFar = new Dictionary<SubCell, int>();
+        private Dictionary<SubCell, SubCell> _cameFrom = new ();
+        private Dictionary<SubCell, int> _costSoFar = new ();
         
         private static int Heuristic(SubCell a, SubCell b)
         {
@@ -21,22 +21,21 @@ namespace UI.Grid
             return Math.Abs(aCoordinates.x - bCoordinates.x) + Math.Abs(aCoordinates.y - bCoordinates.y);
         } 
         
-        public LinePathFinder(Dictionary<Vector2Int, SubCell> grid, SubCell startPoint, SubCell endPoint, TransitionLine transitionLine, StateUIElement destinationState = null)
+        public LinePathFinder(SubCell startPoint, SubCell endPoint, TransitionLine transitionLine, StateUIElement destinationState = null)
         {
             var frontier = new SimplePriorityQueue<SubCell>();
             frontier.Enqueue(startPoint, 0);
+            _costSoFar[startPoint] = 0;
 
             while (frontier.Count > 0)
             {
                 var current = frontier.Dequeue();
-                _costSoFar[current] = 0;
 
                 if (current.Equals(endPoint))
-                {
                     break;
-                }
 
-                foreach (var next in current.GetNeighbors(transitionLine, destinationState))
+                var currentNeighbors = current.GetNeighbors(transitionLine, destinationState);
+                foreach (var next in currentNeighbors)
                 {
                     var newCost = _costSoFar[current] + 1;
                     if (!_costSoFar.ContainsKey(next) || newCost < _costSoFar[next])
@@ -54,11 +53,14 @@ namespace UI.Grid
 
         private List<SubCell> SetPath(SubCell startPoint, SubCell endPoint, StateUIElement destinationState)
         {
+            if (startPoint.Equals(endPoint))
+                return new List<SubCell> { startPoint };
+            
             if (!_cameFrom.ContainsKey(endPoint))
                 return null;
             
             var path = new List<SubCell>();
-            var current = endPoint;
+            SubCell current;
             if (destinationState != null)
             {
                 var endSubCell = _cameFrom[endPoint];
@@ -68,10 +70,12 @@ namespace UI.Grid
                 }
                 
                 path.Add(endSubCell);
+                current = endSubCell;
             }
             else
             {
-                path.Add(endPoint);    
+                path.Add(endPoint);
+                current = endPoint;
             }
             
             while (!current.Equals(startPoint))

@@ -75,6 +75,19 @@ namespace UI.Grid
         {
             return cellCoordinates * 3 + Vector2Int.one;
         }
+
+        private Vector2Int SubCellCoordinatesToCellCoordinates(Vector2Int subCellCoordinates)
+        {
+            var x = (int)Mathf.Floor(subCellCoordinates.x / 3f);
+            var y = (int)Mathf.Floor(subCellCoordinates.y / 3f);
+            return new Vector2Int(x, y);
+        }
+
+        private Vector2 SubCellCoordinatesToScreenPosition(Vector2Int subCellCoordinates)
+        {
+            var bottomLeftOffset = _bottomLeftPosition + Vector2.one * _subCellSize * 0.5f;
+            return bottomLeftOffset + (Vector2)subCellCoordinates * _subCellSize;
+        }
         
         public bool TryScreenPositionToCellCoordinates(Vector2 screenPosition, out Vector2Int coordinates) 
         {
@@ -205,16 +218,16 @@ namespace UI.Grid
             return transitionLines.Distinct();
         }
 
-        public (Vector2, Direction) GetPlugAttributesForAdjacentState(Vector2 subCellPosition, StateChartCell stateCell)
+        public (Vector2, Direction) GetPlugAttributesForAdjacentState(SubCell subCell, StateChartCell stateCell)
         {
             var adjacentStateCoordinates = GetCoordinatesFromCell(stateCell);
-            if (!TryScreenPositionToCellCoordinates(subCellPosition, out var sourceCellPosition))
-                throw new ArgumentException();
-            
-            var coordinateDelta = sourceCellPosition - adjacentStateCoordinates;
+            var sourceCellCoordinates = SubCellCoordinatesToCellCoordinates(subCell.Coordinates);
+
+            var coordinateDelta = sourceCellCoordinates - adjacentStateCoordinates;
             var adjacentStatePosition = CellCoordinatesToScreenPosition(adjacentStateCoordinates);
 
             var plugDirection = coordinateDelta.ToDirection();
+            var subCellPosition = SubCellCoordinatesToScreenPosition(subCell.Coordinates);
             var plugPosition = GetStateBorderPosition(adjacentStatePosition, subCellPosition,
                 plugDirection);
 
@@ -339,13 +352,14 @@ namespace UI.Grid
                 if (stateChartCell.PlacedStateElement == null || 
                     stateChartCell.PlacedStateElement.GetComponent<StateUIPlaceElement>() == null) 
                     continue;
-                
-                RemoveStateElementFromGrid(stateChartCell.PlacedStateElement);
-                Destroy(stateChartCell.PlacedStateElement.gameObject);
+
+                var stateElement = stateChartCell.PlacedStateElement;
+                RemoveStateElementFromGrid(stateElement);
+                Destroy(stateElement.gameObject);
             }
         }
 
-        public void PlaceStateElementOnCell(StateUIPlaceElement stateUIElement, StateChartCell cell)
+        public void PlaceStateElementOnCell(StateUIElement stateUIElement, StateChartCell cell)
         {
             cell.PlaceStateElement(stateUIElement);
             var cellCoordinates = GetCoordinatesFromCell(cell);
@@ -355,7 +369,7 @@ namespace UI.Grid
                 for (var y = 0; y < 3; y++)
                 {
                     var currentCoordinates = bottomLeftSubCellCoordinates + new Vector2Int(x, y);
-                    SubCell.Grid[currentCoordinates].BlockingState = stateUIElement.GetComponent<StateUIElement>();
+                    SubCell.Grid[currentCoordinates].BlockingState = stateUIElement;
                 }
             }
         }
