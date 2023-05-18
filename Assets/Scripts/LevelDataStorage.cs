@@ -15,13 +15,13 @@ public static class LevelDataStorage
     {
         new LevelData( // Level 1
             new Vector2Int(0, 0),
-            Direction.Right,
+            Direction.Down,
             new[,]
             {
                 {Floor },
                 {Floor },
                 {Floor },
-                {Floor },
+               
                 {Goal }
             },
             new List<LevelData.AvailableStateInfo>()
@@ -228,7 +228,7 @@ public static class LevelDataStorage
                 {None, None, Goal, None, None },
                 {None, None, Floor, None, None },
                 {None, None, Orange, Floor, Floor },
-                {None, None, Floor, None, Orange },
+                {Floor, Floor, Floor, Floor, Orange },
             },
             new List<LevelData.AvailableStateInfo>()
             {
