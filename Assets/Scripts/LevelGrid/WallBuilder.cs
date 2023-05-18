@@ -118,6 +118,12 @@ namespace LevelGrid
                 if (y == -(yMax - 1))
                 {
                     CreateBottomWall(borderCoordinates);
+
+                    if (borderCoordinates.x == 0)
+                    {
+                        CreateLeftWall(borderCoordinates);
+                        CreateLowerConnectorWall(borderCoordinates, false);
+                    }
                 }
 
                 if (!grid.ContainsKey(borderCoordinates + Vector2Int.down))
