@@ -1,4 +1,5 @@
-﻿using Helper;
+﻿using DG.Tweening;
+using Helper;
 using LevelGrid;
 using UI;
 using UI.Transition;
@@ -21,8 +22,10 @@ namespace Robot.States
                 return false;
 
             coordinates += direction.ToVector2Int();
-            _robotTransform.position = LevelGridManager.Grid[coordinates].transform.position;
+            var moveTime = 0.6f;
+            _robotTransform.DOMove(LevelGridManager.Grid[coordinates].transform.position, moveTime).SetEase(Ease.InOutSine);
             SpriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
+            SoundPlayer.Instance.PlayRobotMove();
             
             return LevelGridManager.CheckIfTileIsGoal(coordinates);
         }

@@ -13,6 +13,7 @@ namespace UI
 
         private Image _image;
         private Dictionary<StateChartManager.StateAction, Sprite> _stateSprites;
+        private bool _playMusicOnNextState;
 
         private void Awake()
         {
@@ -38,6 +39,16 @@ namespace UI
         private void OnNextState(StateChartManager.StateAction action)
         {
             _image.sprite = _stateSprites[action];
+            if (action == StateChartManager.StateAction.Start)
+            {
+                SoundPlayer.Instance.PlayRobotStartUp();
+                _playMusicOnNextState = true;
+            }
+            else if (_playMusicOnNextState)
+            {
+                SoundPlayer.Instance.PlayMusicWalking();
+                _playMusicOnNextState = false;
+            }
         }
     }
 }

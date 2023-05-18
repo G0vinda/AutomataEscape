@@ -17,6 +17,7 @@ namespace Robot.States
             GameManager.Instance.DropKeyOnCoordinates(coordinates, GrabbedKeyType);
             GrabbedKeyType = LevelGridManager.KeyType.None;
             SpriteChanger.SetCarryKeyType(LevelGridManager.KeyType.None);
+            SoundPlayer.Instance.PlayRobotDrop();
             return false;
         }
     }

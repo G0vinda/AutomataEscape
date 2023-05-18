@@ -39,8 +39,15 @@ public class SoundPlayer : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+        if (Instance != null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     #region OnEnable/OnDisable
@@ -98,6 +105,13 @@ public class SoundPlayer : MonoBehaviour
         _musicInstance.start();
     }
 
+    public void PlayMusicWalking()
+    {
+        _musicInstance.stop(STOP_MODE.IMMEDIATE);
+        //_musicInstance = RuntimeManager.CreateInstance(.... Add walking music walking event here
+        _musicInstance.start();
+    }
+
     public void PlayCableStart()
     {
         RuntimeManager.PlayOneShot(cableStartEvent);
@@ -120,11 +134,6 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(cableReleaseEvent);
         _cableHoldInstance.stop(STOP_MODE.IMMEDIATE);
-    }
-
-    public void PlayGoalMusic()
-    {
-        // Switch Music to Goal music
     }
 
     public void PlayBeamSpawn()
@@ -155,15 +164,40 @@ public class SoundPlayer : MonoBehaviour
     public void PlayRunStart()
     {
         RuntimeManager.PlayOneShot(levelStartSuccessEvent);
-        // Play sound when the run button gets successfully pressed
+    }
+
+    public void PlayRobotStartUp()
+    {
+        // play the robot start sound that comes after the player presses start
     }
 
     public void PlayRunError()
     {
         RuntimeManager.PlayOneShot(levelStartFailEvent);
-        // Play sound when the run button gets pressed, but the state chart is invalid
     }
-    
-    
 
+    public void PlayVictory()
+    {
+        // play the sound on reaching the goal
+    }
+
+    public void PlayRobotGrab()
+    {
+        // play the sound when the robot grabs a key
+    }
+
+    public void PlayRobotDrop()
+    {
+        // play the sound when the robot drops a key
+    }
+
+    public void PlayRobotMove()
+    {
+        // play the sound the robot makes, when he moves forward
+    }
+
+    public void PlayRobotTurn()
+    {
+        // play the sound the robot makes, when it turns by 90 deg, no animation time (yet)
+    }
 }

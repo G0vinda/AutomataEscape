@@ -16,6 +16,7 @@ namespace Robot.States
             
             GrabbedKeyType = GameManager.Instance.GrabKeyOnCoordinates(coordinates);
             SpriteChanger.SetCarryKeyType(GrabbedKeyType);
+            SoundPlayer.Instance.PlayRobotGrab();
             return false;
         }
     }

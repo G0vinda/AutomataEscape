@@ -19,7 +19,7 @@ namespace Robot
         private Vector2Int _currentCoordinates;
         private Direction _currentDirection;
         private StateChartManager _stateChartManager;
-        private WaitForSeconds _waitForSecond = new (1f);
+        private WaitForSeconds _waitForSecond = new (0.8f);
         private Coroutine _currentRun;
 
         private void Awake()
@@ -62,7 +62,8 @@ namespace Robot
                 currentState = _stateChartManager.GetStateById(nextStateId);
                 yield return _waitForSecond;
             } while (true);
-            
+
+            yield return _waitForSecond;
             GameManager.Instance.ReachGoal();
         }
 

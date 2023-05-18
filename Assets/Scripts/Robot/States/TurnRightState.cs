@@ -14,6 +14,7 @@ namespace Robot.States
         {
             direction = direction.Turn(true);
             SpriteChanger.SetSpriteDirection(direction);
+            SoundPlayer.Instance.PlayRobotTurn();
             return false;
         }
     }

@@ -201,7 +201,7 @@ public class GameManager : MonoBehaviour
 
     public void ReachGoal()
     {
-        SoundPlayer.Instance.PlayGoalMusic();
+        SoundPlayer.Instance.PlayVictory();
         GoalReached?.Invoke();
         Invoke(nameof(FadeLevelOut), 2.7f);
     }
