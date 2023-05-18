@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using Helper;
 using Robot;
 using UI.Grid;
@@ -32,6 +33,9 @@ namespace UI.Transition
         }
 
         [SerializeField] private Image plugPrefab;
+        [SerializeField] private float transparencyValue;
+        [SerializeField] private float fadeInTime;
+        [SerializeField] private float fadeOutTime;
 
         public StateChartManager.TransitionCondition Condition { get; private set; }
         
@@ -40,6 +44,8 @@ namespace UI.Transition
         private float _firstElementLength;
         private float _width;
         private RectTransform _plugTransform;
+        private Color _solidColor;
+        private Color _transparentColor;
 
 
         public void Initialize(float firstElementLength, float elementLength, float width, Color lineColor, Direction startDirection, StateChartManager.TransitionCondition condition)
@@ -47,19 +53,26 @@ namespace UI.Transition
             _elementLength = elementLength;
             _firstElementLength = firstElementLength;
             _width = width;
-            color = lineColor;
             Condition = condition;
             _lineElements.Add(CreateFirstElement(startDirection));
+
+            _solidColor = lineColor;
+            _transparentColor = _solidColor;
+            _transparentColor.a = transparencyValue;
+            color = _transparentColor;
             UpdateGeometry();
         }
 
         public void ParsePathToCreateLine(List<SubCell> path)
         {
             _lineElements.RemoveRange(1, _lineElements.Count - 1);
-
+            
             for (var i = 0; i < path.Count - 1; i++)
             {
-                var direction = (path[i + 1].Coordinates - path[i].Coordinates).ToDirection();
+                var distance = path[i + 1].Coordinates - path[i].Coordinates;
+                if(!Mathf.Approximately(distance.magnitude, 1f))
+                    Debug.Log("Error found in given path");
+                var direction = distance.ToDirection();
                 _lineElements.Add(CreateLineElement(direction, _lineElements[^1]));
             }
             UpdateGeometry();
@@ -157,6 +170,7 @@ namespace UI.Transition
 
         public void CreatePlug(Vector2 position, Quaternion rotation)
         {
+            FadeColorToFinish();
             _plugTransform = Instantiate(plugPrefab, position, rotation, transform).rectTransform;
             _plugTransform.sizeDelta = new Vector2(_width * 1.3f, _width * 1.5f);
         }
@@ -291,6 +305,30 @@ namespace UI.Transition
             vertexPositions[3] = vertexPositions[0] + new Vector3(0, _width);
 
             return new LineElement(Direction.Left, vertexPositions);
+        }
+
+        private void FadeColorToFinish()
+        {
+            DOVirtual.Color(_transparentColor, _solidColor, fadeInTime, value =>
+            {
+                color = value;
+                UpdateGeometry();
+            }).SetEase(Ease.OutCubic);
+        }
+
+        public void FadeColorToDestroy()
+        {
+            if(_plugTransform != null)
+                Destroy(_plugTransform.gameObject);
+            
+            DOVirtual.Float(color.a, 0, fadeOutTime, value =>
+            {
+                var newColor = color;
+                newColor.a = value;
+                color = newColor;
+
+                UpdateGeometry();
+            }).SetEase(Ease.OutCubic).OnComplete(() => { Destroy(gameObject);});
         }
     }
 }

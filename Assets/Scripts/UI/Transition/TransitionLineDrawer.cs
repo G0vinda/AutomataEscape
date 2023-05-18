@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using Helper;
-using PlasticPipe.PlasticProtocol.Messages;
 using Robot;
 using UI.Grid;
 using UI.State;
@@ -40,11 +40,10 @@ namespace UI.Transition
 
         private static readonly float ColorStep = 1f / 9;
         
-        private static Vector2 _currentSubCellPosition;
         private static SubCell _currentSubCell;
         private static SubCell _startSubCell;
+        private static List<SubCell> _currentLinePath;
         private static StateUIElement _currentSourceState;
-        private static Direction _previousDrawDirection;
         private static Vector2 _plugPosition;
         private static Direction _plugDirection;
         
@@ -66,12 +65,10 @@ namespace UI.Transition
             var colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition];
             var lineColor = GetLineColor(CurrentTransitionCondition, colorIndex);
             CurrentTransitionLine = sourceState.CreateFirstTransitionLineElement(drawStartPosition, lineColor, inputDirection, CurrentTransitionCondition);
-            _currentSubCellPosition =
-                UIGridManager.GetNextSubCellPositionInDirection(drawStartPosition, inputDirection, true);
             _currentSubCell = UIGridManager.GetNextSubCellInDirection(drawStartPosition, inputDirection, true);
             _startSubCell = _currentSubCell;
+            _currentLinePath = new List<SubCell> { _startSubCell };
             _currentSourceState = sourceState;
-            _previousDrawDirection = inputDirection;
 
             if (inputIsHorizontal)
             {
@@ -95,8 +92,7 @@ namespace UI.Transition
                 return true;
 
             var hoveredStateElement = UIGridManager.GetStateUIElementOnPosition(inputPosition);
-            LinePathFinder pathFinder;
-            
+
             if (hoveredStateElement != null)
             {
                 // is hovered state start state or already hovered
@@ -104,25 +100,25 @@ namespace UI.Transition
                 if (hoveredStatePlaceElement == null || hoveredStatePlaceElement == DestinationStateElement) 
                     return true;
                 
-                // is hovered state source state
-                // TODO: instead of canceling this case could be handled otherwise
-                if (hoveredStateElement == _currentSourceState)
+                // is line completely reverted
+                if (hoveredStateElement == _currentSourceState && _currentLinePath.Count < 2)
                     return false;
                 
                 // hovered state is valid destination state
                 UIGridManager.TryScreenPositionToCellCoordinates(inputPosition, out var stateCoordinates);
-                var statePosition = UIGridManager.CellCoordinatesToScreenPosition(stateCoordinates);
-                var stateCenterSubCell = UIGridManager.GetSubCellOnPosition(statePosition);
-                pathFinder = new LinePathFinder(SubCell.Grid, _startSubCell, stateCenterSubCell, CurrentTransitionLine, hoveredStateElement);
-                var linePath = pathFinder.Path;
-                CurrentTransitionLine.ParsePathToCreateLine(linePath);
+                // var statePosition = UIGridManager.CellCoordinatesToScreenPosition(stateCoordinates);
+                // var stateCenterSubCell = UIGridManager.GetSubCellOnPosition(statePosition);
+                var hoveredSubCellOnState = UIGridManager.GetSubCellOnPosition(inputPosition);
+                
+                var newPath = FindPathWithBreakpoints(hoveredSubCellOnState, hoveredStateElement);
+                if (newPath == null)
+                    return true;
 
-                _currentSubCell = linePath[^1]; 
                 DestinationStateElement = hoveredStatePlaceElement;
                 DestinationStateElement.HighlightAsTransitionDestination();
                 var stateCell = DestinationStateElement.GetComponent<StateUIElement>().ConnectedCell;
                 (_plugPosition, _plugDirection) =
-                    UIGridManager.GetPlugAttributesForAdjacentState(_currentSubCellPosition, stateCell);
+                    UIGridManager.GetPlugAttributesForAdjacentState(_currentSubCell, stateCell);
                 
                 return true;
             }
@@ -135,11 +131,114 @@ namespace UI.Transition
             }
             
             var hoveredSubCell = UIGridManager.GetSubCellOnPosition(inputPosition);
-            pathFinder = new LinePathFinder(SubCell.Grid, _startSubCell, hoveredSubCell, CurrentTransitionLine);
-            CurrentTransitionLine.ParsePathToCreateLine(pathFinder.Path);
-
-            _currentSubCell = hoveredSubCell;
+            FindPathWithBreakpoints(hoveredSubCell);
+            
             return true;
+        }
+
+        private static List<SubCell> FindPathWithBreakpoints(SubCell destinationSubCell, StateUIElement allowedStateUIElement = null)
+        {
+            if (_currentLinePath.Contains(destinationSubCell))
+            {
+                var reversedSubCellIndex = _currentLinePath.IndexOf(destinationSubCell);
+                var trimLength = _currentLinePath.Count - (reversedSubCellIndex + 1);
+                _currentLinePath.RemoveRange(reversedSubCellIndex + 1, trimLength);
+                UpdateLinePath(_currentLinePath);
+                return _currentLinePath;
+            }
+
+            var checkCounter = _currentLinePath.Count - 1;
+            SubCell checkedSubCell;
+            do
+            {
+                checkedSubCell = _currentLinePath[checkCounter];
+                var newPath = new LinePathFinder(checkedSubCell, destinationSubCell, CurrentTransitionLine,
+                    allowedStateUIElement).Path;
+
+                if (newPath != null)
+                {
+                    if (checkCounter > 0)
+                        newPath = RemovePathDuplicates(newPath);
+                    
+                    UpdateLinePath(newPath);
+                    
+                    return newPath;
+                }
+
+                checkCounter = checkCounter > 3 ? checkCounter - 3 : 0;
+            } while (checkedSubCell != _startSubCell);
+
+            return null;
+        }
+
+        public static List<SubCell> RemovePathDuplicates(List<SubCell> path)
+        {
+            var pathCoordinatesMessage = "-- Path Finding Coordinates --\n";
+            for (var i = 0; i < path.Count; i++)
+            {
+                pathCoordinatesMessage += $"({i}) {path[i].Coordinates}\n";
+            }
+            Debug.Log(pathCoordinatesMessage);
+            
+            var currentPathKeepCount = _currentLinePath.Count - 1; // Discard last element
+            for (var i = path.Count - 1; i > 0; i--)
+            {
+                if (!_currentLinePath.Contains(path[i]))
+                    continue;
+
+                currentPathKeepCount = _currentLinePath.IndexOf(path[i]) + 1;
+                path.RemoveRange(0, i + 1);
+                break;
+            }
+            
+            var newPath = _currentLinePath.GetRange(0, currentPathKeepCount);
+            newPath.AddRange(path);
+            return newPath;
+        }
+
+        private static void UpdateLinePath(List<SubCell> newPath)
+        {
+            if(newPath == null)
+                return;
+
+            if (_currentLinePath != null)
+            {
+                for (var i = 1; i < _currentLinePath.Count; i++)
+                {
+                    _currentLinePath[i].RemoveBlockingLine(CurrentTransitionLine);
+                }
+            }
+            
+            for (var i = 0; i < newPath.Count - 1; i++)
+            {
+                if (newPath[i].Coordinates.x != newPath[i + 1].Coordinates.x)
+                {
+                    newPath[i].BlockingHorizontalLine = CurrentTransitionLine;
+                    newPath[i + 1].BlockingHorizontalLine = CurrentTransitionLine;
+                    continue;
+                }
+
+                if (newPath[i].Coordinates.y != newPath[i + 1].Coordinates.y)
+                {
+                    newPath[i].BlockingVerticalLine = CurrentTransitionLine;
+                    newPath[i + 1].BlockingVerticalLine = CurrentTransitionLine;
+                    continue;
+                }
+
+                throw new ArgumentException($"SubCell{newPath[i].Coordinates} and SubCell{newPath[i+1].Coordinates} are not adjacent");
+            }
+
+            var pathCoordinatesMessage = "-- New Path Coordinates --\n";
+            for (var i = 0; i < newPath.Count; i++)
+            {
+                pathCoordinatesMessage += $"({i}) {newPath[i].Coordinates}\n";
+            }
+            Debug.Log(pathCoordinatesMessage);
+            
+            CurrentTransitionLine.ParsePathToCreateLine(newPath);
+
+            _currentLinePath = newPath;
+            _currentSubCell = _currentLinePath[^1];
         }
 
         public static void CancelDraw()
@@ -151,6 +250,7 @@ namespace UI.Transition
             DestinationStateElement = null;
             _currentSubCell = null;
             _currentSourceState = null;
+            _currentLinePath = null;
         }
 
         public static void FinishLine()

@@ -96,7 +96,7 @@ namespace UI
             var startStateCoordinates = new Vector2Int(0, 3);
             var startCell = _uiGridManager.GetCellOnCoordinates(startStateCoordinates);
             var startCellPosition = _uiGridManager.CellCoordinatesToScreenPosition(startStateCoordinates);
-            startCell.PlaceStateElement(startStateUIElement);
+            _uiGridManager.PlaceStateElementOnCell(startStateUIElement.GetComponent<StateUIElement>(), startCell);
             startStateUIElement.Initialize(startCell);
             startStateUIElement.transform.position = startCellPosition;
         }
@@ -177,7 +177,7 @@ namespace UI
 
         public void PlaceStateElementOnGrid(StateUIPlaceElement placeElement, StateChartCell connectedCell)
         {
-            _uiGridManager.PlaceStateElementOnCell(placeElement, connectedCell);
+            _uiGridManager.PlaceStateElementOnCell(placeElement.GetComponent<StateUIElement>(), connectedCell);
             placeElement.PlaceOnCell(connectedCell, stateChartPanel.transform);
             var assignedId = _stateChartManager.AddState(placeElement.GetAction());
             placeElement.SetAssignedId(assignedId);

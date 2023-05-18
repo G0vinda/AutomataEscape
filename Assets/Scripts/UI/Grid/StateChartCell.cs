@@ -11,15 +11,10 @@ namespace UI.Grid
         {
             PlacedStateElement = null;
         }
-        
-        public void PlaceStateElement(StateUIPlaceElement stateElement)
+
+        public void PlaceStateElement(StateUIElement stateUIElement)
         {
-            PlacedStateElement = stateElement.GetComponent<StateUIElement>();
-        }
-        
-        public void PlaceStateElement(StartStateUIElement stateElement)
-        {
-            PlacedStateElement = stateElement.GetComponent<StateUIElement>();
+            PlacedStateElement = stateUIElement;
         }
     }
 }

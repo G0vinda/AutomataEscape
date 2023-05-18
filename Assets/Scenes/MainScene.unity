@@ -1482,7 +1482,7 @@ MonoBehaviour:
   levelFadeImage: {fileID: 1742516009}
   levelFadeColor: {r: 0.0114659965, g: 0.06849515, b: 0.078, a: 1}
   levelFadeTime: 1.3
-  startLevelId: 14
+  startLevelId: 0
   resetLevelOnStart: 1
 --- !u!114 &868897339
 MonoBehaviour:
