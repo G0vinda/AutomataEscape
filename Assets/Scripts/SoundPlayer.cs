@@ -18,9 +18,15 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference robotBeamEvent;
     [SerializeField] private EventReference levelStartSuccessEvent;
     [SerializeField] private EventReference levelStartFailEvent;
+    [SerializeField] private EventReference VictorySFXEvent;
+
+    [SerializeField] private EventReference RobotWalkEvent;
+    [SerializeField] private EventReference RobotDropEvent;
+    [SerializeField] private EventReference RobotGrabEvent;
     
     [SerializeField] private EventReference atmoLevelEvent;
     [SerializeField] private EventReference musicLevelEvent;
+    [SerializeField] private EventReference musicWalkingEvent;
     
     public static SoundPlayer Instance;
 
@@ -108,7 +114,7 @@ public class SoundPlayer : MonoBehaviour
     public void PlayMusicWalking()
     {
         _musicInstance.stop(STOP_MODE.IMMEDIATE);
-        //_musicInstance = RuntimeManager.CreateInstance(.... Add walking music walking event here
+        _musicInstance = RuntimeManager.CreateInstance(musicWalkingEvent);
         _musicInstance.start();
     }
 
@@ -178,22 +184,22 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayVictory()
     {
-        // play the sound on reaching the goal
+        RuntimeManager.PlayOneShot(VictorySFXEvent);
     }
 
     public void PlayRobotGrab()
     {
-        // play the sound when the robot grabs a key
+        RuntimeManager.PlayOneShot(RobotGrabEvent);
     }
 
     public void PlayRobotDrop()
     {
-        // play the sound when the robot drops a key
+        RuntimeManager.PlayOneShot(RobotDropEvent);
     }
 
     public void PlayRobotMove()
     {
-        // play the sound the robot makes, when he moves forward
+        RuntimeManager.PlayOneShot(RobotWalkEvent);
     }
 
     public void PlayRobotTurn()
