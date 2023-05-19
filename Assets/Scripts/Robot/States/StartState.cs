@@ -1,4 +1,5 @@
-﻿using UI;
+﻿using DG.Tweening;
+using UI;
 using UI.Transition;
 using UnityEngine;
 
@@ -8,8 +9,9 @@ namespace Robot.States
     {
         public StartState() : base(null, null) {}
 
-        public override bool ProcessState(ref Vector2Int coordinates, ref Direction direction)
+        public override bool ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
         {
+            animation = null;
             return false;
         }
     }

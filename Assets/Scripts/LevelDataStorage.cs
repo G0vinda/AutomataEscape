@@ -225,10 +225,10 @@ public static class LevelDataStorage
             Direction.Right,
             new[,]
             {
-                {None, None, Goal, None, None },
-                {None, None, Floor, None, None },
-                {None, Floor, Orange, Floor, Floor },
-                {Floor, Floor, Floor, Floor, Orange },
+                {None, None, Goal, None, None, None },
+                {None, None, Floor, None, None, None },
+                {None, Floor, Orange, Floor, Floor, None },
+                {Floor, Floor, Floor, Floor, Orange, Floor },
             },
             new List<LevelData.AvailableStateInfo>()
             {

@@ -16,14 +16,15 @@ namespace Robot.States
             _robotTransform = robotTransform;
         }
 
-        public override bool ProcessState(ref Vector2Int coordinates, ref Direction direction)
+        public override bool ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
         {
+            animation = null;
             if (LevelGridManager.CheckIfWayIsBlocked(coordinates, direction))
                 return false;
 
             coordinates += direction.ToVector2Int();
             var moveTime = 0.6f;
-            _robotTransform.DOMove(LevelGridManager.Grid[coordinates].transform.position, moveTime).SetEase(Ease.InOutSine);
+            animation = _robotTransform.DOMove(LevelGridManager.Grid[coordinates].transform.position, moveTime).SetEase(Ease.InOutSine);
             SpriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
             SoundPlayer.Instance.PlayRobotMove();
             

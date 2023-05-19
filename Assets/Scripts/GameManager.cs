@@ -112,6 +112,7 @@ public class GameManager : MonoBehaviour
             _robot.StopRun();
             RobotStateChanged?.Invoke(false);
             ReloadLevel(); 
+            SoundPlayer.Instance.PlayMusicLevel();
         }
         else
         {

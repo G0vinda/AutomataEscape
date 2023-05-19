@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using LevelGrid;
 using Mono.Collections.Generic;
 using Robot.Transitions;
@@ -28,7 +29,7 @@ namespace Robot.States
         }
 
         // Returns true if goal is reached
-        public abstract bool ProcessState(ref Vector2Int coordinates, ref Direction direction);
+        public abstract bool ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation);
 
         public int DetermineNextStateId(Vector2Int coordinates, Direction direction)
         {

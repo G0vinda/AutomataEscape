@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using LevelGrid;
 using Robot.States;
 using UI;
@@ -21,6 +22,7 @@ namespace Robot
         private StateChartManager _stateChartManager;
         private WaitForSeconds _waitForSecond = new (0.8f);
         private Coroutine _currentRun;
+        private Tween _currentAnimation;
 
         private void Awake()
         {
@@ -47,6 +49,7 @@ namespace Robot
         {
             IsRunning = false;
             StopCoroutine(_currentRun);
+            _currentAnimation?.Kill();
         }
 
         private IEnumerator Run(StartState startState)
@@ -56,7 +59,7 @@ namespace Robot
             {
                 NextStateStarts?.Invoke(DetermineStateAction(currentState));
 
-                if (currentState.ProcessState(ref _currentCoordinates, ref _currentDirection))
+                if (currentState.ProcessState(ref _currentCoordinates, ref _currentDirection, out _currentAnimation))
                     break;
                 var nextStateId = currentState.DetermineNextStateId(_currentCoordinates, _currentDirection);
                 currentState = _stateChartManager.GetStateById(nextStateId);
