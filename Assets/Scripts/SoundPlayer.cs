@@ -191,6 +191,7 @@ public class SoundPlayer : MonoBehaviour
     public void PlayVictory()
     {
         RuntimeManager.PlayOneShot(VictorySFXEvent);
+        _musicInstance.stop(STOP_MODE.IMMEDIATE);
     }
 
     public void PlayRobotGrab()
