@@ -24,6 +24,7 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference RobotDropEvent;
     [SerializeField] private EventReference RobotGrabEvent;
     
+    [SerializeField] private EventReference musicMenuEvent;
     [SerializeField] private EventReference atmoLevelEvent;
     [SerializeField] private EventReference musicLevelEvent;
     [SerializeField] private EventReference musicWalkingEvent;
@@ -98,6 +99,13 @@ public class SoundPlayer : MonoBehaviour
         RuntimeManager.PlayOneShot(buttonClickEvent);
     }
 
+    public void PlayMusicMenu()         //Todo: Menu-Musik triggern
+    {
+        _musicInstance.stop(STOP_MODE.IMMEDIATE);
+        _musicInstance = RuntimeManager.CreateInstance(musicMenuEvent);
+        _musicInstance.start();
+    }
+    
     public void PlayAtmoLevel()
     {
         _atmoInstance = RuntimeManager.CreateInstance(atmoLevelEvent);
