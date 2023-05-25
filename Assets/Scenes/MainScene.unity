@@ -470,6 +470,13 @@ MonoBehaviour:
       Data3: -1505372263
       Data4: 1175236539
     Path: event:/Foleys/Robo Grab
+  musicMenuEvent:
+    Guid:
+      Data1: 1835304012
+      Data2: 1254253878
+      Data3: -1324799048
+      Data4: -851313356
+    Path: event:/Music/Menu Music
   atmoLevelEvent:
     Guid:
       Data1: -26895183
