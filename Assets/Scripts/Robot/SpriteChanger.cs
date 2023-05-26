@@ -47,12 +47,12 @@ namespace Robot
 
         private void OnEnable()
         {
-            GameManager.Instance.GoalReached += StartBeamDespawnEffect;
+            GameManager.GoalReached += StartBeamDespawnEffect;
         }
 
         private void OnDisable()
         {
-            GameManager.Instance.GoalReached -= StartBeamDespawnEffect;
+            GameManager.GoalReached -= StartBeamDespawnEffect;
         }
         
         #endregion

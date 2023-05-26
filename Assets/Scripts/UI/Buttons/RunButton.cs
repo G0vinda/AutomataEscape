@@ -27,14 +27,14 @@ namespace UI
 
         private void OnEnable()
         {
-            GameManager.Instance.RobotStateChanged += ChangeImage;
-            GameManager.Instance.InvalidRunPress += PlayInvalidEffect;
+            GameManager.RobotStateChanged += ChangeImage;
+            GameManager.InvalidRunPress += PlayInvalidEffect;
         }
 
         private void OnDisable()
         {
-            GameManager.Instance.RobotStateChanged -= ChangeImage;
-            GameManager.Instance.InvalidRunPress -= PlayInvalidEffect;
+            GameManager.RobotStateChanged -= ChangeImage;
+            GameManager.InvalidRunPress -= PlayInvalidEffect;
         }
 
         private void PlayInvalidEffect()

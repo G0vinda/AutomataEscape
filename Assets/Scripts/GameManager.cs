@@ -28,9 +28,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool resetLevelOnStart;
 
     public static GameManager Instance { get; private set; }
-    public event Action<bool> RobotStateChanged;
-    public event Action InvalidRunPress;
-    public event Action GoalReached;
+    public static event Action<bool> RobotStateChanged;
+    public static event Action InvalidRunPress;
+    public static event Action GoalReached;
     
     private const int FinishSceneIndex = 2;
     
@@ -50,6 +50,9 @@ public class GameManager : MonoBehaviour
         if(resetLevelOnStart)
             PlayerPrefs.SetInt("CurrentLevelId", startLevelId);
         _currentLevelId = PlayerPrefs.GetInt("CurrentLevelId", 0);
+        
+        SoundPlayer.Instance.PlayAtmoLevel();
+        SoundPlayer.Instance.PlayMusicLevel();
         StartCoroutine(LoadLevel(_currentLevelId));
     }
 

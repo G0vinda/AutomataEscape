@@ -2,6 +2,7 @@ using FMOD.Studio;
 using FMODUnity;
 using UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public class SoundPlayer : MonoBehaviour
@@ -60,13 +61,14 @@ public class SoundPlayer : MonoBehaviour
     #region OnEnable/OnDisable
     private void OnEnable()
     {
-        GameManager.Instance.RobotStateChanged += HandleRobotStateChanged;
+        GameManager.RobotStateChanged += HandleRobotStateChanged;
         UIManager.ViewStateChanged += HandleViewStateChanged;
     }
 
     private void OnDisable()
     {
-        GameManager.Instance.RobotStateChanged += HandleRobotStateChanged;
+        GameManager.RobotStateChanged -= HandleRobotStateChanged;
+        UIManager.ViewStateChanged -= HandleViewStateChanged;
     }
     #endregion
 
@@ -83,9 +85,19 @@ public class SoundPlayer : MonoBehaviour
         _musicInstance.setParameterByNameWithLabel(ViewStateParameterName, newLabelName);
     }
 
-    private void Start() // Todo: Change me later
+    private void Start()
     {
-        PlayAtmoLevel();
+        var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        switch (currentSceneIndex)
+        {
+            case 0: 
+                PlayMusicMenu();
+                break;
+            case 1:
+                PlayMusicLevel();
+                PlayAtmoLevel();
+                break;
+        }
     }
 
     public void SetLevelBackgroundVolume(float volume)
@@ -99,7 +111,7 @@ public class SoundPlayer : MonoBehaviour
         RuntimeManager.PlayOneShot(buttonClickEvent);
     }
 
-    public void PlayMusicMenu()         //Todo: Menu-Musik triggern
+    public void PlayMusicMenu()
     {
         _musicInstance.stop(STOP_MODE.IMMEDIATE);
         _musicInstance = RuntimeManager.CreateInstance(musicMenuEvent);

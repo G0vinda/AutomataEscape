@@ -20,14 +20,14 @@ namespace UI.Buttons
         private void OnEnable()
         {
             UIManager.ViewStateChanged += ChangeImage;
-            GameManager.Instance.RobotStateChanged += SetButtonToInteractable;
+            GameManager.RobotStateChanged += SetButtonToInteractable;
 
         }
 
         private void OnDisable()
         {
             UIManager.ViewStateChanged -= ChangeImage;
-            GameManager.Instance.RobotStateChanged -= SetButtonToInteractable;
+            GameManager.RobotStateChanged -= SetButtonToInteractable;
         }
 
         private void ChangeImage(bool programmingViewActive)

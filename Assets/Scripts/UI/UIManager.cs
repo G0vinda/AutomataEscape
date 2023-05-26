@@ -21,7 +21,7 @@ namespace UI
         [SerializeField] private Image selectPanel;
         [SerializeField] private GameObject menuButton;
 
-        public static Action<bool> ViewStateChanged;
+        public static event Action<bool> ViewStateChanged;
 
         private StateChartManager _stateChartManager;
         private UIGridManager _uiGridManager;
@@ -130,6 +130,7 @@ namespace UI
 
         public void ToggleUI()
         {
+            SoundPlayer.Instance.PlayButtonClick();
             if (_uiActive)
             {
                 SwitchToLevelView();
