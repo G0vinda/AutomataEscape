@@ -28,10 +28,6 @@ namespace UI.State
             GetComponent<RectTransform>().sizeDelta = _originalSize * gridScaleFactor;
             stateElementPlaceOffset = _originalPlaceOffset * gridScaleFactor;
             DestroyStates();
-            for (var i = 0; i < numberOfStates; i++)
-            {
-                AddState();
-            }
         }
 
         public StateChartManager.StateAction GetAction()

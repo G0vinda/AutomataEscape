@@ -107,6 +107,11 @@ namespace UI
             stateUIElementStacks.ForEach(stack => stack.gameObject.SetActive(false));
             foreach (var availableStateInfo in _availableStateInfo)
             {
+                if (availableStateInfo.StartPositionOnGrid != -Vector2Int.one)
+                {
+                    
+                    continue;
+                }
                 var availableStack =
                     stateUIElementStacks.First(stack => stack.GetAction() == availableStateInfo.Action);
                 availableStack.gameObject.SetActive(true);
@@ -173,6 +178,11 @@ namespace UI
         public void ZoomStateChartPanel(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
         {
             stateChartPanel.ZoomChart(zoomFactor, zoomDelta, zoomCenter);
+        }
+
+        private void PlaceNewStateElementOnGrid(StateChartManager.StateAction stateAction, Vector2Int placeCoordinates)
+        {
+            
         }
 
         public void PlaceStateElementOnGrid(StateUIPlaceElement placeElement, StateChartCell connectedCell)

@@ -9,12 +9,12 @@ public class LevelData
     public readonly struct AvailableStateInfo
     {
         public StateChartManager.StateAction Action { get; }
-        public int Amount { get; }
+        public Vector2Int StartPositionOnGrid { get; }
 
-        public AvailableStateInfo(StateChartManager.StateAction action, int amount)
+        public AvailableStateInfo(StateChartManager.StateAction action, Vector2Int startPosition)
         {
             Action = action;
-            Amount = amount;
+            StartPositionOnGrid = startPosition;
         }
     }
     
