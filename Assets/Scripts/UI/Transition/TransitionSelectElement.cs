@@ -1,7 +1,8 @@
 ﻿using Robot;
 using UI.UIData;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 namespace UI.Transition
 {
@@ -29,9 +30,9 @@ namespace UI.Transition
             Condition = data.condition;
         }
 
-        public StateChartManager.TransitionCondition GetCondition()
+        public Color GetColor()
         {
-            return data.condition;
+            return background.color;
         }
 
         public void ShowSelectionMarking()

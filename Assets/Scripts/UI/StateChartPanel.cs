@@ -24,14 +24,14 @@ namespace UI
         private float _defaultStateSize = 130;
         private float _defaultLineWidth = 20;
 
-        public void Initialize(float availableHorizontalSpace)
+        public void Initialize()
         {
             _rectTransform = GetComponent<RectTransform>();
             _uiGridManager = GetComponent<UIGridManager>();
             _uiManager = GameManager.Instance.GetUIManager();
             
             _zoomFactor = 1f;
-            ScaleChartToFitScreen(availableHorizontalSpace);
+            ScaleChartToFitScreen();
             _scaledPadding = _uiManager.ScaleFloat(padding) * _scaleFactor;
             CalculateGridValues();
             _uiGridManager.Initialize(_gridHeight, _bottomLeftGridPosition);
@@ -56,14 +56,14 @@ namespace UI
             _bottomLeftGridPosition = (Vector2)transform.position + Vector2.one * -_gridHeight * 0.5f;
         }
 
-        private void ScaleChartToFitScreen(float availableHorizontalSpace)
+        private void ScaleChartToFitScreen()
         {
             var scaledHeight = _uiManager.ScaleFloat(_rectTransform.sizeDelta.y + 2 * yMargin);
             _scaleFactor = Screen.height < scaledHeight ? Screen.height / scaledHeight : 1f; // If the screen height isn't big enough _scaleFactor will be < 0
             
             _rectTransform.sizeDelta *= _scaleFactor;
             _defaultSize = _rectTransform.sizeDelta;
-            transform.position = new Vector2(availableHorizontalSpace * 0.5f, transform.position.y); // Position panel at center in available space
+            transform.position = new Vector2(Screen.width * 0.5f, transform.position.y); // Position panel at center in available space
             _movementBoundaries = new MovementBoundaries(transform.position);
             
             // The StateUIElement size has to scale with uiGrid

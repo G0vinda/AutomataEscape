@@ -13,7 +13,7 @@ public static class LevelDataStorage
     
     private static List<LevelData> _levels = new ()
     {
-        new LevelData( // Level 1
+        new LevelData(
             new Vector2Int(0, 0),
             Direction.Down,
             new[,]
@@ -21,364 +21,383 @@ public static class LevelDataStorage
                 {Floor },
                 {Floor },
                 {Floor },
-               
                 {Goal }
             },
             new List<LevelData.AvailableStateInfo>()
             {
-                new (GoForward, 1), 
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()), // <-- Wenn keine Gears 
-
-
-        new LevelData(  // Level 2
-            new Vector2Int(0, -1),
-            Direction.Right,
-            new[,]
-            {
-                { None, Goal },
-                { Floor, Floor}
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 1), 
-                new (TurnLeft, 1)
-            },
-            new List<StateChartManager.TransitionCondition>()
+                new (GoForward, new Vector2Int(1, 1))
+            },new List<StateChartManager.TransitionCondition>()
             {
                 Default,
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
-
-
-        new LevelData( // Level 3
-            new Vector2Int(0, 0),
-            Direction.Down,
-            new[,]
-            {
-                { Floor, None, None},
-                { Floor, Floor, Goal}
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 2), 
-                new (TurnLeft, 1)
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
-        
-
-        new LevelData( // Level 4
-            new Vector2Int(0, -2),
-            Direction.Left,
-            new[,]
-            {
-                { Floor, Floor, Goal},
-                { Floor, Floor, Floor},
-                { Floor, Floor, Floor}
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 2), 
-                new (TurnRight, 1)
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                //IsInFrontOfWall
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
-
-
-        new LevelData( // Level 5
-            new Vector2Int(0, -3),
-            Direction.Up,
-            new[,]
-            {
-                { None, None, Goal},
-                { None, Floor, Floor},
-                { Floor, Floor, Floor},
-                { Floor, Floor, None},
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 2), 
-                new (TurnRight, 1),
-                new (TurnLeft, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
-        
-
-        new LevelData(  //Level 6
-            new Vector2Int(0, 0),
-            Direction.Down,
-            new[,]
-            {
-                { Floor, None, None},
-                { Floor, None, None},
-                { Floor, Floor, Goal}          
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 1), 
-                new (TurnLeft, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                IsInFrontOfWall
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
-        // new Dictionary<Vector2Int, LevelGridManager.KeyType>()
-        //  {
-        //     {new Vector2Int(0, -1), LevelGridManager.KeyType.Red}  // <-- Wenn Gears 
-        //  }),
-
-
-        new LevelData( // Level 7
-            new Vector2Int(0, 0),
-            Direction.Down,
-            new[,]
-            {
-                { Floor, None, None, None, None},
-                { Floor, None, None, None, None},
-                { Floor, Floor, Floor, None, None},
-                { None, Floor, Floor, Floor, None },
-                { None, None, Floor, Floor, Goal }
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 2),
-                new (TurnLeft, 1),
-                new (TurnRight, 1)
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                IsInFrontOfWall,
-            },
-           new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
-
-
-        new LevelData( // Level 8
-            new Vector2Int(0, -2),
-            Direction.Right,
-            new[,]
-            {
-                { None, None, Goal, None},
-                { None, None, Floor, None},
-                { Floor, Floor, Orange, Floor},
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 1),
-                new (TurnLeft, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-             
-                StandsOnOrange
-            },
-           new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
-
-        new LevelData( // Level 9
-            new Vector2Int(0, -4),
-            Direction.Up,
-            new[,]
-            {
-                {None, None, Goal},
-                {Floor, None, Floor},
-                {Orange, Floor, Floor},
-                {Floor, None, None },
-                {Floor, None, None },
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 1),
-                new (TurnRight, 1),
-                new (TurnLeft, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                IsInFrontOfWall,
-                StandsOnOrange,
-
-            },
-           new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
-
-
-        new LevelData( // Level 10
-            new Vector2Int(0, -3),
-            Direction.Right,
-            new[,]
-            {
-                {None, None, Goal, None, None, None },
-                {None, None, Floor, None, None, None },
-                {None, Floor, Orange, Floor, Floor, None },
-                {Floor, Floor, Floor, Floor, Orange, Floor },
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 2),
-                new (TurnRight, 1),
-                new (TurnLeft, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                IsInFrontOfWall,
-                StandsOnOrange,
-
-            },
-           new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
-
-        new LevelData( // Level 11
-            new Vector2Int(0, 0),
-            Direction.Right,
-            new[,]
-            {
-                {Floor, Floor, Floor, RedGateRight, Goal }
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 1),
-                new (Drop, 1),
-                new (Grab, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                IsInFrontOfWall,
-                StandsOnKey,
+                StandsOnPurple
             },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>()
-            {
-               {new Vector2Int(1, 0), LevelGridManager.KeyType.Red} 
-            }),
-
-
-        new LevelData( // Level 12
-            new Vector2Int(0, -3),
-            Direction.Up,
-            new[,]
-            {
-                { Floor, None, None },
-                { Floor, RedGateRight, Goal },
-                { Floor, None, None },
-                { Floor, None, None },
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 1),
-                new (TurnRight, 1),
-                new (Drop, 1),
-                new (Grab, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                IsInFrontOfWall,
-                StandsOnKey,
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()
-            {
-               {new Vector2Int(0, -1), LevelGridManager.KeyType.Red}
-            }),
-
-
-        new LevelData( // Level 13
-            new Vector2Int(0, 0),
-            Direction.Down,
-            new[,]
-            {
-                { Floor, None, None, None },
-                { Floor, None, None, None },
-                { Floor, Floor, RedGateRight, Goal },
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 1),
-                new (TurnLeft, 1),
-                new (Drop, 1),
-                new (Grab, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                IsInFrontOfWall,
-                StandsOnKey,
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()
-            {
-               {new Vector2Int(0, -1), LevelGridManager.KeyType.Red}
-            }),
-
-        new LevelData( // Level 14
-            new Vector2Int(1, -4),
-            Direction.Down,
-            new[,]
-            {
-               { None, None, None, None, None, Floor, None, None },
-               { None, None, None, None, None, Floor, None, None },
-               { Floor, Floor, Floor, RedGateRight, Floor, Floor, BlueGateRight, Goal },
-               { Floor, Floor, None, None, None, Floor, None, None },
-               { None, Floor, None, None, None, Floor, None, None }
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 1),
-                new (TurnRight, 1),
-                new (Drop, 1),
-                new (Grab, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                IsInFrontOfWall,
-                StandsOnKey,
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>()
-            {
-               {new Vector2Int(1, -2), LevelGridManager.KeyType.Red},
-               {new Vector2Int(0, -2), LevelGridManager.KeyType.Blue}
-            }),
-
-        new LevelData( // Level 15
-            new Vector2Int(0, -2),
-            Direction.Right,
-            new[,]
-            {
-                { None, None, Floor, Floor, None, Goal },
-                { None, Floor, Floor, Floor, None, Floor },
-                { Floor, Floor, None, Floor, Floor, Floor },
-                { None, Floor, None, None, Floor, Floor }
-             
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, 3),
-                new (TurnRight, 1),
-                new (TurnLeft, 1),
-            },
-            new List<StateChartManager.TransitionCondition>()
-            {
-                Default,
-                IsInFrontOfWall,
-            },
-           new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+            ),
+        // new LevelData( // Level 1
+        //     new Vector2Int(0, 0),
+        //     Direction.Down,
+        //     new[,]
+        //     {
+        //         {Floor },
+        //         {Floor },
+        //         {Floor },
+        //         {Goal }
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 1), 
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()), // <-- Wenn keine Gears 
+        //
+        //
+        // new LevelData(  // Level 2
+        //     new Vector2Int(0, -1),
+        //     Direction.Right,
+        //     new[,]
+        //     {
+        //         { None, Goal },
+        //         { Floor, Floor}
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 1), 
+        //         new (TurnLeft, 1)
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        //
+        //
+        // new LevelData( // Level 3
+        //     new Vector2Int(0, 0),
+        //     Direction.Down,
+        //     new[,]
+        //     {
+        //         { Floor, None, None},
+        //         { Floor, Floor, Goal}
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 2), 
+        //         new (TurnLeft, 1)
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        //
+        //
+        // new LevelData( // Level 4
+        //     new Vector2Int(0, -2),
+        //     Direction.Left,
+        //     new[,]
+        //     {
+        //         { Floor, Floor, Goal},
+        //         { Floor, Floor, Floor},
+        //         { Floor, Floor, Floor}
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 2), 
+        //         new (TurnRight, 1)
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         //IsInFrontOfWall
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        //
+        //
+        // new LevelData( // Level 5
+        //     new Vector2Int(0, -3),
+        //     Direction.Up,
+        //     new[,]
+        //     {
+        //         { None, None, Goal},
+        //         { None, Floor, Floor},
+        //         { Floor, Floor, Floor},
+        //         { Floor, Floor, None},
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 2), 
+        //         new (TurnRight, 1),
+        //         new (TurnLeft, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        //
+        //
+        // new LevelData(  //Level 6
+        //     new Vector2Int(0, 0),
+        //     Direction.Down,
+        //     new[,]
+        //     {
+        //         { Floor, None, None},
+        //         { Floor, None, None},
+        //         { Floor, Floor, Goal}          
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 1), 
+        //         new (TurnLeft, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         IsInFrontOfWall
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        // // new Dictionary<Vector2Int, LevelGridManager.KeyType>()
+        // //  {
+        // //     {new Vector2Int(0, -1), LevelGridManager.KeyType.Red}  // <-- Wenn Gears 
+        // //  }),
+        //
+        //
+        // new LevelData( // Level 7
+        //     new Vector2Int(0, 0),
+        //     Direction.Down,
+        //     new[,]
+        //     {
+        //         { Floor, None, None, None, None},
+        //         { Floor, None, None, None, None},
+        //         { Floor, Floor, Floor, None, None},
+        //         { None, Floor, Floor, Floor, None },
+        //         { None, None, Floor, Floor, Goal }
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 2),
+        //         new (TurnLeft, 1),
+        //         new (TurnRight, 1)
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         IsInFrontOfWall,
+        //     },
+        //    new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        //
+        //
+        // new LevelData( // Level 8
+        //     new Vector2Int(0, -2),
+        //     Direction.Right,
+        //     new[,]
+        //     {
+        //         { None, None, Goal, None},
+        //         { None, None, Floor, None},
+        //         { Floor, Floor, Orange, Floor},
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 1),
+        //         new (TurnLeft, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //      
+        //         StandsOnOrange
+        //     },
+        //    new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        //
+        // new LevelData( // Level 9
+        //     new Vector2Int(0, -4),
+        //     Direction.Up,
+        //     new[,]
+        //     {
+        //         {None, None, Goal},
+        //         {Floor, None, Floor},
+        //         {Orange, Floor, Floor},
+        //         {Floor, None, None },
+        //         {Floor, None, None },
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 1),
+        //         new (TurnRight, 1),
+        //         new (TurnLeft, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         IsInFrontOfWall,
+        //         StandsOnOrange,
+        //
+        //     },
+        //    new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        //
+        //
+        // new LevelData( // Level 10
+        //     new Vector2Int(0, -3),
+        //     Direction.Right,
+        //     new[,]
+        //     {
+        //         {None, None, Goal, None, None, None },
+        //         {None, None, Floor, None, None, None },
+        //         {None, Floor, Orange, Floor, Floor, None },
+        //         {Floor, Floor, Floor, Floor, Orange, Floor },
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 2),
+        //         new (TurnRight, 1),
+        //         new (TurnLeft, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         IsInFrontOfWall,
+        //         StandsOnOrange,
+        //
+        //     },
+        //    new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        //
+        // new LevelData( // Level 11
+        //     new Vector2Int(0, 0),
+        //     Direction.Right,
+        //     new[,]
+        //     {
+        //         {Floor, Floor, Floor, RedGateRight, Goal }
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 1),
+        //         new (Drop, 1),
+        //         new (Grab, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         IsInFrontOfWall,
+        //         StandsOnKey,
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()
+        //     {
+        //        {new Vector2Int(1, 0), LevelGridManager.KeyType.Red} 
+        //     }),
+        //
+        //
+        // new LevelData( // Level 12
+        //     new Vector2Int(0, -3),
+        //     Direction.Up,
+        //     new[,]
+        //     {
+        //         { Floor, None, None },
+        //         { Floor, RedGateRight, Goal },
+        //         { Floor, None, None },
+        //         { Floor, None, None },
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 1),
+        //         new (TurnRight, 1),
+        //         new (Drop, 1),
+        //         new (Grab, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         IsInFrontOfWall,
+        //         StandsOnKey,
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()
+        //     {
+        //        {new Vector2Int(0, -1), LevelGridManager.KeyType.Red}
+        //     }),
+        //
+        //
+        // new LevelData( // Level 13
+        //     new Vector2Int(0, 0),
+        //     Direction.Down,
+        //     new[,]
+        //     {
+        //         { Floor, None, None, None },
+        //         { Floor, None, None, None },
+        //         { Floor, Floor, RedGateRight, Goal },
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 1),
+        //         new (TurnLeft, 1),
+        //         new (Drop, 1),
+        //         new (Grab, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         IsInFrontOfWall,
+        //         StandsOnKey,
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()
+        //     {
+        //        {new Vector2Int(0, -1), LevelGridManager.KeyType.Red}
+        //     }),
+        //
+        // new LevelData( // Level 14
+        //     new Vector2Int(1, -4),
+        //     Direction.Down,
+        //     new[,]
+        //     {
+        //        { None, None, None, None, None, Floor, None, None },
+        //        { None, None, None, None, None, Floor, None, None },
+        //        { Floor, Floor, Floor, RedGateRight, Floor, Floor, BlueGateRight, Goal },
+        //        { Floor, Floor, None, None, None, Floor, None, None },
+        //        { None, Floor, None, None, None, Floor, None, None }
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 1),
+        //         new (TurnRight, 1),
+        //         new (Drop, 1),
+        //         new (Grab, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         IsInFrontOfWall,
+        //         StandsOnKey,
+        //     },
+        //     new Dictionary<Vector2Int, LevelGridManager.KeyType>()
+        //     {
+        //        {new Vector2Int(1, -2), LevelGridManager.KeyType.Red},
+        //        {new Vector2Int(0, -2), LevelGridManager.KeyType.Blue}
+        //     }),
+        //
+        // new LevelData( // Level 15
+        //     new Vector2Int(0, -2),
+        //     Direction.Right,
+        //     new[,]
+        //     {
+        //         { None, None, Floor, Floor, None, Goal },
+        //         { None, Floor, Floor, Floor, None, Floor },
+        //         { Floor, Floor, None, Floor, Floor, Floor },
+        //         { None, Floor, None, None, Floor, Floor }
+        //      
+        //     },
+        //     new List<LevelData.AvailableStateInfo>()
+        //     {
+        //         new (GoForward, 3),
+        //         new (TurnRight, 1),
+        //         new (TurnLeft, 1),
+        //     },
+        //     new List<StateChartManager.TransitionCondition>()
+        //     {
+        //         Default,
+        //         IsInFrontOfWall,
+        //     },
+        //    new Dictionary<Vector2Int, LevelGridManager.KeyType>())
     };
 
     public static LevelData GetLevelData(int id)

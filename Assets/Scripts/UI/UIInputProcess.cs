@@ -13,6 +13,7 @@ namespace UI
     public class UIInputProcess : MonoBehaviour
     {
         [SerializeField] private GameObject blockedCellMarkingPrefab;
+        [SerializeField] private TransitionSelection transitionSelection;
 
         public Action InputStarted;
         public Action InputEnded;
@@ -29,13 +30,11 @@ namespace UI
 
         // Variables for dragging state element
         private StateUIPlaceElement _selectedDragStateElement;
-        private StateUIElementStack _selectedDragStateStack;
         private bool _dragStateElementWasOnGrid;
         private StateChartCell _hoveredDragStateChartCell;
         private List<GameObject> _blockedCellMarkings = new ();
 
         // Variables for drawing transition line
-        private TransitionSelectElement _selectedTransitionElement;
         private StateUIElement _selectedDrawStateElement;
         private StateChartCell _selectedDrawStateCell;
         private Vector2Int _selectedDrawStateCellCoordinates;
@@ -53,8 +52,8 @@ namespace UI
             InputManager.StateChartPanelTapped += HandleStateChartPanelTapped;
             InputManager.StateElementDragStarted += HandleStatePlaceElementDragStart;
             InputManager.StateChartPanelDragStarted += HandleStateChartPanelDragStart;
+            InputManager.TransitionLineDragStarted += HandleTransitionLineDragStart;
             InputManager.TransitionElementSelected += HandleTransitionSelected;
-            InputManager.TransitionElementDeselected += HandleTransitionElementDeselected;
             InputManager.ZoomInputChanged += ProcessZoom;
 
             _inputPhase = UIInputPhase.WaitingForInput;
@@ -66,8 +65,8 @@ namespace UI
             InputManager.StateChartPanelTapped -= HandleStateChartPanelTapped;
             InputManager.StateElementDragStarted -= HandleStatePlaceElementDragStart;
             InputManager.StateChartPanelDragStarted -= HandleStateChartPanelDragStart;
+            InputManager.TransitionLineDragStarted -= HandleTransitionLineDragStart;
             InputManager.TransitionElementSelected -= HandleTransitionSelected;
-            InputManager.TransitionElementDeselected -= HandleTransitionElementDeselected;
             InputManager.ZoomInputChanged -= ProcessZoom;
         }
 
@@ -167,24 +166,27 @@ namespace UI
             // Todo: some features could be implemented here
         }
 
+        private void HandleTransitionLineDragStart(StateUIElement stateElement)
+        {
+            if (transitionSelection.CurrentSelected != null && (stateElement.GetComponent<StartStateUIElement>() == null ||
+                                                                transitionSelection.CurrentSelected.Condition == StateChartManager.TransitionCondition.Default))
+            {
+                InputManager.DragEnded += HandleDragEnded;
+                ChangeInputPhase(UIInputPhase.InitiateTransitionLineDraw);
+                _selectedDrawStateElement = stateElement;
+                _selectedDrawStateElement.SetSizeToHighlight();
+                _selectedDrawStateCell = _selectedDrawStateElement.ConnectedCell;
+                _selectedDrawStateCellCoordinates = _uiGridManager.GetCoordinatesFromCell(_selectedDrawStateCell);
+
+                _selectedDragStateElement = null;
+            }
+        }
+
         private void HandleStatePlaceElementDragStart(StateUIElement stateElement)
         {
             InputManager.DragEnded += HandleDragEnded;
             if (stateElement.ConnectedCell != null)
             {
-                if (_selectedTransitionElement != null && (stateElement.GetComponent<StartStateUIElement>() == null ||
-                    _selectedTransitionElement.Condition == StateChartManager.TransitionCondition.Default))
-                {
-                    ChangeInputPhase(UIInputPhase.InitiateTransitionLineDraw);
-                    _selectedDrawStateElement = stateElement;
-                    _selectedDrawStateElement.SetSizeToHighlight();
-                    _selectedDrawStateCell = _selectedDrawStateElement.ConnectedCell;
-                    _selectedDrawStateCellCoordinates = _uiGridManager.GetCoordinatesFromCell(_selectedDrawStateCell);
-
-                    _selectedDragStateElement = null;
-                    return;
-                }
-
                 if (!stateElement.TryGetComponent(out _selectedDragStateElement))
                 {
                     InputManager.DragEnded -= HandleDragEnded;
@@ -192,17 +194,6 @@ namespace UI
                 }
 
                 _uiManager.RemoveStateElementFromGrid(_selectedDragStateElement);
-            }
-            else
-            {
-                HandleTransitionElementDeselected(); 
-                _selectedDragStateElement = stateElement.GetComponent<StateUIPlaceElement>();
-                if (!_selectedDragStateElement.Draggable)
-                {
-                    InputManager.DragEnded -= HandleDragEnded;
-                    return;
-                }
-                _selectedDragStateStack = _uiManager.RemoveStateElementFromStack(_selectedDragStateElement);
             }
 
             _dragStateElementWasOnGrid = false;
@@ -231,21 +222,7 @@ namespace UI
 
         private void HandleTransitionSelected(TransitionSelectElement transitionSelectElement)
         {
-            if(_selectedTransitionElement != null)
-                _selectedTransitionElement.HideSelectionMarking();
-        
-            _selectedTransitionElement = transitionSelectElement;
-            _selectedTransitionElement.ShowSelectionMarking();
-            TransitionLineDrawer.CurrentTransitionCondition = transitionSelectElement.GetCondition();
-        }
-    
-        private void HandleTransitionElementDeselected()
-        {
-            if (_selectedTransitionElement == null) 
-                return;
-        
-            _selectedTransitionElement.HideSelectionMarking();
-            _selectedTransitionElement = null;
+            transitionSelection.SelectTransitionCondition(transitionSelectElement.Condition);
         }
 
         private bool StartDrawTransitionLine(Vector2 inputPosition)
@@ -281,7 +258,7 @@ namespace UI
                 var destinationState = TransitionLineDrawer.DestinationStateElement;
                 destinationState.GetComponent<StateUIElement>().UpdateScaling();
                 TransitionLineDrawer.FinishLine();
-                _uiManager.AddTransition(_selectedDrawStateElement, destinationState, _selectedTransitionElement.GetCondition());
+                _uiManager.AddTransition(_selectedDrawStateElement, destinationState, transitionSelection.CurrentSelected.Condition);
             }
             else
             {
@@ -318,7 +295,7 @@ namespace UI
                 _selectedDragStateElement.SwitchAppearanceToOffGrid();
             }
 
-            stateElementTransform.SetParent(_selectedDragStateStack.transform);
+            //stateElementTransform.SetParent(_selectedDragStateStack.transform);
             stateElementTransform.position = inputPosition;
             _dragStateElementWasOnGrid = false;
         }
@@ -333,7 +310,7 @@ namespace UI
             }
             else
             {
-                _uiManager.PlaceStateElementOnStack(_selectedDragStateElement);
+                //_uiManager.PlaceStateElementOnStack(_selectedDragStateElement);
                 Destroy(_selectedDragStateElement.gameObject);
             }
 
