@@ -30,6 +30,7 @@ namespace UI
 
         // Variables for dragging state element
         private StateUIPlaceElement _selectedDragStateElement;
+        private StateChartCell _dragStartCell;
         private bool _dragStateElementWasOnGrid;
         private StateChartCell _hoveredDragStateChartCell;
         private List<GameObject> _blockedCellMarkings = new ();
@@ -185,16 +186,16 @@ namespace UI
         private void HandleStatePlaceElementDragStart(StateUIElement stateElement)
         {
             InputManager.DragEnded += HandleDragEnded;
-            if (stateElement.ConnectedCell != null)
+            if (!stateElement.TryGetComponent(out _selectedDragStateElement))
             {
-                if (!stateElement.TryGetComponent(out _selectedDragStateElement))
-                {
-                    InputManager.DragEnded -= HandleDragEnded;
-                    return;
-                }
-
-                _uiManager.RemoveStateElementFromGrid(_selectedDragStateElement);
+                InputManager.DragEnded -= HandleDragEnded;
+                return;
             }
+
+            _dragStartCell = stateElement.ConnectedCell;
+            
+            _uiManager.RemoveStateElementFromGrid(_selectedDragStateElement);
+            
 
             _dragStateElementWasOnGrid = false;
             _selectedDragStateElement.SwitchAppearanceToOffGrid();
@@ -310,8 +311,11 @@ namespace UI
             }
             else
             {
-                //_uiManager.PlaceStateElementOnStack(_selectedDragStateElement);
-                Destroy(_selectedDragStateElement.gameObject);
+                _uiManager.PlaceStateElementOnGrid(_selectedDragStateElement, _dragStartCell);
+                var cellCoordinates = _uiGridManager.GetCoordinatesFromCell(_dragStartCell);
+                var cellPosition = _uiGridManager.CellCoordinatesToScreenPosition(cellCoordinates);
+                _selectedDragStateElement.transform.position = cellPosition;
+                _selectedDragStateElement.SwitchAppearanceToOnGrid();
             }
 
             foreach (var blockedCellMarking in _blockedCellMarkings)
