@@ -9,6 +9,7 @@ using UI.Transition;
 
 public class InputManager : MonoBehaviour
 {
+    [SerializeField] private float stateDragHoldTime;
     public static event Action<StateUIElement> StateElementTapped;
     public static event Action<StateUIElement> StateElementDragStarted;
 
@@ -16,7 +17,8 @@ public class InputManager : MonoBehaviour
     public static event Action StateChartPanelDragStarted;
 
     public static event Action<TransitionSelectElement> TransitionElementSelected;
-    public static event Action TransitionElementDeselected;
+
+    public static event Action<StateUIElement> TransitionLineDragStarted;
 
     public static event Action DragEnded;
 
@@ -70,13 +72,11 @@ public class InputManager : MonoBehaviour
             {
                 StartCoroutine(ProcessPressInput());
             });
-        
-        if(!wasPossibleDrawInteraction)
-            TransitionElementDeselected?.Invoke();
     }
 
     private IEnumerator ProcessPressInput(StateUIElement selectedStateElement = null)
     {
+        var pressTimer = 0f;
         while (true)
         {
             if (_inputReleased) // Player input was tap
@@ -93,20 +93,27 @@ public class InputManager : MonoBehaviour
                 break;
             }
 
-            if (_uiInput.DragAndSelect.PositionDelta.ReadValue<Vector2>() != Vector2.zero) // Player input is drag
+            if (selectedStateElement != null && pressTimer >= stateDragHoldTime)
+            {
+                StateElementDragStarted?.Invoke(selectedStateElement);
+                break;
+            }
+            
+            if(_uiInput.DragAndSelect.PositionDelta.ReadValue<Vector2>() != Vector2.zero)
             {
                 if (selectedStateElement != null)
                 {
-                    StateElementDragStarted?.Invoke(selectedStateElement);
+                    TransitionLineDragStarted?.Invoke(selectedStateElement);
                 }
                 else
                 {
-                    StateChartPanelDragStarted?.Invoke();
+                    StateChartPanelDragStarted?.Invoke();    
                 }
-
+                
                 break;
             }
 
+            pressTimer += Time.deltaTime;
             yield return null;
         }
     }

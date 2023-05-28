@@ -7,8 +7,6 @@ namespace UI.State
 {
     public class StateUIPlaceElement : MonoBehaviour
     {
-        public bool Draggable { get; set; }
-        
         private StateUIData _data;
         private StateUIElement _uiElement;
 

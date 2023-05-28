@@ -14,12 +14,11 @@ namespace UI
 {
     public class UIManager : MonoBehaviour
     {
-        [SerializeField] private List<StateUIElementStack> stateUIElementStacks;
-        [SerializeField] private List<TransitionSelectElement> transitionSelectElements;
+        [SerializeField] private TransitionSelection transitionSelection;
         [SerializeField] private StartStateUIElement startStateUIElement;
         [SerializeField] private StateChartPanel stateChartPanel;
-        [SerializeField] private Image selectPanel;
         [SerializeField] private GameObject menuButton;
+        [SerializeField] private StateUIElementFactory stateUIElementFactory;
 
         public static Action<bool> ViewStateChanged;
 
@@ -79,7 +78,7 @@ namespace UI
             _stateChartManager = stateChartManager;
             if (_uiActive)
             {
-                EnableAvailableSelection();
+                SetupStatesAndTransitionSelection();
             }
             else
             {
@@ -89,9 +88,7 @@ namespace UI
 
         private void SetupStateChartUI()
         {
-            var availableHorizontalSpace =
-                selectPanel.transform.position.x - ScaleFloat(selectPanel.rectTransform.sizeDelta.x);
-            stateChartPanel.Initialize(availableHorizontalSpace);
+            stateChartPanel.Initialize();
 
             var startStateCoordinates = new Vector2Int(0, 3);
             var startCell = _uiGridManager.GetCellOnCoordinates(startStateCoordinates);
@@ -101,28 +98,14 @@ namespace UI
             startStateUIElement.transform.position = startCellPosition;
         }
 
-        private void EnableAvailableSelection()
+        private void SetupStatesAndTransitionSelection()
         {
-            var stateChartPanelScaleFactor = stateChartPanel.GetScaleFactor();
-            stateUIElementStacks.ForEach(stack => stack.gameObject.SetActive(false));
             foreach (var availableStateInfo in _availableStateInfo)
             {
-                if (availableStateInfo.StartPositionOnGrid != -Vector2Int.one)
-                {
-                    
-                    continue;
-                }
-                var availableStack =
-                    stateUIElementStacks.First(stack => stack.GetAction() == availableStateInfo.Action);
-                availableStack.gameObject.SetActive(true);
-                availableStack.Setup(availableStateInfo.Amount, stateChartPanelScaleFactor);
+                PlaceNewStateElementOnGrid(availableStateInfo.Action, availableStateInfo.StartPositionOnGrid);
             }
             
-            foreach (var transitionSelectElement in transitionSelectElements)
-            {
-                transitionSelectElement.gameObject.SetActive(
-                    _availableTransitionConditions.Contains(transitionSelectElement.Condition));
-            }
+            transitionSelection.Setup(_availableTransitionConditions);
         }
 
         private void ClearStateChartUI()
@@ -149,7 +132,7 @@ namespace UI
         {
             _uiActive = true;
             stateChartPanel.gameObject.SetActive(true);
-            selectPanel.gameObject.SetActive(true);
+            transitionSelection.TrySetActive(true);
             ViewStateChanged?.Invoke(true);
             _inputManager.enabled = true;
             
@@ -161,7 +144,7 @@ namespace UI
 
             if (_availableSelectChanged)
             {
-                EnableAvailableSelection();
+                SetupStatesAndTransitionSelection();
                 _availableSelectChanged = false;
             }
         }
@@ -170,7 +153,7 @@ namespace UI
         {
             _uiActive = false;
             stateChartPanel.gameObject.SetActive(false);
-            selectPanel.gameObject.SetActive(false);
+            transitionSelection.TrySetActive(false);
             ViewStateChanged?.Invoke(false);
             _inputManager.enabled = false;
         }
@@ -182,7 +165,10 @@ namespace UI
 
         private void PlaceNewStateElementOnGrid(StateChartManager.StateAction stateAction, Vector2Int placeCoordinates)
         {
-            
+            var newState = stateUIElementFactory.CreateStateUIElement(stateAction);
+            var stateCell = _uiGridManager.GetCellOnCoordinates(placeCoordinates);
+            newState.transform.position = _uiGridManager.CellCoordinatesToScreenPosition(placeCoordinates);
+            PlaceStateElementOnGrid(newState, stateCell);
         }
 
         public void PlaceStateElementOnGrid(StateUIPlaceElement placeElement, StateChartCell connectedCell)
@@ -199,12 +185,6 @@ namespace UI
                 var sourceState = transitionLine.GetComponentInParent<StateUIElement>();
                 RemoveTransition(sourceState, transitionLine.Condition);
             }
-        }
-
-        public void PlaceStateElementOnStack(StateUIPlaceElement placeElement)
-        {
-            stateUIElementStacks.First(s => s.GetAction() == placeElement.GetAction())
-                .AddState();
         }
 
         public void RemoveStateElementFromGrid(StateUIPlaceElement placeElement)
@@ -226,13 +206,6 @@ namespace UI
             _placedStateElements.Remove(placeElement);
             _uiGridManager.RemoveStateElementFromGrid(placeElement.GetComponent<StateUIElement>());
             placeElement.SetAssignedId(-1);
-        }
-
-        public StateUIElementStack RemoveStateElementFromStack(StateUIPlaceElement placeElement)
-        {
-            var stack = stateUIElementStacks.First(stack => stack.GetAction() == placeElement.GetAction());
-            stack.RemoveState(placeElement);
-            return stack;
         }
 
         public void AddTransition(StateUIElement sourceState, StateUIPlaceElement destinationState,

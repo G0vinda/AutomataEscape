@@ -13,6 +13,26 @@ public static class LevelDataStorage
     
     private static List<LevelData> _levels = new ()
     {
+        new LevelData(
+            new Vector2Int(0, 0),
+            Direction.Down,
+            new[,]
+            {
+                {Floor },
+                {Floor },
+                {Floor },
+                {Goal }
+            },
+            new List<LevelData.AvailableStateInfo>()
+            {
+                new (GoForward, new Vector2Int(1, 1))
+            },new List<StateChartManager.TransitionCondition>()
+            {
+                Default,
+                StandsOnPurple
+            },
+            new Dictionary<Vector2Int, LevelGridManager.KeyType>()
+            ),
         // new LevelData( // Level 1
         //     new Vector2Int(0, 0),
         //     Direction.Down,
@@ -21,7 +41,6 @@ public static class LevelDataStorage
         //         {Floor },
         //         {Floor },
         //         {Floor },
-        //        
         //         {Goal }
         //     },
         //     new List<LevelData.AvailableStateInfo>()
