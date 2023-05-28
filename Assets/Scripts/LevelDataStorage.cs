@@ -28,8 +28,7 @@ public static class LevelDataStorage
                 new (GoForward, new Vector2Int(1, 1))
             },new List<StateChartManager.TransitionCondition>()
             {
-                Default,
-                StandsOnPurple
+                Default
             },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>()
             ),
