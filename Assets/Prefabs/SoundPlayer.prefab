@@ -144,6 +144,13 @@ MonoBehaviour:
       Data3: 127849864
       Data4: 418877780
     Path: event:/SFX/Victory
+  RobotTurnOnEvent:
+    Guid:
+      Data1: 1203264799
+      Data2: 1239868738
+      Data3: 1112264368
+      Data4: 665624717
+    Path: event:/Foleys/Robo Turn On
   RobotWalkEvent:
     Guid:
       Data1: -1106963896
@@ -151,6 +158,13 @@ MonoBehaviour:
       Data3: -514510175
       Data4: -6179742
     Path: event:/Foleys/Robo Walk
+  RobotTurnEvent:
+    Guid:
+      Data1: 526816976
+      Data2: 1174423542
+      Data3: -229257043
+      Data4: -747649493
+    Path: event:/Foleys/Robo Turns
   RobotDropEvent:
     Guid:
       Data1: -919021076

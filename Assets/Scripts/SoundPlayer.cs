@@ -21,7 +21,9 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference levelStartFailEvent;
     [SerializeField] private EventReference VictorySFXEvent;
 
+    [SerializeField] private EventReference RobotTurnOnEvent;
     [SerializeField] private EventReference RobotWalkEvent;
+    [SerializeField] private EventReference RobotTurnEvent;
     [SerializeField] private EventReference RobotDropEvent;
     [SerializeField] private EventReference RobotGrabEvent;
     
@@ -29,6 +31,7 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference atmoLevelEvent;
     [SerializeField] private EventReference musicLevelEvent;
     [SerializeField] private EventReference musicWalkingEvent;
+    [SerializeField] private EventReference finalMusicEvent;
     
     public static SoundPlayer Instance;
 
