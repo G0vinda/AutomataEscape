@@ -971,7 +971,7 @@ MonoBehaviour:
   levelFadeColor: {r: 0.0114659965, g: 0.06849515, b: 0.078, a: 1}
   levelFadeTime: 1.3
   startLevelId: 0
-  resetLevelOnStart: 1
+  resetLevelOnStart: 0
 --- !u!114 &868897339
 MonoBehaviour:
   m_ObjectHideFlags: 0
