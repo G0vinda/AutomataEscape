@@ -203,7 +203,7 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayRobotStartUp()
     {
-        // play the robot start sound that comes after the player presses start
+        RuntimeManager.PlayOneShot(RobotTurnOnEvent);
     }
 
     public void PlayRunError()
@@ -234,6 +234,6 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayRobotTurn()
     {
-        // play the sound the robot makes, when it turns by 90 deg, no animation time (yet)
+        RuntimeManager.PlayOneShot(RobotTurnEvent);
     }
 }
