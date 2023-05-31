@@ -15,7 +15,8 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference cableReleaseEvent;
     [SerializeField] private EventReference stateDragEvent;
     [SerializeField] private EventReference stateDropEvent;
-    
+    [SerializeField] private EventReference ImpossibleActionSFXEvent;
+
     [SerializeField] private EventReference robotBeamEvent;
     [SerializeField] private EventReference levelStartSuccessEvent;
     [SerializeField] private EventReference levelStartFailEvent;

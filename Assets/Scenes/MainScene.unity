@@ -2207,6 +2207,26 @@ PrefabInstance:
       propertyPath: finalMusicEvent.Guid.Data4
       value: 899607150
       objectReference: {fileID: 0}
+    - target: {fileID: 1856738656433845313, guid: e19a7b764cf56684097c588688061990, type: 3}
+      propertyPath: ImpossibleActionSFXEvent.Path
+      value: event:/SFX/Impossible Action
+      objectReference: {fileID: 0}
+    - target: {fileID: 1856738656433845313, guid: e19a7b764cf56684097c588688061990, type: 3}
+      propertyPath: ImpossibleActionSFXEvent.Guid.Data1
+      value: -1961588333
+      objectReference: {fileID: 0}
+    - target: {fileID: 1856738656433845313, guid: e19a7b764cf56684097c588688061990, type: 3}
+      propertyPath: ImpossibleActionSFXEvent.Guid.Data2
+      value: 1165006694
+      objectReference: {fileID: 0}
+    - target: {fileID: 1856738656433845313, guid: e19a7b764cf56684097c588688061990, type: 3}
+      propertyPath: ImpossibleActionSFXEvent.Guid.Data3
+      value: 1859175573
+      objectReference: {fileID: 0}
+    - target: {fileID: 1856738656433845313, guid: e19a7b764cf56684097c588688061990, type: 3}
+      propertyPath: ImpossibleActionSFXEvent.Guid.Data4
+      value: -811915540
+      objectReference: {fileID: 0}
     - target: {fileID: 1856738656433845314, guid: e19a7b764cf56684097c588688061990, type: 3}
       propertyPath: m_RootOrder
       value: 5
