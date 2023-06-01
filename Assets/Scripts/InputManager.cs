@@ -55,18 +55,15 @@ public class InputManager : MonoBehaviour
     private void HandlePress(InputAction.CallbackContext context)
     {
         _inputReleased = false;
-        var wasPossibleDrawInteraction = false;
         ProcessInputOverElement(
             _uiInput.DragAndSelect.Position.ReadValue<Vector2>(),
             state =>
             {
                 StartCoroutine(ProcessPressInput(state));
-                wasPossibleDrawInteraction = true;
             },
             transitionSelect =>
             {
                 TransitionElementSelected?.Invoke(transitionSelect);
-                wasPossibleDrawInteraction = true;
             },
             () =>
             {
