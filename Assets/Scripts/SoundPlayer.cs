@@ -15,13 +15,16 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference cableReleaseEvent;
     [SerializeField] private EventReference stateDragEvent;
     [SerializeField] private EventReference stateDropEvent;
-    
+    [SerializeField] private EventReference ImpossibleActionSFXEvent;
+
     [SerializeField] private EventReference robotBeamEvent;
     [SerializeField] private EventReference levelStartSuccessEvent;
     [SerializeField] private EventReference levelStartFailEvent;
     [SerializeField] private EventReference VictorySFXEvent;
 
+    [SerializeField] private EventReference RobotTurnOnEvent;
     [SerializeField] private EventReference RobotWalkEvent;
+    [SerializeField] private EventReference RobotTurnEvent;
     [SerializeField] private EventReference RobotDropEvent;
     [SerializeField] private EventReference RobotGrabEvent;
     
@@ -29,6 +32,7 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference atmoLevelEvent;
     [SerializeField] private EventReference musicLevelEvent;
     [SerializeField] private EventReference musicWalkingEvent;
+    [SerializeField] private EventReference finalMusicEvent;
     
     public static SoundPlayer Instance;
 
@@ -200,7 +204,7 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayRobotStartUp()
     {
-        // play the robot start sound that comes after the player presses start
+        RuntimeManager.PlayOneShot(RobotTurnOnEvent);
     }
 
     public void PlayRunError()
@@ -231,6 +235,6 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayRobotTurn()
     {
-        // play the sound the robot makes, when it turns by 90 deg, no animation time (yet)
+        RuntimeManager.PlayOneShot(RobotTurnEvent);
     }
 }
