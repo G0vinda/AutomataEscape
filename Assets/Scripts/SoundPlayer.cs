@@ -147,6 +147,11 @@ public class SoundPlayer : MonoBehaviour
         _musicInstance.stop(STOP_MODE.IMMEDIATE);
     }
 
+    public void StopAtmoLevel()
+    {
+        _atmoInstance.stop(STOP_MODE.IMMEDIATE);
+    }
+
     public void PlayCableStart()
     {
         RuntimeManager.PlayOneShot(cableStartEvent);

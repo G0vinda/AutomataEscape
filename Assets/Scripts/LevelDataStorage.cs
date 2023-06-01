@@ -32,27 +32,6 @@ public static class LevelDataStorage
             },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>()
             ),
-        // new leveldata( // level 1
-        //     new vector2int(0, 0),
-        //     direction.down,
-        //     new[,]
-        //     {
-        //         {floor },
-        //         {floor },
-        //         {floor },
-        //         {goal }
-        //     },
-        //     new list<leveldata.availablestateinfo>()
-        //     {
-        //         new (goforward, new vector2int(3, 3))
-        //     },
-        //     new list<statechartmanager.transitioncondition>()
-        //     {
-        //         default
-        //     },
-        //     new dictionary<vector2int, levelgridmanager.keytype>()), // <-- wenn keine gears 
-        //
-        //
         new LevelData(  // Level 2
              new Vector2Int(0, -1),
              Direction.Right,
@@ -174,9 +153,9 @@ public static class LevelDataStorage
              {
                  { Floor, None, None, None, None},
                  { Floor, None, None, None, None},
-                 { Orange, Floor, Orange, None, None},
+                 { Orange, Floor, Orange, Floor, None},
                  { None, Floor, Floor, Floor, None },
-                 { None, None, Orange, Floor, Goal }
+                 { None, Floor, Orange, Floor, Goal }
              },
              new List<LevelData.AvailableStateInfo>()
              {
@@ -210,7 +189,6 @@ public static class LevelDataStorage
              new List<StateChartManager.TransitionCondition>()
              {
                  Default,
-
                  IsInFrontOfWall
              },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
