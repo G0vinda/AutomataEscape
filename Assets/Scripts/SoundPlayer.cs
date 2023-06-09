@@ -22,11 +22,14 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference levelStartFailEvent;
     [SerializeField] private EventReference VictorySFXEvent;
 
+    [SerializeField] private EventReference RobotSpawnEvent;
+    [SerializeField] private EventReference RobotDespawnEvent;
     [SerializeField] private EventReference RobotTurnOnEvent;
     [SerializeField] private EventReference RobotWalkEvent;
     [SerializeField] private EventReference RobotTurnEvent;
     [SerializeField] private EventReference RobotDropEvent;
     [SerializeField] private EventReference RobotGrabEvent;
+    [SerializeField] private EventReference RobotTeleportEvent;
     
     [SerializeField] private EventReference musicMenuEvent;
     [SerializeField] private EventReference atmoLevelEvent;
@@ -178,17 +181,17 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayBeamSpawn()
     {
-        PlayBeam();
+        RuntimeManager.PlayOneShot(RobotSpawnEvent);   //todo: neuer Methodentrigger
     }
-
+    
     public void PlayBeamDespawn()
     {
-        PlayBeam();
+        RuntimeManager.PlayOneShot(RobotDespawnEvent);   //todo: neuer Methodentrigger 
     }
-
-    private void PlayBeam()
+    
+    public void PlayBeamTeleport()
     {
-        RuntimeManager.PlayOneShot(robotBeamEvent);   
+        RuntimeManager.PlayOneShot(RobotTeleportEvent);   //todo: neuer Methodentrigger 
     }
 
     public void PlayStateDragStart()
