@@ -116,6 +116,13 @@ MonoBehaviour:
       Data3: -2054680652
       Data4: 713835992
     Path: event:/Foleys/State Drop UI
+  ImpossibleActionSFXEvent:
+    Guid:
+      Data1: -1961588333
+      Data2: 1165006694
+      Data3: 1859175573
+      Data4: -811915540
+    Path: event:/SFX/Impossible Action
   robotBeamEvent:
     Guid:
       Data1: -1101501727
@@ -144,6 +151,20 @@ MonoBehaviour:
       Data3: 127849864
       Data4: 418877780
     Path: event:/SFX/Victory
+  RobotSpawnEvent:
+    Guid:
+      Data1: 248614769
+      Data2: 1237162303
+      Data3: 1370251672
+      Data4: -1177138893
+    Path: event:/Foleys/Robo Spawn
+  RobotDespawnEvent:
+    Guid:
+      Data1: -892370462
+      Data2: 1246325941
+      Data3: -2103454312
+      Data4: 1067304334
+    Path: event:/Foleys/Robo Despawn
   RobotTurnOnEvent:
     Guid:
       Data1: 1203264799
@@ -179,6 +200,13 @@ MonoBehaviour:
       Data3: -1505372263
       Data4: 1175236539
     Path: event:/Foleys/Robo Grab
+  RobotTeleportEvent:
+    Guid:
+      Data1: -876752589
+      Data2: 1177404777
+      Data3: -670552922
+      Data4: 762690258
+    Path: event:/Foleys/Robo Teleport
   musicMenuEvent:
     Guid:
       Data1: 1835304012
@@ -207,3 +235,10 @@ MonoBehaviour:
       Data3: -1889091150
       Data4: 298364396
     Path: event:/Music/Level Walking Music
+  finalMusicEvent:
+    Guid:
+      Data1: 1220889516
+      Data2: 1280333266
+      Data3: 940413333
+      Data4: 899607150
+    Path: event:/Music/Credits Music
