@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Robot.Robot robotPrefab;
     [SerializeField] private GameObject redKeyPrefab;
     [SerializeField] private GameObject blueKeyPrefab;
+    [SerializeField] private Enemy.Enemy enemyPrefab;
     [SerializeField] private CurrentStateIndicator currentStateIndicator;
     [SerializeField] private Image levelFadeImage;
     [SerializeField] private Color levelFadeColor;
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviour
     private Vector2Int[] _currentPortalCoordinates;
     private int _currentLevelId;
     private Robot.Robot _robot;
+    private List<Enemy.Enemy> _enemiesInLevel = new ();
     private StateChartManager _stateChartManager;
 
     private void Awake()
@@ -152,6 +154,7 @@ public class GameManager : MonoBehaviour
 
         var level = LevelDataStorage.GetLevelData(_currentLevelId);
         LoadLevelGrid(level);
+        PositionEnemiesInLevel(level);
         PositionRobotInLevel(level);
     }
 
@@ -184,8 +187,9 @@ public class GameManager : MonoBehaviour
         _robot = Instantiate(robotPrefab);
         BeamRobotIn?.Invoke(levelBeamTime);
         _stateChartManager = _robot.GetComponent<StateChartManager>();
+        PositionEnemiesInLevel(level);
         PositionRobotInLevel(level);
-        
+
         TransitionLineDrawer.ResetColors();
         uiManager.SetupUIForLevel(level.AvailableActions, level.AvailableTransitionConditions, _stateChartManager);
     }
@@ -194,7 +198,30 @@ public class GameManager : MonoBehaviour
     {
         var robotStartPositionOnGrid = levelGridManager.GetTilePosition(level.RobotStartPosition);
         _robot.transform.position = robotStartPositionOnGrid;
-        _robot.Initialize(level.RobotStartPosition, level.RobotStartDirection);
+        _robot.Initialize(level.RobotStartPosition, level.RobotStartDirection, _enemiesInLevel);
+    }
+
+    private void PositionEnemiesInLevel(LevelData level)
+    {
+        if (_enemiesInLevel.Count > 0)
+        {
+            foreach (var enemy in _enemiesInLevel)
+            {
+                Destroy(enemy.gameObject);
+            }
+            _enemiesInLevel.Clear();
+        }
+        
+        if(level.EnemyData == null)
+            return;
+            
+        foreach (var (coordinates, direction) in level.EnemyData)
+        {
+            var enemyPositionOnGrid = levelGridManager.GetTilePosition(coordinates);
+            var newEnemy = Instantiate(enemyPrefab, enemyPositionOnGrid, Quaternion.identity);
+            newEnemy.Initialize(coordinates, direction, levelGridManager);
+            _enemiesInLevel.Add(newEnemy);
+        }
     }
 
     private void LoadLevelGrid(LevelData level)
@@ -268,5 +295,15 @@ public class GameManager : MonoBehaviour
         _robot.SetCoordinates(destinationCoordinates);
         BeamRobotIn?.Invoke(portalBeamTime);
     }
-    
+
+    public void CheckForEnemyCollision()
+    {
+        StartCoroutine(DelayedCollisionCheck());
+    }
+
+    private IEnumerator DelayedCollisionCheck()
+    {
+        var collisionCheckDelay = 0.3f;
+        yield return new WaitForSeconds(collisionCheckDelay);
+    }
 }
