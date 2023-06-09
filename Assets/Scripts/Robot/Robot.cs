@@ -22,6 +22,7 @@ namespace Robot
         private StateChartManager _stateChartManager;
         private WaitForSeconds _stateWait = new (0.8f);
         private Coroutine _currentRun;
+        private List<Enemy.Enemy> _activeEnemies;
         private Tween _currentAnimation;
 
         private void Awake()
@@ -30,10 +31,11 @@ namespace Robot
             _spriteChanger = GetComponent<SpriteChanger>();
         }
 
-        public void Initialize(Vector2Int coordinates, Direction direction)
+        public void Initialize(Vector2Int coordinates, Direction direction, List<Enemy.Enemy> enemies)
         {
             _currentCoordinates = coordinates;
             _currentDirection = direction;
+            _activeEnemies = enemies;
             _spriteChanger.SetCarryKeyType(LevelGridManager.KeyType.None);
             _spriteChanger.SetSpriteDirection(direction);
             _spriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
@@ -43,6 +45,11 @@ namespace Robot
         {
             _currentCoordinates = newCoordinates;
             _spriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(newCoordinates));
+        }
+
+        public Vector2Int GetCoordinates()
+        {
+            return _currentCoordinates;
         }
 
         public void StartRun()
@@ -65,6 +72,7 @@ namespace Robot
             do
             {
                 NextStateStarts?.Invoke(DetermineStateAction(currentState));
+                _activeEnemies.ForEach(enemy => enemy.Move());
 
                 if (currentStatus == RobotState.Status.Pause)
                 {

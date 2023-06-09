@@ -17,7 +17,7 @@ public class LevelData
             StartPositionOnGrid = startPosition;
         }
     }
-    
+
     public Vector2Int RobotStartPosition { get; }
     public Direction RobotStartDirection { get; }
     public LevelGridManager.TileType[,] Grid { get; }
@@ -25,6 +25,7 @@ public class LevelData
     public readonly List<AvailableStateInfo> AvailableActions;
     public readonly List<StateChartManager.TransitionCondition> AvailableTransitionConditions;
     public readonly Dictionary<Vector2Int, LevelGridManager.KeyType> KeyData;
+    public readonly Dictionary<Vector2Int, Direction> EnemyData;
     public readonly Vector2Int[] PortalData;
 
     public LevelData(
@@ -51,7 +52,8 @@ public class LevelData
         List<AvailableStateInfo> actions, 
         List<StateChartManager.TransitionCondition> conditions,
         Dictionary<Vector2Int, LevelGridManager.KeyType> keyData,
-        (Vector2Int, Vector2Int) portalData) 
+        (Vector2Int, Vector2Int) portalData,
+        Dictionary<Vector2Int, Direction> enemyData = null) 
         : this(startPos, 
             startDirection,
             grid,
@@ -61,5 +63,24 @@ public class LevelData
     {
         var (portal1, portal2) = portalData;
         PortalData = new [] {portal1, portal2};
+        EnemyData = enemyData;
+    }
+
+    public LevelData(
+        Vector2Int startPos,
+        Direction startDirection,
+        LevelGridManager.TileType[,] grid,
+        List<AvailableStateInfo> actions,
+        List<StateChartManager.TransitionCondition> conditions,
+        Dictionary<Vector2Int, LevelGridManager.KeyType> keyData,
+        Dictionary<Vector2Int, Direction> enemyData)
+        : this(startPos,
+            startDirection,
+            grid,
+            actions,
+            conditions,
+            keyData)
+    {
+        EnemyData = enemyData;
     }
 }
