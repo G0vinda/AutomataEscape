@@ -151,6 +151,13 @@ MonoBehaviour:
       Data3: 127849864
       Data4: 418877780
     Path: event:/SFX/Victory
+  SceneSwitchSFXEvent:
+    Guid:
+      Data1: 1292532733
+      Data2: 1110274981
+      Data3: 1093801097
+      Data4: 1545822877
+    Path: event:/SFX/Scene Switch
   RobotSpawnEvent:
     Guid:
       Data1: 248614769
@@ -207,6 +214,13 @@ MonoBehaviour:
       Data3: -670552922
       Data4: 762690258
     Path: event:/Foleys/Robo Teleport
+  RobotOpenGateEvent:
+    Guid:
+      Data1: 2034244145
+      Data2: 1184991140
+      Data3: 1826048191
+      Data4: 924820039
+    Path: event:/Foleys/Open Gate
   musicMenuEvent:
     Guid:
       Data1: 1835304012
