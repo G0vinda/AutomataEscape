@@ -47,6 +47,11 @@ namespace Robot
             _spriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(newCoordinates));
         }
 
+        public Vector2Int GetCoordinates()
+        {
+            return _currentCoordinates;
+        }
+
         public void StartRun()
         {
             IsRunning = true;

@@ -303,7 +303,23 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator DelayedCollisionCheck()
     {
+        if (_enemiesInLevel == null)
+            yield break;
+        
         var collisionCheckDelay = 0.3f;
         yield return new WaitForSeconds(collisionCheckDelay);
+
+        var robotCoordinates = _robot.GetCoordinates();
+        foreach (var enemy in _enemiesInLevel)
+        {
+            if (enemy.GetCoordinates() == robotCoordinates)
+            {
+                currentStateIndicator.gameObject.SetActive(false);
+                _robot.StopRun();
+                RobotStateChanged?.Invoke(false);
+                SoundPlayer.Instance.PlayMusicLevel();
+                ReloadLevel();
+            }
+        }
     }
 }

@@ -28,6 +28,7 @@ namespace Robot.States
             animation = _robotTransform.DOMove(LevelGridManager.Grid[coordinates].transform.position, moveTime).SetEase(Ease.InOutSine);
             SpriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
             SoundPlayer.Instance.PlayRobotMove();
+            GameManager.Instance.CheckForEnemyCollision();
 
             if (LevelGridManager.CheckIfTileIsPortal(coordinates))
             {

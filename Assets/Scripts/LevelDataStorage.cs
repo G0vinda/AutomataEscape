@@ -53,7 +53,7 @@ public static class LevelDataStorage
             new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
             new Dictionary<Vector2Int, Direction>
             {
-                {new Vector2Int(2, -2), Direction.Left}
+                {new Vector2Int(1, -2), Direction.Left}
             }
         ),
         new LevelData( // Level 1 
@@ -283,7 +283,6 @@ public static class LevelDataStorage
                  Default,
                  IsInFrontOfWall,
                  StandsOnOrange,
-
              },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
 
@@ -310,7 +309,6 @@ public static class LevelDataStorage
                  Default,
                  IsInFrontOfWall,
                  StandsOnOrange,
-
              },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
 

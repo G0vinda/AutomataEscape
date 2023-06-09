@@ -228,13 +228,6 @@ namespace UI.Transition
                 throw new ArgumentException($"SubCell{newPath[i].Coordinates} and SubCell{newPath[i+1].Coordinates} are not adjacent");
             }
 
-            var pathCoordinatesMessage = "-- New Path Coordinates --\n";
-            for (var i = 0; i < newPath.Count; i++)
-            {
-                pathCoordinatesMessage += $"({i}) {newPath[i].Coordinates}\n";
-            }
-            Debug.Log(pathCoordinatesMessage);
-            
             CurrentTransitionLine.ParsePathToCreateLine(newPath);
 
             _currentLinePath = newPath;

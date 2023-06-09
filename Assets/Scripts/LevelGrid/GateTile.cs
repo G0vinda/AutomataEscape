@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UI.Transition;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ namespace LevelGrid
 
         private Direction _gateDirection;
         private bool _locked = true;
+        private float _unlockAnimationTime = 1f;
         
         public void Initialize(Direction newDirection, int wallSpriteSortingOrder)
         {
@@ -45,8 +47,20 @@ namespace LevelGrid
                 return false;
             
             _locked = false;
-            gateWall.SetActive(false);
             placedKey.SetActive(true);
+            var gateWallSpriteRenderer = gateWall.GetComponent<SpriteRenderer>();
+            var gateWallColor = gateWallSpriteRenderer.color;
+            
+            var unlockSequence = DOTween.Sequence();
+            unlockSequence.Append(placedKey.transform.DORotate(new Vector3(0, 0, 100f), _unlockAnimationTime).From());
+            unlockSequence.Join(DOVirtual.Float(1, 0, _unlockAnimationTime, value =>
+            {
+                gateWallColor.a = value;
+                gateWallSpriteRenderer.color = gateWallColor;
+            }));
+            unlockSequence.SetEase(Ease.OutSine).OnComplete(() => { gateWall.SetActive(false); });
+            unlockSequence.Play();
+
             return true;
         }
 

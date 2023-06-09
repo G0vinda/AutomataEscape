@@ -41,6 +41,7 @@ namespace Enemy
             _currentCoordinates += _currentDirection.ToVector2Int();
             var moveTime = 0.6f;
             transform.DOMove(_levelGridManager.Grid[_currentCoordinates].transform.position, moveTime).SetEase(Ease.InOutSine);
+            GameManager.Instance.CheckForEnemyCollision();
         }
     }
 }

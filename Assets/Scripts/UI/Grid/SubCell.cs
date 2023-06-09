@@ -72,8 +72,6 @@ namespace UI.Grid
 
         private bool CheckForHorizontalNeighbor(SubCell neighbor, StateUIElement allowedStateUIElement, TransitionLine allowedTransitionLine)
         {
-            if(neighbor.BlockingState != null)
-                Debug.Log("block detected");
             var originSubCellLineBlock =
                 BlockingHorizontalLine == null || BlockingHorizontalLine == allowedTransitionLine;
             var neighborStateBlock = neighbor.BlockingState == null || neighbor.BlockingState == allowedStateUIElement;
