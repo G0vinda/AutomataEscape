@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Helper;
 using UI.Transition;
 using UnityEngine;
+using UnityEngine.WSA;
 
 namespace LevelGrid
 {
@@ -15,6 +16,7 @@ namespace LevelGrid
         [SerializeField] private GameObject purpleTilePrefab;
         [SerializeField] private GameObject blueGateTilePrefab;
         [SerializeField] private GameObject redGateTilePrefab;
+        [SerializeField] private GameObject portalTilePrefab;
         
         public Dictionary<Vector2Int, GameObject> Grid { get; } = new();
 
@@ -56,6 +58,9 @@ namespace LevelGrid
                             break;
                         case TileType.Purple:
                             tileToInstantiate = purpleTilePrefab;
+                            break;
+                        case TileType.Portal:
+                            tileToInstantiate = portalTilePrefab;
                             break;
                         case TileType.BlueGateRight:
                             tileToInstantiate = blueGateTilePrefab;
@@ -133,6 +138,11 @@ namespace LevelGrid
                    gateTile.IsBlockingWay(moveDirection);
         }
 
+        public bool CheckIfTileIsPortal(Vector2Int tileCoordinates)
+        {
+            return CheckIfTileHasTag(tileCoordinates, "Portal");
+        }
+
         public bool CheckIfTileIsGoal(Vector2Int tileCoordinates)
         {
             return CheckIfTileHasTag(tileCoordinates, "Goal");
@@ -193,6 +203,7 @@ namespace LevelGrid
             BlueGateLeft,
             RedGateRight,
             RedGateLeft,
+            Portal
         }
 
         public enum KeyType

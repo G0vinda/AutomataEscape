@@ -25,6 +25,7 @@ public class LevelData
     public readonly List<AvailableStateInfo> AvailableActions;
     public readonly List<StateChartManager.TransitionCondition> AvailableTransitionConditions;
     public readonly Dictionary<Vector2Int, LevelGridManager.KeyType> KeyData;
+    public readonly Vector2Int[] PortalData;
 
     public LevelData(
         Vector2Int startPos, 
@@ -32,7 +33,8 @@ public class LevelData
         LevelGridManager.TileType[,] grid,
         List<AvailableStateInfo> actions, 
         List<StateChartManager.TransitionCondition> conditions,
-        Dictionary<Vector2Int, LevelGridManager.KeyType> keyData)
+        Dictionary<Vector2Int, LevelGridManager.KeyType> keyData
+        )
     {
         RobotStartPosition = startPos;
         RobotStartDirection = startDirection;
@@ -40,5 +42,24 @@ public class LevelData
         AvailableActions = actions;
         AvailableTransitionConditions = conditions;
         KeyData = keyData;
+    }
+
+    public LevelData(
+        Vector2Int startPos, 
+        Direction startDirection, 
+        LevelGridManager.TileType[,] grid,
+        List<AvailableStateInfo> actions, 
+        List<StateChartManager.TransitionCondition> conditions,
+        Dictionary<Vector2Int, LevelGridManager.KeyType> keyData,
+        (Vector2Int, Vector2Int) portalData) 
+        : this(startPos, 
+            startDirection,
+            grid,
+            actions,
+            conditions,
+            keyData)
+    {
+        var (portal1, portal2) = portalData;
+        PortalData = new [] {portal1, portal2};
     }
 }

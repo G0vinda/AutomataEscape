@@ -6,13 +6,13 @@ using UnityEngine;
 namespace Robot.States
 {
     public class StartState : RobotState
-    {
+    { 
         public StartState() : base(null, null) {}
 
-        public override bool ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
+        public override Status ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
         {
             animation = null;
-            return false;
+            return Status.Running;
         }
     }
 }

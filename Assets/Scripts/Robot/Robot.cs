@@ -20,7 +20,7 @@ namespace Robot
         private Vector2Int _currentCoordinates;
         private Direction _currentDirection;
         private StateChartManager _stateChartManager;
-        private WaitForSeconds _waitForSecond = new (0.8f);
+        private WaitForSeconds _stateWait = new (0.8f);
         private Coroutine _currentRun;
         private Tween _currentAnimation;
 
@@ -39,6 +39,12 @@ namespace Robot
             _spriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
         }
 
+        public void SetCoordinates(Vector2Int newCoordinates)
+        {
+            _currentCoordinates = newCoordinates;
+            _spriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(newCoordinates));
+        }
+
         public void StartRun()
         {
             IsRunning = true;
@@ -55,18 +61,36 @@ namespace Robot
         private IEnumerator Run(StartState startState)
         {
             RobotState currentState = startState;
+            var currentStatus = RobotState.Status.Running;
             do
             {
                 NextStateStarts?.Invoke(DetermineStateAction(currentState));
 
-                if (currentState.ProcessState(ref _currentCoordinates, ref _currentDirection, out _currentAnimation))
+                if (currentStatus == RobotState.Status.Pause)
+                {
+                    currentStatus = RobotState.Status.Running;
+                }
+                else
+                {
+                    currentStatus = currentState.ProcessState(ref _currentCoordinates, ref _currentDirection,
+                        out _currentAnimation);   
+                }
+
+                if (currentStatus == RobotState.Status.ReachedGoal)
+                {
                     break;
-                var nextStateId = currentState.DetermineNextStateId(_currentCoordinates, _currentDirection);
-                currentState = _stateChartManager.GetStateById(nextStateId);
-                yield return _waitForSecond;
+                }
+
+                if (currentStatus == RobotState.Status.Running)
+                {
+                    var nextStateId = currentState.DetermineNextStateId(_currentCoordinates, _currentDirection);
+                    currentState = _stateChartManager.GetStateById(nextStateId);    
+                }
+                
+                yield return _stateWait;
             } while (true);
 
-            yield return _waitForSecond;
+            yield return _stateWait;
             GameManager.Instance.ReachGoal();
         }
 

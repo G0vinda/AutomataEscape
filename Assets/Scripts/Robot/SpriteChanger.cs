@@ -29,7 +29,6 @@ namespace Robot
         [Header("BeamValues")] 
         [SerializeField] private Color beamTransparentColor;
         [SerializeField] private Color beamSolidColor;
-        [SerializeField] private float beamTime;
 
         private Sprite upSprite;
         private Sprite sideSprite;
@@ -47,20 +46,17 @@ namespace Robot
 
         private void OnEnable()
         {
-            GameManager.GoalReached += StartBeamDespawnEffect;
+            GameManager.BeamRobotIn += StartBeamSpawnEffect;
+            GameManager.BeamRobotOut += StartBeamDespawnEffect;
         }
 
         private void OnDisable()
         {
-            GameManager.GoalReached -= StartBeamDespawnEffect;
+            GameManager.BeamRobotIn -= StartBeamSpawnEffect;
+            GameManager.BeamRobotOut -= StartBeamDespawnEffect;
         }
         
         #endregion
-
-        private void Start()
-        {
-            StartBeamSpawnEffect();
-        }
 
         public void SetCarryKeyType(LevelGridManager.KeyType keyType)
         {
@@ -123,7 +119,7 @@ namespace Robot
             backParticles.GetComponent<Renderer>().sortingOrder = sortingOrder - 1;
         }
 
-        private void StartBeamSpawnEffect()
+        private void StartBeamSpawnEffect(float beamTime)
         {
             SoundPlayer.Instance.PlayBeamSpawn();
             DOVirtual.Color(beamTransparentColor, beamSolidColor, beamTime, value => _spriteRenderer.color = value);
@@ -131,7 +127,7 @@ namespace Robot
             backParticles.Play();
         }
 
-        public void StartBeamDespawnEffect()
+        public void StartBeamDespawnEffect(float beamTime)
         {
             SoundPlayer.Instance.PlayBeamDespawn();
             DOVirtual.Color(beamSolidColor, beamTransparentColor, beamTime, value => _spriteRenderer.color = value);

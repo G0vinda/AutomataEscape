@@ -10,14 +10,14 @@ namespace Robot.States
     {
         public TurnLeftState(LevelGridManager levelGridManager, SpriteChanger spriteChanger) : base(levelGridManager, spriteChanger) {}
 
-        public override bool ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
+        public override Status ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
         {
             animation = null;
             
             direction = direction.Turn(false);
             SpriteChanger.SetSpriteDirection(direction);
             SoundPlayer.Instance.PlayRobotTurn();
-            return false;
+            return Status.Running;
         }
     }
 }

@@ -13,6 +13,13 @@ namespace Robot.States
 {
     public abstract class RobotState
     {
+        public enum Status
+        {
+            Running,
+            Pause,
+            ReachedGoal
+        }
+        
         public ReadOnlyCollection<RobotTransition> Transitions => new (_transitions.ToArray());
         public int Id { get; set; }
 
@@ -29,7 +36,7 @@ namespace Robot.States
         }
 
         // Returns true if goal is reached
-        public abstract bool ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation);
+        public abstract Status ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation);
 
         public int DetermineNextStateId(Vector2Int coordinates, Direction direction)
         {

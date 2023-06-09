@@ -971,7 +971,9 @@ MonoBehaviour:
   levelFadeColor: {r: 0.0114659965, g: 0.06849515, b: 0.078, a: 1}
   levelFadeTime: 1.3
   startLevelId: 0
-  resetLevelOnStart: 0
+  resetLevelOnStart: 1
+  levelBeamTime: 1
+  portalBeamTime: 0.3
 --- !u!114 &868897339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1169,6 +1171,7 @@ MonoBehaviour:
   purpleTilePrefab: {fileID: 3936563129576413985, guid: a290fc6dd5a262d42a4c7d10df064438, type: 3}
   blueGateTilePrefab: {fileID: 22112647600960642, guid: 5ac7a9ca79d7d624683eb46ff75b8a09, type: 3}
   redGateTilePrefab: {fileID: 663882095650040343, guid: 3effc1a609708864babddfbfcf85f780, type: 3}
+  portalTilePrefab: {fileID: 6166132525780701941, guid: b759d97aa4740bb40bf81b1d67b051ad, type: 3}
 --- !u!4 &1040296884
 Transform:
   m_ObjectHideFlags: 0

@@ -10,16 +10,16 @@ namespace Robot.States
     {
         public GrabState(LevelGridManager levelGridManager, SpriteChanger spriteChanger) : base(levelGridManager, spriteChanger) {}
 
-        public override bool ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
+        public override Status ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
         {
             animation = null;
             if (!CheckIfOnKey(coordinates) || GrabbedKeyType != LevelGridManager.KeyType.None)
-                return false;
+                return Status.Running;
             
             GrabbedKeyType = GameManager.Instance.GrabKeyOnCoordinates(coordinates);
             SpriteChanger.SetCarryKeyType(GrabbedKeyType);
             SoundPlayer.Instance.PlayRobotGrab();
-            return false;
+            return Status.Running;
         }
     }
 }

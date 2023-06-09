@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using LevelGrid;
+using log4net.Appender;
 using Robot;
 using UI;
 using UI.Transition;
@@ -26,15 +27,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float levelFadeTime;
     [SerializeField] private int startLevelId;
     [SerializeField] private bool resetLevelOnStart;
+    [SerializeField] private float levelBeamTime;
+    [SerializeField] private float portalBeamTime;
 
     public static GameManager Instance { get; private set; }
     public static event Action<bool> RobotStateChanged;
     public static event Action InvalidRunPress;
-    public static event Action GoalReached;
+    public static event Action<float> BeamRobotIn;
+    public static event Action<float> BeamRobotOut;
+     
     
     private const int FinishSceneIndex = 2;
     
     private Dictionary<Vector2Int, (LevelGridManager.KeyType, GameObject)> _currentKeyObjectData = new ();
+    private Vector2Int[] _currentPortalCoordinates;
     private int _currentLevelId;
     private Robot.Robot _robot;
     private StateChartManager _stateChartManager;
@@ -149,7 +155,7 @@ public class GameManager : MonoBehaviour
         PositionRobotInLevel(level);
     }
 
-    public void LoadNextLevel()
+    private void LoadNextLevel()
     {
         Destroy(_robot.gameObject);
         RobotStateChanged?.Invoke(false);
@@ -176,6 +182,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(levelWaitTime);
         
         _robot = Instantiate(robotPrefab);
+        BeamRobotIn?.Invoke(levelBeamTime);
         _stateChartManager = _robot.GetComponent<StateChartManager>();
         PositionRobotInLevel(level);
         
@@ -201,13 +208,8 @@ public class GameManager : MonoBehaviour
         {
             DropKeyOnCoordinates(keyCoordinates, keyType);
         }
-    }
 
-    public void ReachGoal()
-    {
-        SoundPlayer.Instance.PlayVictory();
-        GoalReached?.Invoke();
-        Invoke(nameof(FadeLevelOut), 2.7f);
+        _currentPortalCoordinates = level.PortalData;
     }
 
     private void FadeLevelIn()
@@ -232,4 +234,39 @@ public class GameManager : MonoBehaviour
             value => SoundPlayer.Instance.SetLevelBackgroundVolume(value)));
         fadeSequence.SetEase(Ease.InCirc).OnComplete(LoadNextLevel);
     }
+    
+    public void ReachGoal()
+    {
+        SoundPlayer.Instance.PlayVictory();
+        BeamRobotOut?.Invoke(levelBeamTime);
+        Invoke(nameof(FadeLevelOut), 2.7f);
+    }
+
+    public void InitiateMoveThroughPortal(Vector2Int startCoordinates)
+    {
+        if (_currentPortalCoordinates[0] == startCoordinates)
+        {
+            StartCoroutine(MoveRobotThroughPortal(_currentPortalCoordinates[1]));
+            return;
+        }
+        
+        if (_currentPortalCoordinates[1] == startCoordinates)
+        {
+            StartCoroutine(MoveRobotThroughPortal(_currentPortalCoordinates[0]));
+            return;
+        }
+        
+        throw new ArgumentException("No correct portal was found");
+    }
+
+    private IEnumerator MoveRobotThroughPortal(Vector2Int destinationCoordinates)
+    {
+        BeamRobotOut?.Invoke(portalBeamTime);
+        yield return new WaitForSeconds(portalBeamTime);
+        
+        _robot.transform.position = levelGridManager.GetTilePosition(destinationCoordinates);
+        _robot.SetCoordinates(destinationCoordinates);
+        BeamRobotIn?.Invoke(portalBeamTime);
+    }
+    
 }
