@@ -247,4 +247,9 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(RobotTurnEvent);
     }
+
+    public void PlayOpenGate()
+    {
+        RuntimeManager.PlayOneShot(RobotOpenGateEvent);
+    }
 }

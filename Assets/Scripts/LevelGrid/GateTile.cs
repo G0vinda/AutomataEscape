@@ -60,6 +60,7 @@ namespace LevelGrid
             }));
             unlockSequence.SetEase(Ease.OutSine).OnComplete(() => { gateWall.SetActive(false); });
             unlockSequence.Play();
+            SoundPlayer.Instance.PlayOpenGate();
 
             return true;
         }
