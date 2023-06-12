@@ -502,6 +502,8 @@ MonoBehaviour:
   startStateUIElement: {fileID: 714388723}
   stateChartPanel: {fileID: 1189406611}
   menuButton: {fileID: 1056150192}
+  runButton: {fileID: 616424863}
+  viewButton: {fileID: 1022330841}
   stateUIElementFactory: {fileID: 654531690}
 --- !u!114 &654531689
 MonoBehaviour:
@@ -971,7 +973,7 @@ MonoBehaviour:
   levelFadeImage: {fileID: 1742516009}
   levelFadeColor: {r: 0.0114659965, g: 0.06849515, b: 0.078, a: 1}
   levelFadeTime: 1.3
-  startLevelId: 13
+  startLevelId: 0
   resetLevelOnStart: 1
   levelBeamTime: 1
   portalBeamTime: 0.3

@@ -161,7 +161,6 @@ public class GameManager : MonoBehaviour
     private void LoadNextLevel()
     {
         Destroy(_robot.gameObject);
-        RobotStateChanged?.Invoke(false);
         currentStateIndicator.gameObject.SetActive(false);
         
         _currentLevelId++;
@@ -175,9 +174,12 @@ public class GameManager : MonoBehaviour
     private IEnumerator LoadLevel(int levelId)
     {
         SoundPlayer.Instance.PlayMusicLevel();
+        uiManager.SetButtonsActive(true);
+        RobotStateChanged?.Invoke(false);
         
         var level = LevelDataStorage.GetLevelData(levelId);
         LoadLevelGrid(level);
+        PositionEnemiesInLevel(level);
 
         FadeLevelIn();
 
@@ -187,7 +189,6 @@ public class GameManager : MonoBehaviour
         _robot = Instantiate(robotPrefab);
         BeamRobotIn?.Invoke(levelBeamTime);
         _stateChartManager = _robot.GetComponent<StateChartManager>();
-        PositionEnemiesInLevel(level);
         PositionRobotInLevel(level);
 
         TransitionLineDrawer.ResetColors();
@@ -265,6 +266,8 @@ public class GameManager : MonoBehaviour
     public void ReachGoal()
     {
         SoundPlayer.Instance.PlayVictory();
+        uiManager.SetButtonsActive(false);
+        currentStateIndicator.gameObject.SetActive(false);
         BeamRobotOut?.Invoke(levelBeamTime);
         Invoke(nameof(FadeLevelOut), 2.7f);
     }

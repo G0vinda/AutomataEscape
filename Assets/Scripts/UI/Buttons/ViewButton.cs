@@ -21,7 +21,6 @@ namespace UI.Buttons
         {
             UIManager.ViewStateChanged += ChangeImage;
             GameManager.RobotStateChanged += SetButtonToInteractable;
-
         }
 
         private void OnDisable()

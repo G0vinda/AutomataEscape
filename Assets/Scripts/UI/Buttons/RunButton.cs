@@ -10,7 +10,6 @@ namespace UI
     {
         [SerializeField] private Sprite runSprite;
         [SerializeField] private Sprite stopSprite;
-
         [SerializeField] private float errorEffectTime; 
         
         private Image _image;

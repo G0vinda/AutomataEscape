@@ -18,6 +18,8 @@ namespace UI
         [SerializeField] private StartStateUIElement startStateUIElement;
         [SerializeField] private StateChartPanel stateChartPanel;
         [SerializeField] private GameObject menuButton;
+        [SerializeField] private GameObject runButton;
+        [SerializeField] private GameObject viewButton;
         [SerializeField] private StateUIElementFactory stateUIElementFactory;
 
         public static event Action<bool> ViewStateChanged;
@@ -157,6 +159,13 @@ namespace UI
             transitionSelection.TrySetActive(false);
             ViewStateChanged?.Invoke(false);
             _inputManager.enabled = false;
+        }
+
+        public void SetButtonsActive(bool active)
+        {
+            runButton.SetActive(active);
+            menuButton.SetActive(active);
+            viewButton.SetActive(active);
         }
 
         public void ZoomStateChartPanel(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
