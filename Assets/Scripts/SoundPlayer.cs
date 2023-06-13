@@ -13,6 +13,7 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference cableHoldEvent;
     [SerializeField] private EventReference cableStartEvent;
     [SerializeField] private EventReference cableReleaseEvent;
+    [SerializeField] private EventReference cableSelectEvent;
     [SerializeField] private EventReference stateDragEvent;
     [SerializeField] private EventReference stateDropEvent;
     [SerializeField] private EventReference ImpossibleActionSFXEvent;
@@ -181,19 +182,24 @@ public class SoundPlayer : MonoBehaviour
         _cableHoldInstance.stop(STOP_MODE.IMMEDIATE);
     }
 
+    public void PlayCableSelect()
+    {
+        RuntimeManager.PlayOneShot(cableSelectEvent); //todo: neuer Methodentrigger für Auswählen des Kabels
+    }
+
     public void PlayBeamSpawn()
     {
-        RuntimeManager.PlayOneShot(RobotSpawnEvent);   //todo: neuer Methodentrigger
+        RuntimeManager.PlayOneShot(RobotSpawnEvent);   //todo: neuer Methodentrigger für das Spawnen des Roboters
     }
     
     public void PlayBeamDespawn()
     {
-        RuntimeManager.PlayOneShot(RobotDespawnEvent);   //todo: neuer Methodentrigger 
+        RuntimeManager.PlayOneShot(RobotDespawnEvent);   //todo: neuer Methodentrigger für das Despawnen des Roboters
     }
     
     public void PlayBeamTeleport()
     {
-        RuntimeManager.PlayOneShot(RobotTeleportEvent);   //todo: neuer Methodentrigger 
+        RuntimeManager.PlayOneShot(RobotTeleportEvent);   //todo: neuer Methodentrigger fürs Teleportieren durch die Teleportfelder
     }
 
     public void PlayStateDragStart()

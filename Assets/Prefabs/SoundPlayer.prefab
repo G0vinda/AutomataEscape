@@ -102,6 +102,13 @@ MonoBehaviour:
       Data3: -590664274
       Data4: 2114277176
     Path: event:/Foleys/Cable Release UI
+  cableSelectEvent:
+    Guid:
+      Data1: 1660863128
+      Data2: 1324011683
+      Data3: -1733230184
+      Data4: 873481911
+    Path: event:/Foleys/Level Choose Cable
   stateDragEvent:
     Guid:
       Data1: -344485164
