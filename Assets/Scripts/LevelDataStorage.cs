@@ -13,49 +13,51 @@ public static class LevelDataStorage
     
     private static List<LevelData> _levels = new ()
     {
-        new LevelData( // Portal test
-            new Vector2Int(0, 0),
-            Direction.Down,
-            new[,]
-            {
-                {Floor, None, None },
-                {Floor, None, Portal },
-                {Portal, None, Floor },
-                {None, None, Goal }
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, new Vector2Int(3, 3))
-            },new List<StateChartManager.TransitionCondition>()
-            {
-                Default
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
-            (new Vector2Int(0, -2), new Vector2Int(2, -1))
-            ),
-        new LevelData( // Enemy test
-            new Vector2Int(1, 0),
-            Direction.Down,
-            new[,]
-            {
-                {None, Floor, None },
-                {None, Floor, None },
-                {Floor, Floor, Floor },
-                {None, Goal, None }
-            },
-            new List<LevelData.AvailableStateInfo>()
-            {
-                new (GoForward, new Vector2Int(3, 3))
-            },new List<StateChartManager.TransitionCondition>()
-            {
-                Default
-            },
-            new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
-            new Dictionary<Vector2Int, Direction>
-            {
-                {new Vector2Int(1, -2), Direction.Left}
-            }
-        ),
+        //new LevelData( // Portal test
+        //    new Vector2Int(0, 0),
+        //    Direction.Down,
+        //    new[,]
+        //    {
+        //        {Floor, None, None },
+        //        {Floor, None, Portal },
+        //        {Portal, None, Floor },
+        //        {None, None, Goal }
+        //    },
+        //    new List<LevelData.AvailableStateInfo>()
+        //    {
+        //        new (GoForward, new Vector2Int(3, 3))
+        //    },new List<StateChartManager.TransitionCondition>()
+        //    {
+        //        Default
+        //    },
+        //    new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
+        //    (new Vector2Int(0, -2), new Vector2Int(2, -1))
+        //    ),
+
+        //new LevelData( // Enemy test
+        //    new Vector2Int(1, 0),
+        //    Direction.Down,
+        //    new[,]
+        //    {
+        //        {None, Floor, None },
+        //        {None, Floor, None },
+        //        {Floor, Floor, Floor },
+        //        {None, Goal, None }
+        //    },
+        //    new List<LevelData.AvailableStateInfo>()
+        //    {
+        //        new (GoForward, new Vector2Int(3, 3))
+        //    },new List<StateChartManager.TransitionCondition>()
+        //    {
+        //        Default
+        //    },
+        //    new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
+        //    new Dictionary<Vector2Int, Direction>
+        //    {
+        //        {new Vector2Int(1, -2), Direction.Left}
+        //    }
+        //),
+
         new LevelData( // Level 1 
             new Vector2Int(0, 0),
             Direction.Down,
@@ -106,8 +108,8 @@ public static class LevelDataStorage
              new List<LevelData.AvailableStateInfo>()
              {
                  new (GoForward, new Vector2Int(2, 3)),
-                 new (TurnLeft, new Vector2Int(4,3)),
-                 new (GoForward, new Vector2Int(6, 3)),
+                 new (TurnLeft, new Vector2Int(6, 3)),
+                 new (GoForward, new Vector2Int(4, 3)),
              },
              new List<StateChartManager.TransitionCondition>()
              {
@@ -127,8 +129,8 @@ public static class LevelDataStorage
              },
              new List<LevelData.AvailableStateInfo>()
              {
-                 new (GoForward, new Vector2Int(2, 2)),
-                 new (GoForward, new Vector2Int(4, 3)),
+                 new (GoForward, new Vector2Int(2, 1)),
+                 new (GoForward, new Vector2Int(5, 3)),
                  new (TurnRight, new Vector2Int(2, 5))
              },
              new List<StateChartManager.TransitionCondition>()
@@ -144,6 +146,7 @@ public static class LevelDataStorage
              Direction.Up,
              new[,]
              {
+                 
                  { None, None, Goal},
                  { None, Floor, Floor},
                  { Floor, Floor, Floor},
@@ -164,17 +167,18 @@ public static class LevelDataStorage
 
 
         new LevelData(  //Level 6
-             new Vector2Int(0, -2),
+             new Vector2Int(0, -3),
              Direction.Up,
              new[,]
              {
+                 { Floor, None, Floor},
                  { Orange, Floor, Orange},
                  { Floor, None, Floor},
                  { Floor, None, Goal}
              },
              new List<LevelData.AvailableStateInfo>()
              {
-                 new (GoForward, new Vector2Int(3, 3)),
+                 new (GoForward, new Vector2Int(2, 3)),
                  new (TurnRight, new Vector2Int(5, 3)),
              },
              new List<StateChartManager.TransitionCondition>()
@@ -203,9 +207,9 @@ public static class LevelDataStorage
              new List<LevelData.AvailableStateInfo>()
              {
                  new (GoForward, new Vector2Int(1, 5)),
-                 new (GoForward, new Vector2Int(6, 4)),
-                 new (TurnLeft,  new Vector2Int(4, 3)),
-                 new (TurnRight, new Vector2Int(3, 1))
+                 new (GoForward, new Vector2Int(5, 1)),
+                 new (TurnLeft,  new Vector2Int(1, 1)),
+                 new (TurnRight, new Vector2Int(5, 5))
              },
              new List<StateChartManager.TransitionCondition>()
              {
@@ -299,10 +303,10 @@ public static class LevelDataStorage
              },
              new List<LevelData.AvailableStateInfo>()
              {
-                 new (GoForward, new Vector2Int(2, 4)),
+                 new (GoForward, new Vector2Int(2, 5)),
                  new (GoForward, new Vector2Int(2, 1)),
                  new (TurnRight, new Vector2Int(5, 1)),
-                 new (TurnLeft,  new Vector2Int(5 ,4))
+                 new (TurnLeft,  new Vector2Int(5 ,5))
              },
              new List<StateChartManager.TransitionCondition>()
              {
@@ -334,7 +338,7 @@ public static class LevelDataStorage
              },
              new Dictionary<Vector2Int, LevelGridManager.KeyType>()
              {
-                {new Vector2Int(1, 0), LevelGridManager.KeyType.Red}
+                {new Vector2Int(2, 0), LevelGridManager.KeyType.Red}
              }),
 
 
@@ -350,9 +354,9 @@ public static class LevelDataStorage
              },
              new List<LevelData.AvailableStateInfo>()
              {
-                 new (GoForward, new Vector2Int(2, 2)),
-                 new (TurnRight, new Vector2Int(4, 5)),
-                 new (Drop, new Vector2Int(5, 2)),
+                 new (GoForward, new Vector2Int(2, 3)),
+                 new (TurnRight, new Vector2Int(5, 5)),
+                 new (Drop, new Vector2Int(5, 3)),
                  new (Grab, new Vector2Int(2, 5)),
              },
              new List<StateChartManager.TransitionCondition>()
