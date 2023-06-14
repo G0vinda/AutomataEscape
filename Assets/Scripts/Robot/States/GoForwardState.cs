@@ -1,8 +1,6 @@
 ﻿using DG.Tweening;
 using Helper;
 using LevelGrid;
-using log4net.Core;
-using UI;
 using UI.Transition;
 using UnityEngine;
 

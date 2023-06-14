@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using LevelGrid;
-using log4net.Appender;
 using Robot;
 using UI;
 using UI.Transition;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Helper;
 using UI.Transition;
 using UnityEngine;
-using UnityEngine.WSA;
 
 namespace LevelGrid
 {
