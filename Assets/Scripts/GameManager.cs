@@ -291,6 +291,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator MoveRobotThroughPortal(Vector2Int destinationCoordinates)
     {
         BeamRobotOut?.Invoke(portalBeamTime);
+        SoundPlayer.Instance.PlayBeamTeleport();
         yield return new WaitForSeconds(portalBeamTime);
         
         _robot.transform.position = levelGridManager.GetTilePosition(destinationCoordinates);

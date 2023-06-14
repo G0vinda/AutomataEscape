@@ -49,6 +49,7 @@ namespace UI.Transition
             selectElement.ShowSelectionMarking();
             CurrentSelected = selectElement;
             lineImage.color = selectElement.GetColor();
+            SoundPlayer.Instance.PlayCableSelect();
             
             TransitionLineDrawer.CurrentTransitionCondition = condition;
         }

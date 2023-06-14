@@ -14,14 +14,12 @@ namespace UI
         
         private Image _image;
         private Color _defaultColor;
-        private Vector3 _defaultPosition;
         private bool _errorEffectShowing;
 
         private void Awake()
         {
             _image = GetComponent<Image>();
             _defaultColor = _image.color;
-            _defaultPosition = transform.position;
         }
 
         private void OnEnable()
