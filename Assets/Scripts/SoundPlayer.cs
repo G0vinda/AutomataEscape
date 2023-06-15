@@ -8,6 +8,7 @@ using STOP_MODE = FMOD.Studio.STOP_MODE;
 public class SoundPlayer : MonoBehaviour
 {
     [SerializeField] private EventReference buttonClickEvent;
+    [SerializeField] private EventReference buttonClickMenuEvent;
     
     [SerializeField] private EventReference cableConnectEvent;
     [SerializeField] private EventReference cableHoldEvent;
@@ -120,6 +121,12 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(buttonClickEvent);
     }
+    
+    public void PlayButtonClickMenu()
+    {
+        RuntimeManager.PlayOneShot(buttonClickMenuEvent);
+    }
+
 
     public void PlayMusicMenu()
     {
