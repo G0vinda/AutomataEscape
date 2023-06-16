@@ -223,6 +223,7 @@ namespace UI
 
         private void HandleTransitionSelected(TransitionSelectElement transitionSelectElement)
         {
+            SoundPlayer.Instance.PlayCableSelect();
             transitionSelection.SelectTransitionCondition(transitionSelectElement.Condition);
         }
 
@@ -233,14 +234,8 @@ namespace UI
 
             if (currentCellCoordinates == _selectedDrawStateCellCoordinates)
                 return true;
-
-            if (!_uiGridManager.CheckIfSubCellIsAdjacentToCell(_selectedDrawStateCell, inputPosition))
-            {
-                return false;
-            }
             
-            var drawDirection = (currentCellCoordinates - _selectedDrawStateCellCoordinates).ToDirection();
-            if (TransitionLineDrawer.StartDrawingIfSubCellIsFree(inputPosition, drawDirection, _selectedDrawStateElement))
+            if (TransitionLineDrawer.StartDrawingIfSubCellIsFree(inputPosition, _selectedDrawStateElement, _selectedDrawStateCellCoordinates))
             {
                 ChangeInputPhase(UIInputPhase.DrawingTransitionLine);
                 return true;
