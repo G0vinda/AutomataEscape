@@ -5,6 +5,7 @@ using Robot;
 using UI.Grid;
 using UI.State;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace UI.Transition
 {
@@ -17,60 +18,117 @@ namespace UI.Transition
 
         private static Dictionary<StateChartManager.TransitionCondition, int> _numberOfLinesByCondition;
 
-        private static Dictionary<StateChartManager.TransitionCondition, (Color32 startColor, Color32 endColor)> _lineColors =
-            new ()
-            {
-                { 
-                    StateChartManager.TransitionCondition.Default, (new Color32(0x2E, 0x2E, 0x2E, 0xFF), new Color32(0xE0, 0xE0, 0xE0, 0xFF) )
-                },
-                { 
-                    StateChartManager.TransitionCondition.IsInFrontOfWall, (new Color32(0x92, 0xF8, 0xFF, 0xFF), new Color32(0x10, 0x4B, 0x50, 0xFF))
-                },
-                { 
-                    StateChartManager.TransitionCondition.StandsOnKey, (new Color32(0x3C, 0xFA, 0x9E, 0xFF), new Color32(0x10, 0x4F, 0x24, 0xFF))
-                },
-                { 
-                    StateChartManager.TransitionCondition.StandsOnOrange, (new Color32(0xF8, 0x90, 0x41, 0xFF), new Color32(0x59, 0x26, 0x00, 0xFF))
-                },
-                { 
-                    StateChartManager.TransitionCondition.StandsOnPurple, (new Color32(0xB3, 0x4A, 0xA2, 0xFF), new Color32(0x24, 0x1A, 0x5B, 0xFF))
-                },
-                
-            };
+        private static Dictionary<StateChartManager.TransitionCondition, (Color32 startColor, Color32 endColor)>
+            _lineColors =
+                new()
+                {
+                    {
+                        StateChartManager.TransitionCondition.Default,
+                        (new Color32(0x2E, 0x2E, 0x2E, 0xFF), new Color32(0xE0, 0xE0, 0xE0, 0xFF))
+                    },
+                    {
+                        StateChartManager.TransitionCondition.IsInFrontOfWall,
+                        (new Color32(0x92, 0xF8, 0xFF, 0xFF), new Color32(0x10, 0x4B, 0x50, 0xFF))
+                    },
+                    {
+                        StateChartManager.TransitionCondition.StandsOnKey,
+                        (new Color32(0x3C, 0xFA, 0x9E, 0xFF), new Color32(0x10, 0x4F, 0x24, 0xFF))
+                    },
+                    {
+                        StateChartManager.TransitionCondition.StandsOnOrange,
+                        (new Color32(0xF8, 0x90, 0x41, 0xFF), new Color32(0x59, 0x26, 0x00, 0xFF))
+                    },
+                    {
+                        StateChartManager.TransitionCondition.StandsOnPurple,
+                        (new Color32(0xB3, 0x4A, 0xA2, 0xFF), new Color32(0x24, 0x1A, 0x5B, 0xFF))
+                    },
+                };
 
         private static readonly float ColorStep = 1f / 9;
-        
+
         private static SubCell _currentSubCell;
         private static SubCell _startSubCell;
         private static List<SubCell> _currentLinePath;
         private static StateUIElement _currentSourceState;
         private static Vector2 _plugPosition;
         private static Direction _plugDirection;
-        
-        public static bool StartDrawingIfSubCellIsFree(Vector2 inputPosition, Direction inputDirection, StateUIElement sourceState)
+
+        public static bool StartDrawingIfSubCellIsFree(Vector2 inputPosition, StateUIElement sourceState,
+            Vector2Int sourceStateCoordinates)
         {
-            var inputIsHorizontal = inputDirection == Direction.Left || inputDirection == Direction.Right;
-            if (!UIGridManager.IsPositionInsideGrid(inputPosition))
+            if (!UIGridManager.TryScreenPositionToCellCoordinates(inputPosition, out var hoveredCellCoordinates))
                 return false;
 
+            var hoveredCell = UIGridManager.GetCellOnCoordinates(hoveredCellCoordinates);
+
+            var sourceCell = UIGridManager.GetCellOnCoordinates(sourceStateCoordinates);
+            if (sourceCell == hoveredCell)
+                return false;    
+            
+            
             var hoveredSubCell = UIGridManager.GetSubCellOnPosition(inputPosition);
+            Vector2 drawStartPosition;
+            int colorIndex;
+            Color lineColor;
+            Direction inputDirection;
+            bool inputIsHorizontal;
 
-            if (inputIsHorizontal && hoveredSubCell.BlockingHorizontalLine != null)
-                return false;
-            
-            if (!inputIsHorizontal && hoveredSubCell.BlockingVerticalLine != null)
-                return false;
-            
-            var drawStartPosition = UIGridManager.GetStateBorderPosition(sourceState.transform.position, inputPosition, inputDirection);
-            var colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition];
-            var lineColor = GetLineColor(CurrentTransitionCondition, colorIndex);
-            CurrentTransitionLine = sourceState.CreateFirstTransitionLineElement(drawStartPosition, lineColor, inputDirection, CurrentTransitionCondition);
-            _currentSubCell = UIGridManager.GetNextSubCellInDirection(drawStartPosition, inputDirection, true);
-            _startSubCell = _currentSubCell;
-            _currentLinePath = new List<SubCell> { _startSubCell };
-            _currentSourceState = sourceState;
+            if (UIGridManager.CheckIfSubCellIsAdjacentToCell(sourceCell, inputPosition))
+            {
+                Debug.Log("Checking for adjacent start subCell");
+                inputDirection = (hoveredCellCoordinates - sourceStateCoordinates).ToDirection();
+                inputIsHorizontal = inputDirection == Direction.Left || inputDirection == Direction.Right;
 
-            if (inputIsHorizontal)
+                if (inputIsHorizontal && hoveredSubCell.BlockingHorizontalLine != null)
+                    return false;
+
+                if (!inputIsHorizontal && hoveredSubCell.BlockingVerticalLine != null)
+                    return false;
+
+                drawStartPosition =
+                    UIGridManager.GetStateBorderPosition(sourceState.transform.position, inputPosition);
+                colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition];
+                lineColor = GetLineColor(CurrentTransitionCondition, colorIndex);
+                CurrentTransitionLine = sourceState.CreateFirstTransitionLineElement(drawStartPosition, lineColor,
+                    inputDirection, CurrentTransitionCondition);
+                _currentSubCell = UIGridManager.GetNextSubCellInDirection(drawStartPosition, inputDirection, true);
+                _startSubCell = _currentSubCell;
+                _currentLinePath = new List<SubCell> { _startSubCell };
+                _currentSourceState = sourceState;
+
+                if (inputIsHorizontal)
+                {
+                    hoveredSubCell.BlockingHorizontalLine = CurrentTransitionLine;
+                }
+                else
+                {
+                    hoveredSubCell.BlockingVerticalLine = CurrentTransitionLine;
+                }
+
+                SoundPlayer.Instance.PlayCableStart();
+                return true;
+            }
+
+            Debug.Log("Checking for startPath");
+            var startPath = FindStartPath(hoveredSubCell, sourceCell);
+            if (startPath == null)
+                return false;
+
+            _startSubCell = startPath[0];
+
+            var startSubCellPosition = UIGridManager.SubCellCoordinatesToScreenPosition(_startSubCell.Coordinates);
+            drawStartPosition =
+                UIGridManager.GetStateBorderPosition(sourceState.transform.position, startSubCellPosition);
+            colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition];
+            lineColor = GetLineColor(CurrentTransitionCondition, colorIndex);
+            UIGridManager.TryScreenPositionToCellCoordinates(startSubCellPosition, out var startCellCoordinates);
+            
+            inputDirection = (startCellCoordinates - sourceStateCoordinates).ToDirection();
+            CurrentTransitionLine = sourceState.CreateFirstTransitionLineElement(drawStartPosition, lineColor,
+                inputDirection, CurrentTransitionCondition);
+
+            inputIsHorizontal = inputDirection == Direction.Left || inputDirection == Direction.Right;
+            if(inputIsHorizontal)
             {
                 hoveredSubCell.BlockingHorizontalLine = CurrentTransitionLine;
             }
@@ -78,8 +136,12 @@ namespace UI.Transition
             {
                 hoveredSubCell.BlockingVerticalLine = CurrentTransitionLine;
             }
+            
+            UpdateLinePath(startPath);
+            
+            _currentSubCell = startPath[^1];
+            _currentSourceState = sourceState;
 
-            SoundPlayer.Instance.PlayCableStart();
             return true;
         }
 
@@ -87,8 +149,8 @@ namespace UI.Transition
         {
             if (!UIGridManager.IsPositionInsideGrid(inputPosition))
                 return true;
-            
-            if(UIGridManager.IsPositionInsideSubCell(_currentSubCell, inputPosition)) // Input did not move
+
+            if (UIGridManager.IsPositionInsideSubCell(_currentSubCell, inputPosition)) // Input did not move
                 return true;
 
             var hoveredStateElement = UIGridManager.GetStateUIElementOnPosition(inputPosition);
@@ -97,19 +159,19 @@ namespace UI.Transition
             {
                 // is hovered state start state or already hovered
                 var hoveredStatePlaceElement = hoveredStateElement.GetComponent<StateUIPlaceElement>();
-                if (hoveredStatePlaceElement == null || hoveredStatePlaceElement == DestinationStateElement) 
+                if (hoveredStatePlaceElement == null || hoveredStatePlaceElement == DestinationStateElement)
                     return true;
-                
+
                 // is line completely reverted
                 if (hoveredStateElement == _currentSourceState && _currentLinePath.Count < 2)
                     return false;
-                
+
                 // hovered state is valid destination state
                 UIGridManager.TryScreenPositionToCellCoordinates(inputPosition, out var stateCoordinates);
                 // var statePosition = UIGridManager.CellCoordinatesToScreenPosition(stateCoordinates);
                 // var stateCenterSubCell = UIGridManager.GetSubCellOnPosition(statePosition);
                 var hoveredSubCellOnState = UIGridManager.GetSubCellOnPosition(inputPosition);
-                
+
                 var newPath = FindPathWithBreakpoints(hoveredSubCellOnState, hoveredStateElement);
                 if (newPath == null)
                     return true;
@@ -119,24 +181,33 @@ namespace UI.Transition
                 var stateCell = DestinationStateElement.GetComponent<StateUIElement>().ConnectedCell;
                 (_plugPosition, _plugDirection) =
                     UIGridManager.GetPlugAttributesForAdjacentState(_currentSubCell, stateCell);
-                
+
                 return true;
             }
-            
+
             if (DestinationStateElement != null)
             {
                 DestinationStateElement.RemoveHighlight();
                 DestinationStateElement = null;
                 _plugPosition = Vector2.negativeInfinity;
             }
-            
+
             var hoveredSubCell = UIGridManager.GetSubCellOnPosition(inputPosition);
             FindPathWithBreakpoints(hoveredSubCell);
-            
+
             return true;
         }
 
-        private static List<SubCell> FindPathWithBreakpoints(SubCell destinationSubCell, StateUIElement allowedStateUIElement = null)
+        private static List<SubCell> FindStartPath(SubCell destinationSubCell, StateChartCell startCell)
+        {
+            var startStateUIElement = startCell.PlacedStateElement;
+            var startSubCell = UIGridManager.GetCenterSubCellFromCell(startCell);
+            
+            return new LinePathFinder(startSubCell, destinationSubCell).GetStartPath(startStateUIElement);
+        }
+
+        private static List<SubCell> FindPathWithBreakpoints(SubCell destinationSubCell,
+            StateUIElement allowedStateUIElement = null)
         {
             if (_currentLinePath.Contains(destinationSubCell))
             {
@@ -152,16 +223,17 @@ namespace UI.Transition
             do
             {
                 checkedSubCell = _currentLinePath[checkCounter];
-                var newPath = new LinePathFinder(checkedSubCell, destinationSubCell, CurrentTransitionLine,
-                    allowedStateUIElement).Path;
+                var newPath =
+                    new LinePathFinder(checkedSubCell, destinationSubCell).GetPath(CurrentTransitionLine,
+                        allowedStateUIElement);
 
                 if (newPath != null)
                 {
                     if (checkCounter > 0)
                         newPath = RemovePathDuplicates(newPath);
-                    
+
                     UpdateLinePath(newPath);
-                    
+
                     return newPath;
                 }
 
@@ -173,13 +245,6 @@ namespace UI.Transition
 
         public static List<SubCell> RemovePathDuplicates(List<SubCell> path)
         {
-            var pathCoordinatesMessage = "-- Path Finding Coordinates --\n";
-            for (var i = 0; i < path.Count; i++)
-            {
-                pathCoordinatesMessage += $"({i}) {path[i].Coordinates}\n";
-            }
-            Debug.Log(pathCoordinatesMessage);
-            
             var currentPathKeepCount = _currentLinePath.Count - 1; // Discard last element
             for (var i = path.Count - 1; i > 0; i--)
             {
@@ -190,15 +255,24 @@ namespace UI.Transition
                 path.RemoveRange(0, i + 1);
                 break;
             }
-            
+
             var newPath = _currentLinePath.GetRange(0, currentPathKeepCount);
             newPath.AddRange(path);
+            
+            var pathCoordinatesMessage = "-- Path Finding Coordinates --\n";
+            for (var i = 0; i < newPath.Count; i++)
+            {
+                pathCoordinatesMessage += $"({i}) {newPath[i].Coordinates}\n";
+            }
+
+            Debug.Log(pathCoordinatesMessage);
+            
             return newPath;
         }
 
         private static void UpdateLinePath(List<SubCell> newPath)
         {
-            if(newPath == null)
+            if (newPath == null)
                 return;
 
             if (_currentLinePath != null)
@@ -208,7 +282,7 @@ namespace UI.Transition
                     _currentLinePath[i].RemoveBlockingLine(CurrentTransitionLine);
                 }
             }
-            
+
             for (var i = 0; i < newPath.Count - 1; i++)
             {
                 if (newPath[i].Coordinates.x != newPath[i + 1].Coordinates.x)
@@ -225,7 +299,8 @@ namespace UI.Transition
                     continue;
                 }
 
-                throw new ArgumentException($"SubCell{newPath[i].Coordinates} and SubCell{newPath[i+1].Coordinates} are not adjacent");
+                throw new ArgumentException(
+                    $"SubCell{newPath[i].Coordinates} and SubCell{newPath[i + 1].Coordinates} are not adjacent");
             }
 
             CurrentTransitionLine.ParsePathToCreateLine(newPath);
@@ -237,7 +312,7 @@ namespace UI.Transition
         public static void CancelDraw()
         {
             SoundPlayer.Instance.PlayCableRelease();
-            if(DestinationStateElement != null)
+            if (DestinationStateElement != null)
                 DestinationStateElement.RemoveHighlight();
 
             DestinationStateElement = null;
@@ -251,12 +326,12 @@ namespace UI.Transition
             _numberOfLinesByCondition[CurrentTransitionCondition]++;
             DestinationStateElement.RemoveHighlight();
             SoundPlayer.Instance.PlayCableConnect();
-            
+
             CurrentTransitionLine.CreatePlug(_plugPosition, _plugDirection.ToZRotation());
-            
+
             _currentSubCell.BlockingHorizontalLine = CurrentTransitionLine;
             _currentSubCell.BlockingVerticalLine = CurrentTransitionLine;
-            
+
             DestinationStateElement = null;
             _currentSubCell = null;
             _currentSourceState = null;
@@ -269,7 +344,7 @@ namespace UI.Transition
 
         public static void ResetColors()
         {
-            _numberOfLinesByCondition = new ()
+            _numberOfLinesByCondition = new()
             {
                 { StateChartManager.TransitionCondition.Default, 0 },
                 { StateChartManager.TransitionCondition.IsInFrontOfWall, 0 },

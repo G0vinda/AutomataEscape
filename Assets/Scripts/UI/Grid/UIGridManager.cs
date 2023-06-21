@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Borodar.RainbowFolders;
 using Helper;
 using UI.State;
 using UI.Transition;
@@ -83,7 +84,7 @@ namespace UI.Grid
             return new Vector2Int(x, y);
         }
 
-        private Vector2 SubCellCoordinatesToScreenPosition(Vector2Int subCellCoordinates)
+        public Vector2 SubCellCoordinatesToScreenPosition(Vector2Int subCellCoordinates)
         {
             var bottomLeftOffset = _bottomLeftPosition + Vector2.one * _subCellSize * 0.5f;
             return bottomLeftOffset + (Vector2)subCellCoordinates * _subCellSize;
@@ -142,6 +143,7 @@ namespace UI.Grid
         {
             if (!TryScreenPositionToCellCoordinates(positionOnSubCell, out var hoveredCellCoordinates))
                 return false;
+            
             var sourceCellCoordinates = GetCoordinatesFromCell(sourceCell);
             var coordinateDifference = hoveredCellCoordinates - sourceCellCoordinates;
 
@@ -176,6 +178,14 @@ namespace UI.Grid
             cellYBorderPosition = sourceCellPosition.y - _cellSize * 0.5f;
             return positionOnSubCell.y < cellYBorderPosition &&
                    positionOnSubCell.y > cellYBorderPosition - _subCellSize;
+        }
+        
+        public SubCell GetCenterSubCellFromCell(StateChartCell cell)
+        {
+            var cellCoordinates = GetCoordinatesFromCell(cell);
+            var cellPosition = CellCoordinatesToScreenPosition(cellCoordinates);
+
+            return GetSubCellOnPosition(cellPosition);
         }
 
         public List<TransitionLine> GetCellTransitionLines(StateChartCell cell)
@@ -228,8 +238,7 @@ namespace UI.Grid
 
             var plugDirection = coordinateDelta.ToDirection();
             var subCellPosition = SubCellCoordinatesToScreenPosition(subCell.Coordinates);
-            var plugPosition = GetStateBorderPosition(adjacentStatePosition, subCellPosition,
-                plugDirection);
+            var plugPosition = GetStateBorderPosition(adjacentStatePosition, subCellPosition);
 
             return (plugPosition, plugDirection);
         }
@@ -246,8 +255,21 @@ namespace UI.Grid
             return startPosition + direction.ToVector2() * _subCellSize * distanceFactor;
         }
         
-        public Vector2 GetStateBorderPosition(Vector2 statePosition, Vector2 inputPosition, Direction drawDirection)
+        public Vector2 GetStateBorderPosition(Vector2 statePosition, Vector2 inputPosition)
         {
+            var positionDiff = inputPosition - statePosition;
+            Direction drawDirection;
+            if (positionDiff.x > _subCellSize * 1.5f)
+                drawDirection = Direction.Right;
+            else if (positionDiff.x < -_subCellSize * 1.5f)
+                drawDirection = Direction.Left;
+            else if (positionDiff.y > _subCellSize * 1.5f)
+                drawDirection = Direction.Up;
+            else if (positionDiff.y < -_subCellSize * 1.5f)
+                drawDirection = Direction.Down;
+            else
+                throw new ArgumentException("inputPosition is not adjacent to state");
+            
             float xValue, yValue;
             switch (drawDirection)
             {
@@ -347,7 +369,7 @@ namespace UI.Grid
 
         public void RemoveStateElementsFromGrid()
         {
-            foreach (var (cellCoordinates, stateChartCell) in _gridCells)
+            foreach (var (_, stateChartCell) in _gridCells)
             {
                 if (stateChartCell.PlacedStateElement == null || 
                     stateChartCell.PlacedStateElement.GetComponent<StateUIPlaceElement>() == null) 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Priority_Queue;
 using UI.State;
 using UI.Transition;
@@ -9,29 +10,60 @@ namespace UI.Grid
 {
     public class LinePathFinder
     {
-        public List<SubCell> Path;
+        private SimplePriorityQueue<SubCell> _frontier = new ();
         private Dictionary<SubCell, SubCell> _cameFrom = new ();
         private Dictionary<SubCell, int> _costSoFar = new ();
-        
-        private static int Heuristic(SubCell a, SubCell b)
-        {
-            var aCoordinates = a.Coordinates;
-            var bCoordinates = b.Coordinates;
+        private SubCell _startPoint;
+        private SubCell _endPoint;
 
-            return Math.Abs(aCoordinates.x - bCoordinates.x) + Math.Abs(aCoordinates.y - bCoordinates.y);
-        } 
-        
-        public LinePathFinder(SubCell startPoint, SubCell endPoint, TransitionLine transitionLine, StateUIElement destinationState = null)
+        public LinePathFinder(SubCell startPoint, SubCell endPoint)
         {
-            var frontier = new SimplePriorityQueue<SubCell>();
-            frontier.Enqueue(startPoint, 0);
-            _costSoFar[startPoint] = 0;
-
-            while (frontier.Count > 0)
+            _startPoint = startPoint;
+            _endPoint = endPoint;
+        }
+        
+        public List<SubCell> GetStartPath(StateUIElement startState)
+        {
+            _frontier = new SimplePriorityQueue<SubCell>();
+            _costSoFar = new Dictionary<SubCell, int>();
+            _frontier.Enqueue(_startPoint, 0);
+            _costSoFar[_startPoint] = 0;
+            
+            while (_frontier.Count > 0)
             {
-                var current = frontier.Dequeue();
+                var current = _frontier.Dequeue();
 
-                if (current.Equals(endPoint))
+                if (current.Equals(_endPoint))
+                    break;
+
+                var currentNeighbors = current.GetNeighbors(null, startState);
+                foreach (var next in currentNeighbors)
+                {
+                    var newCost = _costSoFar[current] + 1;
+                    if (!_costSoFar.ContainsKey(next) || newCost < _costSoFar[next])
+                    {
+                        _costSoFar[next] = newCost;
+                        var priority = newCost + Heuristic(next, _endPoint);
+                        _frontier.Enqueue(next, priority);
+                        _cameFrom[next] = current;
+                    }
+                }
+            }
+            return ExtractPath(null, startState);
+        }
+
+        public List<SubCell> GetPath(TransitionLine transitionLine, StateUIElement destinationState = null)
+        {
+            _frontier = new SimplePriorityQueue<SubCell>();
+            _frontier.Enqueue(_startPoint, 0);
+            _costSoFar = new();
+            _costSoFar[_startPoint] = 0;
+            
+            while (_frontier.Count > 0)
+            {
+                var current = _frontier.Dequeue();
+
+                if (current.Equals(_endPoint))
                     break;
 
                 var currentNeighbors = current.GetNeighbors(transitionLine, destinationState);
@@ -41,29 +73,37 @@ namespace UI.Grid
                     if (!_costSoFar.ContainsKey(next) || newCost < _costSoFar[next])
                     {
                         _costSoFar[next] = newCost;
-                        var priority = newCost + Heuristic(next, endPoint);
-                        frontier.Enqueue(next, priority);
+                        var priority = newCost + Heuristic(next, _endPoint);
+                        _frontier.Enqueue(next, priority);
                         _cameFrom[next] = current;
                     }
                 }
             }
 
-            Path = SetPath(startPoint, endPoint, destinationState);
+            return ExtractPath(destinationState, null);
         }
-
-        private List<SubCell> SetPath(SubCell startPoint, SubCell endPoint, StateUIElement destinationState)
+        
+        private static int Heuristic(SubCell a, SubCell b)
         {
-            if (startPoint.Equals(endPoint))
-                return new List<SubCell> { startPoint };
+            var aCoordinates = a.Coordinates;
+            var bCoordinates = b.Coordinates;
+
+            return Math.Abs(aCoordinates.x - bCoordinates.x) + Math.Abs(aCoordinates.y - bCoordinates.y);
+        } 
+        
+        private List<SubCell> ExtractPath(StateUIElement destinationState, StateUIElement startState)
+        {
+            if (_startPoint.Equals(_endPoint))
+                return new List<SubCell> { _startPoint };
             
-            if (!_cameFrom.ContainsKey(endPoint))
+            if (!_cameFrom.ContainsKey(_endPoint))
                 return null;
             
             var path = new List<SubCell>();
             SubCell current;
             if (destinationState != null)
             {
-                var endSubCell = _cameFrom[endPoint];
+                var endSubCell = _cameFrom[_endPoint];
                 while (endSubCell.BlockingState != null)
                 {
                     endSubCell = _cameFrom[endSubCell];
@@ -74,13 +114,15 @@ namespace UI.Grid
             }
             else
             {
-                path.Add(endPoint);
-                current = endPoint;
+                path.Add(_endPoint);
+                current = _endPoint;
             }
             
-            while (!current.Equals(startPoint))
+            while (!current.Equals(_startPoint))
             {
                 var prev = _cameFrom[current];
+                if (startState != null && prev.BlockingState == startState)
+                    break;
                 path.Insert(0, prev);
                 current = prev;
             }
