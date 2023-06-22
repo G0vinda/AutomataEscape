@@ -235,6 +235,13 @@ MonoBehaviour:
       Data3: 1826048191
       Data4: 924820039
     Path: event:/Foleys/Open Gate
+  EnemyWalkEvent:
+    Guid:
+      Data1: 903848905
+      Data2: 1203997006
+      Data3: 1803500187
+      Data4: 643191684
+    Path: event:/Foleys/Enemy Walk
   musicMenuEvent:
     Guid:
       Data1: 1835304012

@@ -34,6 +34,7 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference RobotGrabEvent;
     [SerializeField] private EventReference RobotTeleportEvent;
     [SerializeField] private EventReference RobotOpenGateEvent;
+    [SerializeField] private EventReference EnemyWalkEvent;
     
     [SerializeField] private EventReference musicMenuEvent;
     [SerializeField] private EventReference atmoLevelEvent;
@@ -255,7 +256,7 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(RobotWalkEvent);
     }
-
+    
     public void PlayRobotTurn()
     {
         RuntimeManager.PlayOneShot(RobotTurnEvent);
@@ -265,4 +266,10 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(RobotOpenGateEvent);
     }
+    
+    public void PlayEnemyMove()                             //todo: trigger me please
+    {
+        RuntimeManager.PlayOneShot(EnemyWalkEvent);
+    }
+    
 }
