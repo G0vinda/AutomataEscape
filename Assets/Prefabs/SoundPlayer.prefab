@@ -74,6 +74,13 @@ MonoBehaviour:
       Data3: -418409809
       Data4: -101654633
     Path: event:/Foleys/Switch UI
+  buttonClickMenuEvent:
+    Guid:
+      Data1: 274826833
+      Data2: 1269408942
+      Data3: 976647862
+      Data4: -1947256804
+    Path: event:/Foleys/Menu Button UI
   cableConnectEvent:
     Guid:
       Data1: -438105875
@@ -228,6 +235,13 @@ MonoBehaviour:
       Data3: 1826048191
       Data4: 924820039
     Path: event:/Foleys/Open Gate
+  EnemyWalkEvent:
+    Guid:
+      Data1: 903848905
+      Data2: 1203997006
+      Data3: 1803500187
+      Data4: 643191684
+    Path: event:/Foleys/Enemy Walk
   musicMenuEvent:
     Guid:
       Data1: 1835304012

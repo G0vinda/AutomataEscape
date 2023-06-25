@@ -8,6 +8,7 @@ using STOP_MODE = FMOD.Studio.STOP_MODE;
 public class SoundPlayer : MonoBehaviour
 {
     [SerializeField] private EventReference buttonClickEvent;
+    [SerializeField] private EventReference buttonClickMenuEvent;
     
     [SerializeField] private EventReference cableConnectEvent;
     [SerializeField] private EventReference cableHoldEvent;
@@ -33,6 +34,7 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference RobotGrabEvent;
     [SerializeField] private EventReference RobotTeleportEvent;
     [SerializeField] private EventReference RobotOpenGateEvent;
+    [SerializeField] private EventReference EnemyWalkEvent;
     
     [SerializeField] private EventReference musicMenuEvent;
     [SerializeField] private EventReference atmoLevelEvent;
@@ -120,6 +122,12 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(buttonClickEvent);
     }
+    
+    public void PlayButtonClickMenu()
+    {
+        RuntimeManager.PlayOneShot(buttonClickMenuEvent);
+    }
+
 
     public void PlayMusicMenu()
     {
@@ -248,7 +256,7 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(RobotWalkEvent);
     }
-
+    
     public void PlayRobotTurn()
     {
         RuntimeManager.PlayOneShot(RobotTurnEvent);
@@ -258,4 +266,10 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(RobotOpenGateEvent);
     }
+    
+    public void PlayEnemyMove()                             //todo: trigger me please
+    {
+        RuntimeManager.PlayOneShot(EnemyWalkEvent);
+    }
+    
 }
