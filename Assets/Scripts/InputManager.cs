@@ -59,7 +59,7 @@ public class InputManager : MonoBehaviour
             _uiInput.DragAndSelect.Position.ReadValue<Vector2>(),
             state =>
             {
-                StartCoroutine(ProcessPressInput(state));
+                StartCoroutine(ProcessStatePress(state));
             },
             transitionSelect =>
             {
@@ -67,50 +67,50 @@ public class InputManager : MonoBehaviour
             },
             () =>
             {
-                StartCoroutine(ProcessPressInput());
+                StartCoroutine(ProcessPanelPress());
             });
     }
 
-    private IEnumerator ProcessPressInput(StateUIElement selectedStateElement = null)
+    private IEnumerator ProcessStatePress(StateUIElement selectedStateElement)
     {
         var pressTimer = 0f;
         while (true)
         {
-            if (_inputReleased) // Player input was tap
-            {
-                if (selectedStateElement != null)
-                {
-                    StateElementTapped?.Invoke(selectedStateElement);
-                }
-                else
-                {
-                    StateChartPanelTapped?.Invoke();
-                }
-
+            if (_inputReleased)
                 break;
-            }
 
-            if (selectedStateElement != null && pressTimer >= stateDragHoldTime)
+            if (pressTimer >= stateDragHoldTime)
             {
                 StateElementDragStarted?.Invoke(selectedStateElement);
+                break;
+            }
+        
+            if(_uiInput.DragAndSelect.PositionDelta.ReadValue<Vector2>() != Vector2.zero)
+            {
+                TransitionLineDragStarted?.Invoke(selectedStateElement);
+            }
+        
+            pressTimer += Time.deltaTime;
+            yield return null; 
+        }
+    }
+
+    private IEnumerator ProcessPanelPress()
+    {
+        while (true)
+        {
+            if (_inputReleased) // Player input was tap
+            {
+                StateChartPanelTapped?.Invoke();
                 break;
             }
             
             if(_uiInput.DragAndSelect.PositionDelta.ReadValue<Vector2>() != Vector2.zero)
             {
-                if (selectedStateElement != null)
-                {
-                    TransitionLineDragStarted?.Invoke(selectedStateElement);
-                }
-                else
-                {
-                    StateChartPanelDragStarted?.Invoke();    
-                }
-                
+                StateChartPanelDragStarted?.Invoke();
                 break;
             }
-
-            pressTimer += Time.deltaTime;
+            
             yield return null;
         }
     }
