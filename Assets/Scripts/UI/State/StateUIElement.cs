@@ -48,6 +48,8 @@ namespace UI.State
         public int AssignedId { get; set; }
         public StateChartCell ConnectedCell { get; set; }
 
+        private const float SelectedHighlightFactor = 1.08f;
+        private const float DragHighlightFactor = 1.15f; 
         private RectTransform _imageTransform;
         private List<TransitionLine> _outgoingTransitionLines = new ();
 
@@ -66,21 +68,29 @@ namespace UI.State
 
         public void SetSizeToDefault() 
         {
+            Debug.Log("SetSizeToDefault called");
             _imageTransform.sizeDelta = StateSizeAttributes.DefaultStateSize;
         }
 
         public void UpdateScaling()
         {
+            Debug.Log("UpdateScaling called");
             var scaleDelta = StateSizeAttributes.StateSize.x / _imageTransform.sizeDelta.x;
             UpdateTransitionLines(scaleDelta);
             _imageTransform.sizeDelta = StateSizeAttributes.StateSize;
             _imageTransform.localScale = Vector2.one;
         }
 
-        public void SetSizeToHighlight()
+        public void SetSizeToSelectedHighlight()
         {
-            var highlightScaleFactor = 1.1f;
-            _imageTransform.localScale = Vector2.one * highlightScaleFactor;
+            Debug.Log("Set size to selected");
+            _imageTransform.localScale = Vector2.one * SelectedHighlightFactor;
+        }
+
+        public void SetSizeToDragHighlight()
+        {
+            Debug.Log("Set size to dragged");
+            _imageTransform.localScale = Vector2.one * DragHighlightFactor;
         }
         
         private void UpdateTransitionLines(float scaleDelta)

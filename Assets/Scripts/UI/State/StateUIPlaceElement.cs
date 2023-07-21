@@ -49,7 +49,7 @@ namespace UI.State
 
         public void HighlightAsTransitionDestination()
         {
-            _uiElement.SetSizeToHighlight();
+            _uiElement.SetSizeToDragHighlight();
         }
 
         public void RemoveHighlight()
@@ -65,18 +65,17 @@ namespace UI.State
         public void PlaceOnCell(StateChartCell cellToPlaceOn, Transform newParent)
         {
             transform.SetParent(newParent);
+            _uiElement.UpdateScaling();
             _uiElement.ConnectedCell = cellToPlaceOn;
         }
 
         public void SwitchAppearanceToOnGrid()
         {
-            _uiElement.UpdateScaling();
             SetColorToDefault();
         }
 
         public void SwitchAppearanceToOffGrid()
         {
-            _uiElement.SetSizeToDefault();
             SetColorToTransparent();
         }
     }

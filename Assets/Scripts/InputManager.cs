@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,7 +11,7 @@ using UI.Transition;
 public class InputManager : MonoBehaviour
 {
     [SerializeField] private float stateDragHoldTime;
-    public static event Action<StateUIElement> StateElementTapped;
+    public static event Action<StateUIElement> StateElementSelected;
     public static event Action<StateUIElement> StateElementDragStarted;
 
     public static event Action StateChartPanelTapped;
@@ -74,24 +75,34 @@ public class InputManager : MonoBehaviour
     private IEnumerator ProcessStatePress(StateUIElement selectedStateElement)
     {
         var pressTimer = 0f;
-        while (true)
+        var isStatePlaceElement = selectedStateElement.TryGetComponent<StateUIPlaceElement>(out _);
+        StateElementSelected?.Invoke(selectedStateElement);
+        while(true)
         {
             if (_inputReleased)
                 break;
 
+            var inputPosition = _uiInput.DragAndSelect.Position.ReadValue<Vector2>();
+            if(!InputIsOverStateElement(inputPosition))
+            {
+                TransitionLineDragStarted?.Invoke(selectedStateElement);
+                break;
+            }
+
+            if (!isStatePlaceElement)
+            {
+                yield return null;
+                continue;
+            }
+            
             if (pressTimer >= stateDragHoldTime)
             {
                 StateElementDragStarted?.Invoke(selectedStateElement);
                 break;
             }
-        
-            if(_uiInput.DragAndSelect.PositionDelta.ReadValue<Vector2>() != Vector2.zero)
-            {
-                TransitionLineDragStarted?.Invoke(selectedStateElement);
-            }
-        
             pressTimer += Time.deltaTime;
-            yield return null; 
+            
+            yield return null;
         }
     }
 
@@ -223,5 +234,12 @@ public class InputManager : MonoBehaviour
 
         if (inputWasOnPanel)
             inputOverPanelAction();
+    }
+
+    private bool InputIsOverStateElement(Vector2 inputPosition)
+    {
+        var raycastResults = HelperFunctions.GetRaycastResultsOnPosition(inputPosition);
+
+        return raycastResults.Any(result => result.gameObject.CompareTag("StateUIElement"));
     }
 }
