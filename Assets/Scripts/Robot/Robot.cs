@@ -71,6 +71,12 @@ namespace Robot
             var currentStatus = RobotState.Status.Running;
             do
             {
+                if (currentState == null)
+                {
+                    yield return _stateWait;
+                    continue;
+                }
+                
                 NextStateStarts?.Invoke(DetermineStateAction(currentState));
                 _activeEnemies.ForEach(enemy => enemy.Move());
 
@@ -92,7 +98,14 @@ namespace Robot
                 if (currentStatus == RobotState.Status.Running)
                 {
                     var nextStateId = currentState.DetermineNextStateId(_currentCoordinates, _currentDirection);
-                    currentState = _stateChartManager.GetStateById(nextStateId);    
+                    if (nextStateId < 0)
+                    {
+                        currentState = null;
+                    }
+                    else
+                    {
+                        currentState = _stateChartManager.GetStateById(nextStateId);   
+                    }
                 }
                 
                 yield return _stateWait;

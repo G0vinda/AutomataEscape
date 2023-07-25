@@ -121,6 +121,11 @@ namespace Robot
             _stateChart.Remove(GetStateById(id));
         }
 
+        public bool CheckIfStartStateIsConnected()
+        {
+            return _stateChart[0].Transitions.Count > 0;
+        }
+
         public bool CheckIfStatesAreConnected()
         {
             List<RobotState> statesToCheck = new () { _stateChart[0] }; // StartState

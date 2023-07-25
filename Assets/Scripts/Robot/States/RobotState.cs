@@ -46,7 +46,7 @@ namespace Robot.States
                     return transition.DestinationId;
             }
 
-            throw new Exception("State is missing default transition!");
+            return -1;
         }
 
         public void AddTransition(RobotTransition newTransition)
