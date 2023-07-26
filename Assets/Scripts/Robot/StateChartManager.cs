@@ -77,7 +77,7 @@ namespace Robot
                 _ => throw new ArgumentOutOfRangeException()
             };
             fromState.AddTransition(newTransition);
-            CheckIfStatesAreConnected();
+            CheckForConnectedStates();
         }
     
         private int GenerateStateId()
@@ -113,7 +113,7 @@ namespace Robot
                 fromState.Transitions.First(transition => transition.GetType() == typeToDelete);
             
             fromState.RemoveTransition(transitionToDelete);
-            CheckIfStatesAreConnected();
+            CheckForConnectedStates();
         }
     
         public void RemoveStateById(int id)
@@ -126,7 +126,7 @@ namespace Robot
             return _stateChart[0].Transitions.Count > 0;
         }
 
-        public bool CheckIfStatesAreConnected()
+        private void CheckForConnectedStates()
         {
             List<RobotState> statesToCheck = new () { _stateChart[0] }; // StartState
             List<RobotState> checkedStates = new();
@@ -151,11 +151,8 @@ namespace Robot
             activeStates.Where(state => state.Id != 0).ToList().ForEach(state => StateIsActive?.Invoke(state.Id));
 
             var inactiveStates = _stateChart.Except(activeStates).ToList();
-            if (inactiveStates.Count == 0)
-                return true;
             
             inactiveStates.Where(state => state.Id != 0).ToList().ForEach(state => StateIsInactive?.Invoke(state.Id));
-            return false;
         }
     }
 }

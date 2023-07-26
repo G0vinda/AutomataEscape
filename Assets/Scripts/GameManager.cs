@@ -126,7 +126,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (!_stateChartManager.CheckIfStatesAreConnected())
+            if (!_stateChartManager.CheckIfStartStateIsConnected())
             {
                 uiManager.SwitchToProgramView();
                 SoundPlayer.Instance.PlayRunError();

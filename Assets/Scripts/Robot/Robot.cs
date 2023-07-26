@@ -14,6 +14,7 @@ namespace Robot
     public class Robot : MonoBehaviour
     {
         public static event Action<StateChartManager.StateAction> NextStateStarts;
+        public static event Action StateChartStopped;
         public bool IsRunning { get; private set; }
         
         private SpriteChanger _spriteChanger;
@@ -94,6 +95,8 @@ namespace Robot
                 {
                     break;
                 }
+                
+                yield return _stateWait;
 
                 if (currentStatus == RobotState.Status.Running)
                 {
@@ -101,6 +104,7 @@ namespace Robot
                     if (nextStateId < 0)
                     {
                         currentState = null;
+                        StateChartStopped?.Invoke();
                     }
                     else
                     {
@@ -108,7 +112,6 @@ namespace Robot
                     }
                 }
                 
-                yield return _stateWait;
             } while (true);
 
             yield return _stateWait;

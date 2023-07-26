@@ -29,11 +29,13 @@ namespace UI
         private void OnEnable()
         {
             Robot.Robot.NextStateStarts += OnNextState;
+            Robot.Robot.StateChartStopped += HandleStateChartStopped;
         }
 
         private void OnDisable()
         {
             Robot.Robot.NextStateStarts -= OnNextState;
+            Robot.Robot.StateChartStopped -= HandleStateChartStopped;
         }
 
         private void OnNextState(StateChartManager.StateAction action)
@@ -49,6 +51,11 @@ namespace UI
                 SoundPlayer.Instance.PlayMusicWalking();
                 _playMusicOnNextState = false;
             }
+        }
+
+        private void HandleStateChartStopped()
+        {
+            gameObject.SetActive(false);
         }
     }
 }
