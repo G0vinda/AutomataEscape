@@ -193,6 +193,13 @@ MonoBehaviour:
       Data3: 1112264368
       Data4: 665624717
     Path: event:/Foleys/Robo Turn On
+  RobotTurnOffEvent:
+    Guid:
+      Data1: 639860819
+      Data2: 1088948140
+      Data3: -118150522
+      Data4: 1799580401
+    Path: event:/Foleys/Robo Shutdown
   RobotWalkEvent:
     Guid:
       Data1: -1106963896

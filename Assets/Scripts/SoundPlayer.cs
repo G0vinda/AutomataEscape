@@ -28,6 +28,7 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference RobotSpawnEvent;
     [SerializeField] private EventReference RobotDespawnEvent;
     [SerializeField] private EventReference RobotTurnOnEvent;
+    [SerializeField] private EventReference RobotTurnOffEvent;
     [SerializeField] private EventReference RobotWalkEvent;
     [SerializeField] private EventReference RobotTurnEvent;
     [SerializeField] private EventReference RobotDropEvent;
@@ -230,6 +231,11 @@ public class SoundPlayer : MonoBehaviour
     {
         RuntimeManager.PlayOneShot(RobotTurnOnEvent);
     }
+    
+    public void PlayRobotShutdown()                         // Robo Shutdown - Methode
+        {
+            RuntimeManager.PlayOneShot(RobotTurnOffEvent);
+        }
 
     public void PlayRunError()
     {
