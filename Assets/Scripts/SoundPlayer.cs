@@ -232,10 +232,10 @@ public class SoundPlayer : MonoBehaviour
         RuntimeManager.PlayOneShot(RobotTurnOnEvent);
     }
     
-    public void PlayRobotShutdown()                         // Robo Shutdown - Methode
-        {
-            RuntimeManager.PlayOneShot(RobotTurnOffEvent);
-        }
+    public void PlayRobotShutdown()                     
+    {
+        RuntimeManager.PlayOneShot(RobotTurnOffEvent);
+    }
 
     public void PlayRunError()
     {

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Borodar.RainbowFolders;
 using Helper;
 using UI.State;
 using UI.Transition;

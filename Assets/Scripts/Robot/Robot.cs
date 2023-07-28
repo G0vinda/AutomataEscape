@@ -105,6 +105,8 @@ namespace Robot
                     {
                         currentState = null;
                         StateChartStopped?.Invoke();
+                        SoundPlayer.Instance.PlayRobotShutdown();
+                        SoundPlayer.Instance.PlayMusicLevel();
                     }
                     else
                     {
