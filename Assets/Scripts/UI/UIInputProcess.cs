@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Helper;
+using Lofelt.NiceVibrations;
 using Robot;
 using UI.Grid;
 using UI.State;
@@ -203,6 +202,7 @@ namespace UI
             _selectedDragStateElement.transform.SetAsLastSibling();
             ChangeInputPhase(UIInputPhase.DraggingStateElement);
             SoundPlayer.Instance.PlayStateDragStart();
+            HapticPatterns.PlayConstant(0.7f, 0.7f, 0.04f);
 
             var blockedCellPositions = _uiGridManager.GetCellPositionsAdjacentToStates();
             foreach (var blockedCellPosition in blockedCellPositions)
@@ -300,6 +300,7 @@ namespace UI
             {
                 _uiManager.PlaceStateElementOnGrid(_selectedDragStateElement, _hoveredDragStateChartCell);
                 SoundPlayer.Instance.PlayStateDragEnd();
+                HapticPatterns.PlayConstant(0.7f, 0.7f, 0.04f);
                 _selectedDragStateElement = null;
             }
             else
