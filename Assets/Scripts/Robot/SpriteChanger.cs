@@ -212,7 +212,11 @@ namespace Robot
 
         public void Turn(Direction nextDirection)
         {
-            _spriteRenderer.flipX = nextDirection == Direction.Right;
+            if (nextDirection == Direction.Right)
+                _spriteRenderer.flipX = true;
+            if (nextDirection == Direction.Left)
+                _spriteRenderer.flipX = false;
+            
             var turnAnimation = _turnAnimations[(_direction, nextDirection, _keyState)];
             animator.CrossFade(turnAnimation, 0, 0);
             _direction = nextDirection;
