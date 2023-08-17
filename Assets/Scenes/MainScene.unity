@@ -973,8 +973,8 @@ MonoBehaviour:
   levelFadeImage: {fileID: 1742516009}
   levelFadeColor: {r: 0.0114659965, g: 0.06849515, b: 0.078, a: 1}
   levelFadeTime: 1.3
-  startLevelId: 13
-  resetLevelOnStart: 1
+  startLevelId: 0
+  resetLevelOnStart: 0
   levelBeamTime: 1
   portalBeamTime: 0.3
 --- !u!114 &868897339
@@ -2250,6 +2250,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 654531687}
     m_Modifications:
+    - target: {fileID: 8429140400697516539, guid: f175cbe30d0c2fe40a8fd42dddee2a77, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8429140400697516540, guid: f175cbe30d0c2fe40a8fd42dddee2a77, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8429140400697516540, guid: f175cbe30d0c2fe40a8fd42dddee2a77, type: 3}
+      propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8429140400697516542, guid: f175cbe30d0c2fe40a8fd42dddee2a77, type: 3}
       propertyPath: m_Pivot.x
       value: 0
