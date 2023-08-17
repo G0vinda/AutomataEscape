@@ -265,8 +265,6 @@ namespace UI.Transition
                 pathCoordinatesMessage += $"({i}) {newPath[i].Coordinates}\n";
             }
 
-            Debug.Log(pathCoordinatesMessage);
-            
             return newPath;
         }
 

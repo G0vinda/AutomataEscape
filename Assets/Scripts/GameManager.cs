@@ -104,6 +104,7 @@ public class GameManager : MonoBehaviour
         }
         
         _currentKeyObjectData.Add(coordinates, (keyType, newKey));
+        Debug.Log($"CurrentKeyObjectData count adding is: {_currentKeyObjectData.Count}");
     }
 
     public LevelGridManager.KeyType GrabKeyOnCoordinates(Vector2Int coordinates)

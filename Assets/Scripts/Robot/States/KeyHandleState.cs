@@ -8,6 +8,11 @@ namespace Robot.States
     {
         protected static LevelGridManager.KeyType GrabbedKeyType;
 
+        public static void ResetGrabbedKeyType()
+        {
+            GrabbedKeyType = LevelGridManager.KeyType.None;
+        }
+
         protected KeyHandleState(LevelGridManager levelGridManager, SpriteChanger spriteChanger) : base(levelGridManager, spriteChanger)
         {
             GrabbedKeyType = LevelGridManager.KeyType.None;

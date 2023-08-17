@@ -37,6 +37,7 @@ namespace Robot
             _currentCoordinates = coordinates;
             _currentDirection = direction;
             _activeEnemies = enemies;
+            KeyHandleState.ResetGrabbedKeyType();
             _spriteChanger.SetCarryKeyType(LevelGridManager.KeyType.None);
             _spriteChanger.SetSpriteDirection(direction);
             _spriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
