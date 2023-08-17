@@ -39,8 +39,9 @@ namespace Robot
             _activeEnemies = enemies;
             KeyHandleState.ResetGrabbedKeyType();
             _spriteChanger.SetCarryKeyType(LevelGridManager.KeyType.None);
-            _spriteChanger.SetSpriteDirection(direction);
+            _spriteChanger.SetDirection(direction);
             _spriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
+            _spriteChanger.UpdateSprite();
         }
 
         public void SetCoordinates(Vector2Int newCoordinates)

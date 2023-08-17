@@ -15,7 +15,7 @@ namespace Robot.States
             animation = null;
             
             direction = direction.Turn(false);
-            SpriteChanger.SetSpriteDirection(direction);
+            SpriteChanger.Turn(direction);
             SoundPlayer.Instance.PlayRobotTurn();
             return Status.Running;
         }

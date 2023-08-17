@@ -24,6 +24,7 @@ namespace Robot.States
             coordinates += direction.ToVector2Int();
             var moveTime = 0.6f;
             animation = _robotTransform.DOMove(LevelGridManager.Grid[coordinates].transform.position, moveTime).SetEase(Ease.InOutSine);
+            SpriteChanger.GoForward();
             SpriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
             SoundPlayer.Instance.PlayRobotMove();
             GameManager.Instance.CheckForEnemyCollision();

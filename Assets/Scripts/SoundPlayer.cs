@@ -63,7 +63,6 @@ public class SoundPlayer : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {

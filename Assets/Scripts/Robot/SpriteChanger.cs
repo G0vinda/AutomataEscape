@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using LevelGrid;
 using UI;
@@ -9,6 +10,8 @@ namespace Robot
 {
     public class SpriteChanger : MonoBehaviour
     {
+        [SerializeField] private Animator animator;
+        
         [Header("RobotSprites")]
         [SerializeField] private Sprite upRobot;
         [SerializeField] private Sprite sideRobot;
@@ -35,11 +38,150 @@ namespace Robot
         private Sprite downSprite;
 
         private SpriteRenderer _spriteRenderer;
+        private LevelGridManager.KeyType _keyState;
         private Direction _direction;
+
+        private Dictionary<(Direction, LevelGridManager.KeyType), int> _idleAnimations;
+        private Dictionary<(Direction, LevelGridManager.KeyType), int> _moveAnimations;
+        private Dictionary<(Direction, Direction, LevelGridManager.KeyType), int> _turnAnimations;
 
         private void Awake()
         {
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            _idleAnimations = new Dictionary<(Direction, LevelGridManager.KeyType), int>()
+            {
+                { (Direction.Up, LevelGridManager.KeyType.None), Animator.StringToHash("IdleUp") },
+                { (Direction.Down, LevelGridManager.KeyType.None), Animator.StringToHash("IdleDown") },
+                { (Direction.Left, LevelGridManager.KeyType.None), Animator.StringToHash("IdleSide") },
+                { (Direction.Right, LevelGridManager.KeyType.None), Animator.StringToHash("IdleSide") },
+
+                { (Direction.Up, LevelGridManager.KeyType.Red), Animator.StringToHash("IdleUpWithRedKey") },
+                { (Direction.Down, LevelGridManager.KeyType.Red), Animator.StringToHash("IdleDownWithRedKey") },
+                { (Direction.Left, LevelGridManager.KeyType.Red), Animator.StringToHash("IdleSideWithRedKey") },
+                { (Direction.Right, LevelGridManager.KeyType.Red), Animator.StringToHash("IdleSideWithRedKey") },
+
+                { (Direction.Up, LevelGridManager.KeyType.Blue), Animator.StringToHash("IdleUpWithBlueKey") },
+                { (Direction.Down, LevelGridManager.KeyType.Blue), Animator.StringToHash("IdleDownWithBlueKey") },
+                { (Direction.Left, LevelGridManager.KeyType.Blue), Animator.StringToHash("IdleSideWithBlueKey") },
+                { (Direction.Right, LevelGridManager.KeyType.Blue), Animator.StringToHash("IdleSideWithBlueKey") }
+            };
+            _moveAnimations = new Dictionary<(Direction, LevelGridManager.KeyType), int>()
+            {
+                { (Direction.Up, LevelGridManager.KeyType.None), Animator.StringToHash("WalkUp") },
+                { (Direction.Down, LevelGridManager.KeyType.None), Animator.StringToHash("WalkDown") },
+                { (Direction.Left, LevelGridManager.KeyType.None), Animator.StringToHash("WalkSide") },
+                { (Direction.Right, LevelGridManager.KeyType.None), Animator.StringToHash("WalkSide") },
+
+                { (Direction.Up, LevelGridManager.KeyType.Red), Animator.StringToHash("WalkUpWithRedKey") },
+                { (Direction.Down, LevelGridManager.KeyType.Red), Animator.StringToHash("WalkDownWithRedKey") },
+                { (Direction.Left, LevelGridManager.KeyType.Red), Animator.StringToHash("WalkSideWithRedKey") },
+                { (Direction.Right, LevelGridManager.KeyType.Red), Animator.StringToHash("WalkSideWithRedKey") },
+
+                { (Direction.Up, LevelGridManager.KeyType.Blue), Animator.StringToHash("WalkUpWithBlueKey") },
+                { (Direction.Down, LevelGridManager.KeyType.Blue), Animator.StringToHash("WalkDownWithBlueKey") },
+                { (Direction.Left, LevelGridManager.KeyType.Blue), Animator.StringToHash("WalkSideWithBlueKey") },
+                { (Direction.Right, LevelGridManager.KeyType.Blue), Animator.StringToHash("WalkSideWithBlueKey") }
+            };
+            _turnAnimations = new Dictionary<(Direction, Direction, LevelGridManager.KeyType), int>()
+            {
+                {
+                    (Direction.Down, Direction.Left, LevelGridManager.KeyType.None),
+                    Animator.StringToHash("TurnDownToSide")
+                },
+                {
+                    (Direction.Down, Direction.Right, LevelGridManager.KeyType.None),
+                    Animator.StringToHash("TurnDownToSide")
+                },
+                {
+                    (Direction.Down, Direction.Left, LevelGridManager.KeyType.Blue),
+                    Animator.StringToHash("TurnDownToSideWithBlueKey")
+                },
+                {
+                    (Direction.Down, Direction.Right, LevelGridManager.KeyType.Blue),
+                    Animator.StringToHash("TurnDownToSideWithBlueKey")
+                },
+                {
+                    (Direction.Down, Direction.Left, LevelGridManager.KeyType.Red),
+                    Animator.StringToHash("TurnDownToSideWithRedKey")
+                },
+                {
+                    (Direction.Down, Direction.Right, LevelGridManager.KeyType.Red),
+                    Animator.StringToHash("TurnDownToSideWithRedKey")
+                },
+
+                {
+                    (Direction.Left, Direction.Down, LevelGridManager.KeyType.None),
+                    Animator.StringToHash("TurnSideToDown")
+                },
+                {
+                    (Direction.Right, Direction.Down, LevelGridManager.KeyType.None),
+                    Animator.StringToHash("TurnSideToDown")
+                },
+                {
+                    (Direction.Left, Direction.Down, LevelGridManager.KeyType.Blue),
+                    Animator.StringToHash("TurnSideToDownWithBlueKey")
+                },
+                {
+                    (Direction.Right, Direction.Down, LevelGridManager.KeyType.Blue),
+                    Animator.StringToHash("TurnSideToDownWithBlueKey")
+                },
+                {
+                    (Direction.Left, Direction.Down, LevelGridManager.KeyType.Red),
+                    Animator.StringToHash("TurnSideToDownWithRedKey")
+                },
+                {
+                    (Direction.Right, Direction.Down, LevelGridManager.KeyType.Red),
+                    Animator.StringToHash("TurnSideToDownWithRedKey")
+                },
+
+                {
+                    (Direction.Left, Direction.Up, LevelGridManager.KeyType.None), Animator.StringToHash("TurnSideToUp")
+                },
+                {
+                    (Direction.Right, Direction.Up, LevelGridManager.KeyType.None),
+                    Animator.StringToHash("TurnSideToUp")
+                },
+                {
+                    (Direction.Left, Direction.Up, LevelGridManager.KeyType.Blue),
+                    Animator.StringToHash("TurnSideToUpWithBlueKey")
+                },
+                {
+                    (Direction.Right, Direction.Up, LevelGridManager.KeyType.Blue),
+                    Animator.StringToHash("TurnSideToUpWithBlueKey")
+                },
+                {
+                    (Direction.Left, Direction.Up, LevelGridManager.KeyType.Red),
+                    Animator.StringToHash("TurnSideToUpWithRedKey")
+                },
+                {
+                    (Direction.Right, Direction.Up, LevelGridManager.KeyType.Red),
+                    Animator.StringToHash("TurnSideToUpWithRedKey")
+                },
+
+                {
+                    (Direction.Up, Direction.Left, LevelGridManager.KeyType.None), Animator.StringToHash("TurnUpToSide")
+                },
+                {
+                    (Direction.Up, Direction.Right, LevelGridManager.KeyType.None),
+                    Animator.StringToHash("TurnUpToSide")
+                },
+                {
+                    (Direction.Up, Direction.Left, LevelGridManager.KeyType.Blue),
+                    Animator.StringToHash("TurnUpToSideWithBlueKey")
+                },
+                {
+                    (Direction.Up, Direction.Right, LevelGridManager.KeyType.Blue),
+                    Animator.StringToHash("TurnUpToSideWithBlueKey")
+                },
+                {
+                    (Direction.Up, Direction.Left, LevelGridManager.KeyType.Red),
+                    Animator.StringToHash("TurnUpToSideWithRedKey")
+                },
+                {
+                    (Direction.Up, Direction.Right, LevelGridManager.KeyType.Red),
+                    Animator.StringToHash("TurnUpToSideWithRedKey")
+                }
+            };
         }
 
         #region OnEnable/OnDisable
@@ -60,56 +202,40 @@ namespace Robot
 
         public void SetCarryKeyType(LevelGridManager.KeyType keyType)
         {
-            switch (keyType)
-            {
-                case LevelGridManager.KeyType.None:
-                    upSprite = upRobot;
-                    sideSprite = sideRobot;
-                    downSprite = downRobot;           
-                    break;
-                case LevelGridManager.KeyType.Blue:
-                    upSprite = upRobotWithBlueKey;
-                    sideSprite = sideRobotWithBlueKey;
-                    downSprite = downRobotWithBlueKey;
-                    break;
-                case LevelGridManager.KeyType.Red:
-                    upSprite = upRobotWithRedKey;
-                    sideSprite = sideRobotWithRedKey;
-                    downSprite = downRobotWithRedKey;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            UpdateSprite();
+            _keyState = keyType;
         }
 
-        public void SetSpriteDirection(Direction direction)
+        public void SetDirection(Direction direction)
         {
             _direction = direction;
-        
-            UpdateSprite();
         }
 
-        private void UpdateSprite()
+        public void Turn(Direction nextDirection)
         {
-            _spriteRenderer.flipX = false;
-            switch (_direction)
-            {
-                case Direction.Up:
-                    _spriteRenderer.sprite = upSprite;
-                    break;
-                case Direction.Right:
-                    _spriteRenderer.sprite = sideSprite;
-                    break;
-                case Direction.Down:
-                    _spriteRenderer.sprite = downSprite;
-                    break;
-                case Direction.Left:
-                    _spriteRenderer.sprite = sideSprite;
-                    _spriteRenderer.flipX = true;
-                    break;
-            }
+            _spriteRenderer.flipX = nextDirection == Direction.Right;
+            var turnAnimation = _turnAnimations[(_direction, nextDirection, _keyState)];
+            animator.CrossFade(turnAnimation, 0, 0);
+            _direction = nextDirection;
+            Invoke(nameof(MovementToIdle), 0.6f);
+        }
+
+        public void GoForward()
+        {
+            var moveAnimation = _moveAnimations[(_direction, _keyState)];
+            animator.CrossFade(moveAnimation, 0, 0);
+            Invoke(nameof(MovementToIdle), 0.6f);
+        }
+
+        private void MovementToIdle()
+        {
+            var idleAnimation = _idleAnimations[(_direction, _keyState)];
+            animator.CrossFade(idleAnimation, 0, 0);
+        }
+
+        public void UpdateSprite()
+        {
+            _spriteRenderer.flipX = _direction == Direction.Right;
+            MovementToIdle();
         }
 
         public void SetSpriteSortingOrder(int sortingOrder)
