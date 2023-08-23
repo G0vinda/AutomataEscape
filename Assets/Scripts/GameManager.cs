@@ -25,8 +25,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Image levelFadeImage;
     [SerializeField] private Color levelFadeColor;
     [SerializeField] private float levelFadeTime;
-    [SerializeField] private int startLevelId;
-    [SerializeField] private bool resetLevelOnStart;
     [SerializeField] private float levelBeamTime;
     [SerializeField] private float portalBeamTime;
 
@@ -35,9 +33,9 @@ public class GameManager : MonoBehaviour
     public static event Action InvalidRunPress;
     public static event Action<float> BeamRobotIn;
     public static event Action<float> BeamRobotOut;
-     
-    
-    private const int FinishSceneIndex = 2;
+
+    private const int LevelSelectionSceneIndex = 1;
+    private const int FinishSceneIndex = 3;
     
     private Dictionary<Vector2Int, (LevelGridManager.KeyType, GameObject)> _currentKeyObjectData = new ();
     private Vector2Int[] _currentPortalCoordinates;
@@ -54,8 +52,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         uiManager.Initialize();
-        if(resetLevelOnStart)
-            PlayerPrefs.SetInt("CurrentLevelId", startLevelId);
         _currentLevelId = PlayerPrefs.GetInt("CurrentLevelId", 0);
         
         SoundPlayer.Instance.PlayAtmoLevel();
@@ -157,17 +153,14 @@ public class GameManager : MonoBehaviour
         PositionRobotInLevel(level);
     }
 
-    private void LoadNextLevel()
+    private void FinishLevel()
     {
-        Destroy(_robot.gameObject);
-        currentStateIndicator.gameObject.SetActive(false);
-        
-        _currentLevelId++;
         if (_currentLevelId >= LevelDataStorage.LevelCount)
             SceneManager.LoadScene(FinishSceneIndex);
-        
-        PlayerPrefs.SetInt("CurrentLevelId", _currentLevelId);
-        StartCoroutine(LoadLevel(_currentLevelId));
+
+        _currentLevelId++;
+        PlayerPrefs.SetInt("ReachedLevelId", _currentLevelId);
+        SceneManager.LoadScene(LevelSelectionSceneIndex);
     }
 
     private IEnumerator LoadLevel(int levelId)
@@ -259,7 +252,7 @@ public class GameManager : MonoBehaviour
             value => levelFadeImage.color = value));
         fadeSequence.Join(DOVirtual.Float(1, 0, levelFadeTime,
             value => SoundPlayer.Instance.SetLevelBackgroundVolume(value)));
-        fadeSequence.SetEase(Ease.InCirc).OnComplete(LoadNextLevel);
+        fadeSequence.SetEase(Ease.InCirc).OnComplete(FinishLevel);
     }
     
     public void ReachGoal()
