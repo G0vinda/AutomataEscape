@@ -110,6 +110,12 @@ namespace UI
             transitionSelection.Setup(_availableTransitionConditions);
         }
 
+        public void ResetAllStatesSize()
+        {
+            startStateUIElement.GetComponent<StateUIElement>().UpdateScaling();
+            _placedStateElements.ForEach(state => state.GetComponent<StateUIElement>().UpdateScaling());
+        }
+
         private void ClearStateChartUI()
         {
             _connectedTransitions.Clear();

@@ -128,14 +128,8 @@ public class InputManager : MonoBehaviour
 
     private void HandlePressRelease(InputAction.CallbackContext context)
     {
-        if (DragEnded != null)
-        {
-            DragEnded.Invoke();
-        }
-        else
-        {
-            _inputReleased = true;
-        }
+        DragEnded?.Invoke();
+        _inputReleased = true;
     }
 
     public Vector2 GetPointerPosition()

@@ -146,6 +146,7 @@ namespace UI
         private void HandleDragEnded()
         {
             InputManager.DragEnded -= HandleDragEnded;
+            _uiManager.ResetAllStatesSize();
             _dragEnded = true;
         }
 
@@ -161,9 +162,10 @@ namespace UI
             _uiManager.ZoomStateChartPanel(_zoomFactor, zoomDelta, zoomCenter);
         }
 
-        private void HandleStatePlaceElementSelected(StateUIElement stateElement)
+        private void HandleStatePlaceElementSelected(StateUIElement stateUIElement)
         {
-            stateElement.SetSizeToSelectedHighlight();
+            stateUIElement.SetSizeToSelectedHighlight();
+            InputManager.DragEnded += HandleDragEnded;
         }
 
         private void HandleStateChartPanelTapped()
