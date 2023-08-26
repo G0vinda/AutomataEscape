@@ -11,8 +11,10 @@ namespace UI
 {
     public class UIInputProcess : MonoBehaviour
     {
-        [SerializeField] private GameObject blockedCellMarkingPrefab;
         [SerializeField] private TransitionSelection transitionSelection;
+        [Header("Blocked Cell Marking")]
+        [SerializeField] private Transform blockedCellMarkingLayer;
+        [SerializeField] private GameObject blockedCellMarkingPrefab;
 
         public Action InputStarted;
         public Action InputEnded;
@@ -210,7 +212,8 @@ namespace UI
             foreach (var blockedCellPosition in blockedCellPositions)
             {
                 var newBlockedCellMarking =
-                    Instantiate(blockedCellMarkingPrefab, blockedCellPosition, Quaternion.identity, transform);
+                    Instantiate(blockedCellMarkingPrefab, blockedCellPosition, Quaternion.identity,
+                        blockedCellMarkingLayer);
                 ((RectTransform)newBlockedCellMarking.transform).sizeDelta =
                     StateUIElement.StateSizeAttributes.StateSize;
                 _blockedCellMarkings.Add(newBlockedCellMarking);

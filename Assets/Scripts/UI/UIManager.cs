@@ -21,6 +21,9 @@ namespace UI
         [SerializeField] private GameObject runButton;
         [SerializeField] private GameObject viewButton;
         [SerializeField] private StateUIElementFactory stateUIElementFactory;
+        [SerializeField] private Transform stateLayer;
+        [SerializeField] private Transform transitionLayer;
+        [SerializeField] private TransitionLine transitionLinePrefab;
 
         public static event Action<bool> ViewStateChanged;
 
@@ -31,6 +34,7 @@ namespace UI
         private Canvas _canvas;
 
         private List<StateUIPlaceElement> _placedStateElements;
+        private Dictionary<StateUIElement, TransitionLine> _connectedTransitionLines;
         private List<LevelData.AvailableStateInfo> _availableStateInfo;
         private List<TransitionCondition> _availableTransitionConditions;
         private bool _stateChartPanelInitialized;
@@ -190,7 +194,7 @@ namespace UI
         public void PlaceStateElementOnGrid(StateUIPlaceElement placeElement, StateChartCell connectedCell)
         {
             _uiGridManager.PlaceStateElementOnCell(placeElement.GetComponent<StateUIElement>(), connectedCell);
-            placeElement.PlaceOnCell(connectedCell, stateChartPanel.transform);
+            placeElement.PlaceOnCell(connectedCell, stateLayer);
             var assignedId = _stateChartManager.AddState(placeElement.GetAction());
             placeElement.SetAssignedId(assignedId);
             _placedStateElements.Add(placeElement);
@@ -201,6 +205,23 @@ namespace UI
                 var sourceState = transitionLine.GetComponentInParent<StateUIElement>();
                 RemoveTransition(sourceState, transitionLine.Condition);
             }
+        }
+
+        public TransitionLine StartNewTransitionLine(StateUIElement stateUIElement, Vector2 position, Color lineColor,
+            Direction direction, TransitionCondition condition)
+        {
+            var newTransitionLine = Instantiate(transitionLinePrefab, position, Quaternion.identity, transitionLayer);
+            newTransitionLine.Initialize(
+                stateUIElement,
+                StateUIElement.StateSizeAttributes.FirstLineElementLength,
+                StateUIElement.StateSizeAttributes.LineElementLength, 
+                StateUIElement.StateSizeAttributes.LineWidth, 
+                lineColor,
+                direction,
+                condition);
+            stateUIElement.AddTransitionLine(newTransitionLine);
+
+            return newTransitionLine;
         }
 
         public void RemoveStateElementFromGrid(StateUIPlaceElement placeElement)

@@ -108,21 +108,9 @@ namespace UI.State
             }
         }
 
-        public TransitionLine CreateFirstTransitionLineElement(Vector2 position, Color lineColor, Direction direction, StateChartManager.TransitionCondition condition)
+        public void AddTransitionLine(TransitionLine newLine)
         {
-            var newTransitionLine = Instantiate(transitionLinePrefab, position, Quaternion.identity, transform);
-            image.transform.SetAsLastSibling(); // Always bring state image to front
-            newTransitionLine.Initialize(
-                StateSizeAttributes.FirstLineElementLength,
-                StateSizeAttributes.LineElementLength, 
-                StateSizeAttributes.LineWidth, 
-                lineColor,
-                direction,
-                condition);
-            
-            _outgoingTransitionLines.Add(newTransitionLine);
-
-            return newTransitionLine;
+            _outgoingTransitionLines.Add(newLine);
         }
 
         public void RemoveTransitionByCondition(StateChartManager.TransitionCondition condition)

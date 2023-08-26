@@ -65,7 +65,6 @@ namespace UI.Transition
             if (sourceCell == hoveredCell)
                 return false;    
             
-            
             var hoveredSubCell = UIGridManager.GetSubCellOnPosition(inputPosition);
             Vector2 drawStartPosition;
             int colorIndex;
@@ -89,7 +88,7 @@ namespace UI.Transition
                     UIGridManager.GetStateBorderPosition(sourceState.transform.position, inputPosition);
                 colorIndex = _numberOfLinesByCondition[CurrentTransitionCondition];
                 lineColor = GetLineColor(CurrentTransitionCondition, colorIndex);
-                CurrentTransitionLine = sourceState.CreateFirstTransitionLineElement(drawStartPosition, lineColor,
+                CurrentTransitionLine = GameManager.Instance.GetUIManager().StartNewTransitionLine(sourceState, drawStartPosition, lineColor,
                     inputDirection, CurrentTransitionCondition);
                 _currentSubCell = UIGridManager.GetNextSubCellInDirection(drawStartPosition, inputDirection, true);
                 _startSubCell = _currentSubCell;
@@ -124,7 +123,7 @@ namespace UI.Transition
             UIGridManager.TryScreenPositionToCellCoordinates(startSubCellPosition, out var startCellCoordinates);
             
             inputDirection = (startCellCoordinates - sourceStateCoordinates).ToDirection();
-            CurrentTransitionLine = sourceState.CreateFirstTransitionLineElement(drawStartPosition, lineColor,
+            CurrentTransitionLine = GameManager.Instance.GetUIManager().StartNewTransitionLine(sourceState, drawStartPosition, lineColor,
                 inputDirection, CurrentTransitionCondition);
 
             inputIsHorizontal = inputDirection == Direction.Left || inputDirection == Direction.Right;

@@ -4,6 +4,7 @@ using DG.Tweening;
 using Helper;
 using Robot;
 using UI.Grid;
+using UI.State;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,6 +41,7 @@ namespace UI.Transition
         public StateChartManager.TransitionCondition Condition { get; private set; }
         
         private List<LineElement> _lineElements = new ();
+        private StateUIElement _stateUIElement;
         private float _elementLength;
         private float _firstElementLength;
         private float _width;
@@ -48,8 +50,9 @@ namespace UI.Transition
         private Color _transparentColor;
 
 
-        public void Initialize(float firstElementLength, float elementLength, float width, Color lineColor, Direction startDirection, StateChartManager.TransitionCondition condition)
+        public void Initialize(StateUIElement stateUIElement, float firstElementLength, float elementLength, float width, Color lineColor, Direction startDirection, StateChartManager.TransitionCondition condition)
         {
+            _stateUIElement = stateUIElement;
             _elementLength = elementLength;
             _firstElementLength = firstElementLength;
             _width = width;
