@@ -74,7 +74,6 @@ namespace UI.Transition
 
             if (UIGridManager.CheckIfSubCellIsAdjacentToCell(sourceCell, inputPosition))
             {
-                Debug.Log("Checking for adjacent start subCell");
                 inputDirection = (hoveredCellCoordinates - sourceStateCoordinates).ToDirection();
                 inputIsHorizontal = inputDirection == Direction.Left || inputDirection == Direction.Right;
 
@@ -107,8 +106,7 @@ namespace UI.Transition
                 SoundPlayer.Instance.PlayCableStart();
                 return true;
             }
-
-            Debug.Log("Checking for startPath");
+            
             var startPath = FindStartPath(hoveredSubCell, sourceCell);
             if (startPath == null)
                 return false;

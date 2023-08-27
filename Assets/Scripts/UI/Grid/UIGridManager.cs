@@ -215,7 +215,7 @@ namespace UI.Grid
             return _gridCells[cellCoordinates].PlacedStateElement;
         }
 
-        private IEnumerable<TransitionLine> GetSubCellTransitionLines(SubCell subCell)
+        public IEnumerable<TransitionLine> GetSubCellTransitionLines(SubCell subCell)
         {
             List<TransitionLine> transitionLines = new List<TransitionLine>();
             if(subCell.BlockingHorizontalLine != null)

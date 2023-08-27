@@ -68,13 +68,11 @@ namespace UI.State
 
         public void SetSizeToDefault() 
         {
-            Debug.Log("SetSizeToDefault called");
             _imageTransform.sizeDelta = StateSizeAttributes.DefaultStateSize;
         }
 
         public void UpdateScaling()
         {
-            Debug.Log("UpdateScaling called");
             var scaleDelta = StateSizeAttributes.StateSize.x / _imageTransform.sizeDelta.x;
             UpdateTransitionLines(scaleDelta);
             _imageTransform.sizeDelta = StateSizeAttributes.StateSize;
@@ -83,13 +81,11 @@ namespace UI.State
 
         public void SetSizeToSelectedHighlight()
         {
-            Debug.Log("Set size to selected");
             _imageTransform.localScale = Vector2.one * SelectedHighlightFactor;
         }
 
         public void SetSizeToDragHighlight()
         {
-            Debug.Log("Set size to dragged");
             _imageTransform.localScale = Vector2.one * DragHighlightFactor;
         }
         

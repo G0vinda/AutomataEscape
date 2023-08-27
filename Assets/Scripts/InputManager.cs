@@ -5,24 +5,21 @@ using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Helper;
+using UI.Grid;
 using UI.State;
 using UI.Transition;
+using UnityEditorInternal;
 
 public class InputManager : MonoBehaviour
 {
     [SerializeField] private float stateDragHoldTime;
     public static event Action<StateUIElement> StateElementSelected;
     public static event Action<StateUIElement> StateElementDragStarted;
-
-    public static event Action StateChartPanelTapped;
-    public static event Action StateChartPanelDragStarted;
-
-    public static event Action<TransitionSelectElement> TransitionElementSelected;
-
+    public static event Action StateChartPanelPressed;
+    public static event Action<TransitionSelectElement> TransitionSelectElementSelected;
     public static event Action<StateUIElement> TransitionLineDragStarted;
-
     public static event Action DragEnded;
-
+    public static event Action InputOutsideOfDeleteButton;
     public static event Action<float, Vector2> ZoomInputChanged;
 
     private UIInput _uiInput;
@@ -56,20 +53,28 @@ public class InputManager : MonoBehaviour
     private void HandlePress(InputAction.CallbackContext context)
     {
         _inputReleased = false;
+        var deleteButtonWasPressed = false;
         ProcessInputOverElement(
             _uiInput.DragAndSelect.Position.ReadValue<Vector2>(),
+            () =>
+            {
+                deleteButtonWasPressed = true;
+            },
             state =>
             {
                 StartCoroutine(ProcessStatePress(state));
             },
             transitionSelect =>
             {
-                TransitionElementSelected?.Invoke(transitionSelect);
+                TransitionSelectElementSelected?.Invoke(transitionSelect);
             },
             () =>
             {
-                StartCoroutine(ProcessPanelPress());
+                StateChartPanelPressed?.Invoke();
             });
+        
+        if(!deleteButtonWasPressed)
+            InputOutsideOfDeleteButton?.Invoke();
     }
 
     private IEnumerator ProcessStatePress(StateUIElement selectedStateElement)
@@ -106,26 +111,6 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ProcessPanelPress()
-    {
-        while (true)
-        {
-            if (_inputReleased) // Player input was tap
-            {
-                StateChartPanelTapped?.Invoke();
-                break;
-            }
-            
-            if(_uiInput.DragAndSelect.PositionDelta.ReadValue<Vector2>() != Vector2.zero)
-            {
-                StateChartPanelDragStarted?.Invoke();
-                break;
-            }
-            
-            yield return null;
-        }
-    }
-
     private void HandlePressRelease(InputAction.CallbackContext context)
     {
         DragEnded?.Invoke();
@@ -150,8 +135,9 @@ public class InputManager : MonoBehaviour
         var midPoint = HelperFunctions.GetMidpointOfVectors(fingerOnePosition, fingerTwoPosition);
         ProcessInputOverElement(
             midPoint,
-            state => { },
-            transition => { },
+        () => { },
+        state => { },
+            transitionSelect => { },
             () => { StartCoroutine(HandleTouchZoom(midPoint)); });
     }
 
@@ -198,8 +184,9 @@ public class InputManager : MonoBehaviour
 
     private void ProcessInputOverElement(
         Vector2 inputPosition,
+        Action transitionDeleteAction,
         Action<StateUIElement> inputOverStateAction,
-        Action<TransitionSelectElement> inputOverTransitionAction,
+        Action<TransitionSelectElement> inputOverTransitionSelectAction,
         Action inputOverPanelAction)
     {
         var raycastResults = HelperFunctions.GetRaycastResultsOnPosition(inputPosition);
@@ -207,6 +194,12 @@ public class InputManager : MonoBehaviour
 
         foreach (var raycastResult in raycastResults)
         {
+            if (raycastResult.gameObject.CompareTag("TransitionDeleteButton"))
+            {
+                transitionDeleteAction();
+                return;
+            }
+            
             if (raycastResult.gameObject.CompareTag("StateUIElement"))
             {
                 var stateUIElement = raycastResult.gameObject.GetComponentInParent<StateUIElement>();
@@ -216,7 +209,7 @@ public class InputManager : MonoBehaviour
 
             if (raycastResult.gameObject.TryGetComponent<TransitionSelectElement>(out var transitionSelectElement))
             {
-                inputOverTransitionAction(transitionSelectElement);
+                inputOverTransitionSelectAction(transitionSelectElement);
                 return;
             }
 

@@ -15,6 +15,7 @@ TagManager:
   - OrangeTile
   - PurpleTile
   - Portal
+  - TransitionDeleteButton
   layers:
   - Default
   - TransparentFX

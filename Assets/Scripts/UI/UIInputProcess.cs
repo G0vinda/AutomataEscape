@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
+using System.Linq;
 using Lofelt.NiceVibrations;
 using Robot;
 using UI.Grid;
@@ -12,6 +14,8 @@ namespace UI
     public class UIInputProcess : MonoBehaviour
     {
         [SerializeField] private TransitionSelection transitionSelection;
+        [SerializeField] private float transitionLineSelectionTime;
+        [SerializeField] private GameObject transitionDeleteButtonPrefab;
         [Header("Blocked Cell Marking")]
         [SerializeField] private Transform blockedCellMarkingLayer;
         [SerializeField] private GameObject blockedCellMarkingPrefab;
@@ -25,9 +29,15 @@ namespace UI
         private UIGridManager _uiGridManager;
 
         private UIInputPhase _inputPhase;
-
+        
         private bool _dragEnded;
         private Vector2 _previousDragPosition;
+        
+        // Variables for selecting and deleting TransitionLines
+        private SubCell _previousHoveredSubCell;
+        private float _transitionLineSelectionTimer;
+        private TransitionLine _selectedTransitionLine;
+        private GameObject _activeTransitionDeleteButton;
 
         // Variables for dragging state element
         private StateUIPlaceElement _selectedDragStateElement;
@@ -50,25 +60,32 @@ namespace UI
 
         private void OnEnable()
         {
-            InputManager.StateElementSelected += HandleStatePlaceElementSelected;
-            InputManager.StateChartPanelTapped += HandleStateChartPanelTapped;
-            InputManager.StateElementDragStarted += HandleStatePlaceElementDragStart;
-            InputManager.StateChartPanelDragStarted += HandleStateChartPanelDragStart;
-            InputManager.TransitionLineDragStarted += HandleTransitionLineDragStart;
-            InputManager.TransitionElementSelected += HandleTransitionSelected;
-            InputManager.ZoomInputChanged += ProcessZoom;
-
+            ListenToInputEvents();
             _inputPhase = UIInputPhase.WaitingForInput;
         }
 
+        private void ListenToInputEvents()
+        {
+            InputManager.StateElementSelected += HandleStatePlaceElementSelected;
+            InputManager.StateElementDragStarted += HandleStatePlaceElementDragStart;
+            InputManager.StateChartPanelPressed += HandleStateChartPanelDragStart;
+            InputManager.TransitionLineDragStarted += HandleTransitionLineDragStart;
+            InputManager.TransitionSelectElementSelected += HandleTransitionSelectElementSelected;
+            InputManager.ZoomInputChanged += ProcessZoom;
+        }
+        
         private void OnDisable()
         {
+            StopListeningToInputEvents();
+        }
+
+        private void StopListeningToInputEvents()
+        {
             InputManager.StateElementSelected -= HandleStatePlaceElementSelected;
-            InputManager.StateChartPanelTapped -= HandleStateChartPanelTapped;
             InputManager.StateElementDragStarted -= HandleStatePlaceElementDragStart;
-            InputManager.StateChartPanelDragStarted -= HandleStateChartPanelDragStart;
+            InputManager.StateChartPanelPressed -= HandleStateChartPanelDragStart;
             InputManager.TransitionLineDragStarted -= HandleTransitionLineDragStart;
-            InputManager.TransitionElementSelected -= HandleTransitionSelected;
+            InputManager.TransitionSelectElementSelected -= HandleTransitionSelectElementSelected;
             InputManager.ZoomInputChanged -= ProcessZoom;
         }
 
@@ -128,6 +145,34 @@ namespace UI
                     }
 
                     break;
+                case UIInputPhase.StartSelectingTransitionLine:
+                    if(_dragEnded)
+                        ChangeInputPhase(UIInputPhase.WaitingForInput);
+
+                    var hoveredSubCell = _uiGridManager.GetSubCellOnPosition(_inputManager.GetPointerPosition());
+                    if (hoveredSubCell != _previousHoveredSubCell)
+                    {
+                        ChangeInputPhase(UIInputPhase.DraggingStateChart);
+                        break;
+                    }
+                    
+                    _transitionLineSelectionTimer -= Time.deltaTime;
+                    if (_transitionLineSelectionTimer <= 0)
+                    {
+                        _selectedTransitionLine.Highlight();
+                        CreateTransitionDeleteButton();
+                            
+                        TransitionDeleteButton.ButtonPressed += HandleTransitionDeleteButtonPressed;
+                        InputManager.InputOutsideOfDeleteButton += ExitDeleteState;
+                        StopListeningToInputEvents();
+                        
+                        ChangeInputPhase(UIInputPhase.WaitingForDeleteButton);
+                    }
+                    
+                    break;
+                case UIInputPhase.WaitingForDeleteButton:
+                    // meant to be empty
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -140,8 +185,7 @@ namespace UI
 
             if (_inputPhase != UIInputPhase.WaitingForInput && newPhase == UIInputPhase.WaitingForInput)
                 InputEnded?.Invoke();
-
-            Debug.Log($"Input got to {newPhase.ToString()} phase.");
+            
             _inputPhase = newPhase;
         }
 
@@ -168,11 +212,6 @@ namespace UI
         {
             stateUIElement.SetSizeToSelectedHighlight();
             InputManager.DragEnded += HandleDragEnded;
-        }
-
-        private void HandleStateChartPanelTapped()
-        {
-            // Todo: some features could be implemented here
         }
 
         private void HandleTransitionLineDragStart(StateUIElement stateElement)
@@ -223,14 +262,69 @@ namespace UI
         private void HandleStateChartPanelDragStart()
         {
             InputManager.DragEnded += HandleDragEnded;
+            var hoveredSubCell = _uiGridManager.GetSubCellOnPosition(_inputManager.GetPointerPosition());
+            if (hoveredSubCell != null)
+            {
+                _previousHoveredSubCell = hoveredSubCell;
+                _selectedTransitionLine = CheckForTransitionLine(hoveredSubCell);
+                if (_selectedTransitionLine != null)
+                {
+                    _transitionLineSelectionTimer = transitionLineSelectionTime;
+                    ChangeInputPhase(UIInputPhase.StartSelectingTransitionLine);
+                    return;
+                }
+            }
             ChangeInputPhase(UIInputPhase.DraggingStateChart);
             _previousDragPosition = _inputManager.GetPointerPosition();
         }
 
-        private void HandleTransitionSelected(TransitionSelectElement transitionSelectElement)
+        private TransitionLine CheckForTransitionLine(SubCell subCell)
+        {
+            var selectedTransitionLines = _uiGridManager.GetSubCellTransitionLines(subCell).ToList();
+            if (selectedTransitionLines.Any())
+            {
+                if (selectedTransitionLines.Count() > 1)
+                {
+                    var line0 = selectedTransitionLines.ElementAt(0);
+                    var line1 = selectedTransitionLines.ElementAt(1);
+                    return line0.transform.GetSiblingIndex() > line1.transform.GetSiblingIndex() ? line0 : line1;
+                }
+
+                return selectedTransitionLines.ElementAt(0);
+            }
+
+            return null;
+        }
+
+        private void HandleTransitionSelectElementSelected(TransitionSelectElement transitionSelectElement)
         {
             SoundPlayer.Instance.PlayCableSelect();
             transitionSelection.SelectTransitionCondition(transitionSelectElement.Condition);
+        }
+
+        private void CreateTransitionDeleteButton()
+        {
+            var buttonOffset = new Vector2(0, 20f);
+            var buttonPosition = _inputManager.GetPointerPosition() + buttonOffset;
+            _activeTransitionDeleteButton = Instantiate(transitionDeleteButtonPrefab, buttonPosition,
+                Quaternion.identity, transform);
+        }
+
+        private void HandleTransitionDeleteButtonPressed()
+        {
+            ExitDeleteState();
+            _uiManager.RemoveTransition(_selectedTransitionLine.stateUIElement, _selectedTransitionLine.Condition);
+        }
+
+        private void ExitDeleteState()
+        {
+            _selectedTransitionLine.RemoveHighlight();
+            Destroy(_activeTransitionDeleteButton);
+
+            TransitionDeleteButton.ButtonPressed -= HandleTransitionDeleteButtonPressed;
+            InputManager.InputOutsideOfDeleteButton -= ExitDeleteState;
+            ListenToInputEvents();
+            ChangeInputPhase(UIInputPhase.WaitingForInput);
         }
 
         private bool StartDrawTransitionLine(Vector2 inputPosition)
@@ -337,6 +431,8 @@ namespace UI
             WaitingForInput,
             DraggingStateElement,
             DraggingStateChart,
+            StartSelectingTransitionLine,
+            WaitingForDeleteButton,
             InitiateTransitionLineDraw,
             DrawingTransitionLine,
         }

@@ -37,22 +37,27 @@ namespace UI.Transition
         [SerializeField] private float transparencyValue;
         [SerializeField] private float fadeInTime;
         [SerializeField] private float fadeOutTime;
+        [SerializeField] private TransitionLine transitionLinePrefab;
+        [SerializeField] private Color highlightLineColor;
+        [SerializeField] private float highlightLineSizeFactor;
 
         public StateChartManager.TransitionCondition Condition { get; private set; }
+        public StateUIElement stateUIElement;
         
         private List<LineElement> _lineElements = new ();
-        private StateUIElement _stateUIElement;
         private float _elementLength;
         private float _firstElementLength;
         private float _width;
         private RectTransform _plugTransform;
         private Color _solidColor;
         private Color _transparentColor;
+        private List<SubCell> _currentPath;
+        private TransitionLine _highlightLine;
 
 
         public void Initialize(StateUIElement stateUIElement, float firstElementLength, float elementLength, float width, Color lineColor, Direction startDirection, StateChartManager.TransitionCondition condition)
         {
-            _stateUIElement = stateUIElement;
+            this.stateUIElement = stateUIElement;
             _elementLength = elementLength;
             _firstElementLength = firstElementLength;
             _width = width;
@@ -63,11 +68,37 @@ namespace UI.Transition
             _transparentColor = _solidColor;
             _transparentColor.a = transparencyValue;
             color = _transparentColor;
+            
             UpdateGeometry();
+        }
+
+        public void Highlight()
+        {
+            _highlightLine = Instantiate(transitionLinePrefab, transform.position, Quaternion.identity,
+                transform.parent);
+            _highlightLine.Initialize(
+                null,
+                _firstElementLength,
+                _elementLength,
+                _width * highlightLineSizeFactor,
+                highlightLineColor,
+                _lineElements[0].Direction,
+                StateChartManager.TransitionCondition.Default
+                );
+            _highlightLine.ParsePathToCreateLine(_currentPath);
+            transform.SetAsLastSibling();
+            _plugTransform.localScale = highlightLineSizeFactor * Vector3.one;
+        }
+
+        public void RemoveHighlight()
+        {
+            Destroy(_highlightLine.gameObject);
+            _plugTransform.localScale = Vector3.one;
         }
 
         public void ParsePathToCreateLine(List<SubCell> path)
         {
+            _currentPath = path;
             _lineElements.RemoveRange(1, _lineElements.Count - 1);
             
             for (var i = 0; i < path.Count - 1; i++)
@@ -78,6 +109,7 @@ namespace UI.Transition
                 var direction = distance.ToDirection();
                 _lineElements.Add(CreateLineElement(direction, _lineElements[^1]));
             }
+            
             UpdateGeometry();
         }
 
