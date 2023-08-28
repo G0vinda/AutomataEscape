@@ -18,11 +18,27 @@ namespace Robot.States
         public override Status ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
         {
             animation = null;
+            
             if (LevelGridManager.CheckIfWayIsBlocked(coordinates, direction))
-                return Status.Running;
+            {
+                var bumpIntoWallTime = 0.2f;
+                var bumpRetreatTime = 0.4f;
+                var bumpDistance = 0.9f * (Vector2)direction.ToVector2Int();
+                var robotStartPosition = _robotTransform.position;
+                var bumpPosition = robotStartPosition + (Vector3)bumpDistance;
 
-            coordinates += direction.ToVector2Int();
+                var animationSequence = DOTween.Sequence();
+                animationSequence.Append(_robotTransform.DOMove(bumpPosition, bumpIntoWallTime)
+                    .SetEase(Ease.InCubic));
+                animationSequence.Append(_robotTransform.DOMove(robotStartPosition, bumpRetreatTime)
+                    .SetEase(Ease.OutSine));
+                animation = animationSequence;
+                   
+                return Status.Running;    
+            }
+            
             var moveTime = 0.6f;
+            coordinates += direction.ToVector2Int();
             animation = _robotTransform.DOMove(LevelGridManager.Grid[coordinates].transform.position, moveTime).SetEase(Ease.InOutSine);
             SpriteChanger.GoForward();
             SpriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
