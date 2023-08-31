@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccc81209cdc05224d8609d6263d973e8, type: 3}
   m_Name: TurnRightState
   m_EditorClassIdentifier: 
-  sprite: {fileID: -1976137787, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
-  inactiveSprite: {fileID: -1279565096, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
-  pinSprite: {fileID: 314903776, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
+  sprite: {fileID: -153410031, guid: 4701d73bfbd66e64b9d029f97968accf, type: 3}
+  inactiveSprite: {fileID: -1270737886, guid: 4701d73bfbd66e64b9d029f97968accf, type: 3}
   action: 2

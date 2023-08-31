@@ -1576,7 +1576,7 @@ PrefabInstance:
     - target: {fileID: 1154911016439845960, guid: dfaca3cbe223b634ab8412fdf18eb182, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -1608813874, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
+      objectReference: {fileID: -293024684, guid: 4701d73bfbd66e64b9d029f97968accf, type: 3}
     - target: {fileID: 1154911016439845960, guid: dfaca3cbe223b634ab8412fdf18eb182, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -4541,7 +4541,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 428131f9a09df6a48841fdfde1b79dd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startStateSprite: {fileID: -1608813874, guid: 7ed0579c9a8339746a020e3ff99c1491, type: 3}
+  startStateSprite: {fileID: -293024684, guid: 4701d73bfbd66e64b9d029f97968accf, type: 3}
   stateUIData:
   - {fileID: 11400000, guid: 9a3065a5844f6704d99c912620ca3cd7, type: 2}
   - {fileID: 11400000, guid: 6bc3645540333f841a53e29483f7e4b4, type: 2}

@@ -32,13 +32,11 @@ namespace UI
 
         public void SfxSliderChanged(float newVolume)
         {
-            Debug.Log($"New SFXVolume is: {newVolume}");
             SoundPlayer.Instance.UpdateSfxVolume(newVolume);
         }
 
         public void MusicSliderChanged(float newVolume)
         {
-            Debug.Log($"New Music Volume is: {newVolume}");
             SoundPlayer.Instance.UpdateMusicVolume(newVolume);
         }
     }
