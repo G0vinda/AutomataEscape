@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public static event Action<float> BeamRobotIn;
     public static event Action<float> BeamRobotOut;
 
+    private const int MenuSceneIndex = 0;
     private const int LevelSelectionSceneIndex = 1;
     private const int FinishSceneIndex = 3;
     
@@ -72,6 +73,13 @@ public class GameManager : MonoBehaviour
     public LevelGridManager GetLevelGridManager()
     {
         return levelGridManager;
+    }
+
+    public void ReturnToMainMenu()
+    {
+        SoundPlayer.Instance.PlayMusicMenu();
+        SoundPlayer.Instance.StopAtmoLevel();
+        SceneManager.LoadScene(MenuSceneIndex);
     }
 
     public bool IsKeyOnCoordinates(Vector2Int coordinates)

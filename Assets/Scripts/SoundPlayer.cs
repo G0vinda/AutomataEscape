@@ -1,3 +1,4 @@
+using System;
 using FMOD.Studio;
 using FMODUnity;
 using UI;
@@ -45,6 +46,9 @@ public class SoundPlayer : MonoBehaviour
     
     public static SoundPlayer Instance;
 
+    private Bus Music;
+    private Bus SFX;
+
     private EventInstance _musicInstance;
     private EventInstance _cableHoldInstance;
     private EventInstance _atmoInstance;
@@ -63,6 +67,8 @@ public class SoundPlayer : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            Music = RuntimeManager.GetBus("bus:/MusicMix");
+            SFX = RuntimeManager.GetBus("bus:/Sounds");
         }
         else
         {
@@ -83,6 +89,16 @@ public class SoundPlayer : MonoBehaviour
         UIManager.ViewStateChanged -= HandleViewStateChanged;
     }
     #endregion
+
+    public void UpdateSfxVolume(float newVolume)
+    {
+        SFX.setVolume(newVolume);
+    }
+
+    public void UpdateMusicVolume(float newVolume)
+    {
+        Music.setVolume(newVolume);
+    }
 
     private void HandleRobotStateChanged(bool startsWalking)
     {

@@ -17,7 +17,6 @@ namespace UI
         [SerializeField] private TransitionSelection transitionSelection;
         [SerializeField] private StartStateUIElement startStateUIElement;
         [SerializeField] private StateChartPanel stateChartPanel;
-        [SerializeField] private GameObject menuButton;
         [SerializeField] private GameObject runButton;
         [SerializeField] private GameObject viewButton;
         [SerializeField] private StateUIElementFactory stateUIElementFactory;
@@ -52,12 +51,6 @@ namespace UI
         {
             StateChartManager.StateIsActive -= SetStateImageToActive;
             StateChartManager.StateIsInactive -= SetStateImageToInactive;
-
-            if (_inputProcess == null) 
-                return;
-            
-            _inputProcess.InputStarted -= SetMenuButtonToInactive;
-            _inputProcess.InputEnded -= SetMenuButtonToActive;
         }
 
         public void Initialize()
@@ -69,9 +62,6 @@ namespace UI
             _uiGridManager = stateChartPanel.GetComponent<UIGridManager>();
             TransitionLineDrawer.UIGridManager = _uiGridManager;
             _placedStateElements = new List<StateUIPlaceElement>();
-
-            _inputProcess.InputStarted += SetMenuButtonToInactive;
-            _inputProcess.InputEnded += SetMenuButtonToActive;
         }
 
         public void SetupUIForLevel(List<LevelData.AvailableStateInfo> availableStateInfo,
@@ -128,9 +118,14 @@ namespace UI
             startStateUIElement.RemoveDefaultTransitionLine();
         }
 
-        public void ToggleUI()
+        public void PlayButtonClick()
         {
             SoundPlayer.Instance.PlayButtonClick();
+        }
+
+        public void ToggleUI()
+        {
+            
             if (_uiActive)
             {
                 SwitchToLevelView();
@@ -174,7 +169,6 @@ namespace UI
         public void SetButtonsActive(bool active)
         {
             runButton.SetActive(active);
-            menuButton.SetActive(active);
             viewButton.SetActive(active);
         }
 
@@ -289,16 +283,6 @@ namespace UI
         public float ScaleFloat(float scaledFloat)
         {
             return scaledFloat * _canvas.scaleFactor;
-        }
-
-        public void SetMenuButtonToInactive()
-        {
-            menuButton.SetActive(false);
-        }
-        
-        public void SetMenuButtonToActive()
-        {
-            menuButton.SetActive(true);
         }
     }
 }

@@ -369,8 +369,6 @@ namespace LevelGrid
                 _ => 4
             };
 
-            Debug.Log($"Seed is (x: {x},y: {y}), RandomValue is {random2} => WallId is {wallId}");
-
             return wallId;
         }
 
