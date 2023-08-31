@@ -1206,7 +1206,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d55d736d86134fd9ba6579490c6827ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  solidWallPrefab: {fileID: 722756559696109042, guid: 4b917f5e4cdbf964aa07bc0165f38af5, type: 3}
+  solidWallPrefab:
+  - {fileID: 722756559696109042, guid: 4b917f5e4cdbf964aa07bc0165f38af5, type: 3}
+  - {fileID: 2822931060506264684, guid: 1f0ea55449cfbfd48b27fb138b7c25ab, type: 3}
+  - {fileID: 2822931060506264684, guid: 68ebf5419af66924ab9a1c4095018007, type: 3}
+  - {fileID: 2822931060506264684, guid: 279dc59819d79e645a5370523a70ea50, type: 3}
+  - {fileID: 2822931060506264684, guid: 4adb4495c06547f4e98e8d20138224e5, type: 3}
   transparentWallPrefab: {fileID: 9199002141134467628, guid: e94ef0f81746ea84cbf47a9e6be90c5e, type: 3}
   rightWallPrefab: {fileID: 333017306851345668, guid: a20c46db9f10b264eaebc8b2bfafecbe, type: 3}
   leftWallPrefab: {fileID: 212971451347235682, guid: a67575e7ab2b4864b866ece1a9c68d29, type: 3}

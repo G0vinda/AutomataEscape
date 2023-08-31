@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace LevelGrid
@@ -6,7 +7,7 @@ namespace LevelGrid
     public class WallBuilder : MonoBehaviour
     {
         [Header("WallPrefabs")] 
-        [SerializeField] private GameObject solidWallPrefab;
+        [SerializeField] private List<GameObject> solidWallPrefab;
         [SerializeField] private GameObject transparentWallPrefab;
         [SerializeField] private GameObject rightWallPrefab;
         [SerializeField] private GameObject leftWallPrefab;
@@ -64,7 +65,7 @@ namespace LevelGrid
                     var currentCoordinates = new Vector2Int(x, y);
                     if (!grid.ContainsKey(currentCoordinates))
                     {
-                        CreateWallOnEmptyTile(currentCoordinates, grid);
+                        CreateWallOnEmptyTile(currentCoordinates, grid, xMax, yMax);
                     }
                 }
             }
@@ -85,7 +86,7 @@ namespace LevelGrid
                         CreateLowerConnectorWall(borderCoordinates, true);
                 }
 
-                CreateUpperWall(borderCoordinates);
+                CreateUpperWall(borderCoordinates, xMax, yMax);
                 if (!grid.ContainsKey(borderCoordinates + Vector2Int.right))
                     CreateUpperConnectorWall(borderCoordinates, true);
 
@@ -170,7 +171,7 @@ namespace LevelGrid
             }
         }
 
-        private void CreateWallOnEmptyTile(Vector2Int coordinates, Dictionary<Vector2Int, GameObject> grid)
+        private void CreateWallOnEmptyTile(Vector2Int coordinates, Dictionary<Vector2Int, GameObject> grid, int xMax, int yMax)
         {
             var upperTileExists =
                 grid.ContainsKey(coordinates + Vector2Int.up);
@@ -312,7 +313,7 @@ namespace LevelGrid
                 var lowerCoordinates = coordinates + Vector2Int.down;
 
                 // Create lower wall 
-                CreateUpperWall(lowerCoordinates);
+                CreateUpperWall(lowerCoordinates, xMax, yMax);
                 if (!grid.ContainsKey(lowerCoordinates + Vector2Int.left))
                     CreateUpperConnectorWall(lowerCoordinates, false);
 
@@ -341,12 +342,36 @@ namespace LevelGrid
             }
         }
 
-        private void CreateUpperWall(Vector2Int coordinates)
+        private void CreateUpperWall(Vector2Int coordinates, int xMax, int yMax)
         {
             var topWallPosition = CoordinatesToPosition(coordinates) +
                                   _tileSize * Vector2.up * 0.5f;
-            var newWall = InstantiateWall(solidWallPrefab, topWallPosition);
+
+            var wallId = GetRandomUpperWallId( coordinates, xMax, yMax);
+            var newWall = InstantiateWall(solidWallPrefab[wallId], topWallPosition);
             AdjustWallSpriteLayer(newWall, coordinates, -1);
+        }
+
+        private int GetRandomUpperWallId(Vector2Int coordinates, int xMax, int yMax)
+        {
+            var levelSeed = xMax / 35f + yMax / 55f;
+            var x = coordinates.y + coordinates.x / (float)xMax + xMax / 40f;
+            var y = (yMax - coordinates.y + coordinates.x) / (float)yMax + yMax / 40f;
+            var random1 = Mathf.PerlinNoise(x, y);
+            var random2 = Mathf.PerlinNoise(random1, levelSeed);
+
+            int wallId = random2 switch
+            {
+                < 0.4f => 0,
+                < 0.525f => 1,
+                < 0.65f => 2,
+                < 0.725f => 3,
+                _ => 4
+            };
+
+            Debug.Log($"Seed is (x: {x},y: {y}), RandomValue is {random2} => WallId is {wallId}");
+
+            return wallId;
         }
 
         private void CreateRightWall(Vector2Int coordinates)
