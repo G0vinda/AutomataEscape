@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject blueKeyPrefab;
     [SerializeField] private Enemy.Enemy enemyPrefab;
     [SerializeField] private CurrentStateIndicator currentStateIndicator;
+    [SerializeField] private LevelInfoText levelInfoText;
     [SerializeField] private Image levelFadeImage;
     [SerializeField] private Color levelFadeColor;
     [SerializeField] private float levelFadeTime;
@@ -190,6 +191,7 @@ public class GameManager : MonoBehaviour
         BeamRobotIn?.Invoke(levelBeamTime);
         _stateChartManager = _robot.GetComponent<StateChartManager>();
         PositionRobotInLevel(level);
+        levelInfoText.ShowLevelInfo(levelId);
 
         TransitionLineDrawer.ResetColors();
         uiManager.SetupUIForLevel(level.AvailableActions, level.AvailableTransitionConditions, _stateChartManager);
