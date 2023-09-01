@@ -1,6 +1,7 @@
 using System;
 using DG.Tweening;
 using TMPro;
+using UI.State;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,8 +11,11 @@ namespace UI
     {
         [SerializeField] private Sprite runSprite;
         [SerializeField] private Sprite stopSprite;
-        [SerializeField] private float errorEffectTime; 
-        
+        [SerializeField] private StartStateUIElement startStateUIElement;
+        [Header("Error effect values")]
+        [SerializeField] private float errorEffectTime;
+        [SerializeField] private float errorEffectShakeStrength;
+         
         private Image _image;
         private Color _defaultColor;
         private bool _errorEffectShowing;
@@ -40,12 +44,13 @@ namespace UI
                 return;
             
             _errorEffectShowing = true;
-            Debug.Log("Invalid event was triggered");
             var errorSequence = DOTween.Sequence();
-            errorSequence.Append(transform.DOShakePosition(errorEffectTime, 30f));
+            errorSequence.Append(transform.DOShakePosition(errorEffectTime, errorEffectShakeStrength));
             errorSequence.Join(
                 DOVirtual.Color(Color.red, _defaultColor, errorEffectTime, value => _image.color = value));
             errorSequence.SetEase(Ease.OutQuad).OnComplete(() => { _errorEffectShowing = false; });
+
+            startStateUIElement.PlayErrorEffect(errorEffectTime);
         }
 
         private void ChangeImage(bool isRunning)

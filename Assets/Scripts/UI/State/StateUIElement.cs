@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Robot;
@@ -47,6 +48,9 @@ namespace UI.State
         public Image image;
         public int AssignedId { get; set; }
         public StateChartCell ConnectedCell { get; set; }
+
+        public event Action TransitionLineAdded;
+        public event Action LastTransitionLineRemoved;
 
         private const float SelectedHighlightFactor = 1.08f;
         private const float DragHighlightFactor = 1.15f; 
@@ -107,6 +111,7 @@ namespace UI.State
         public void AddTransitionLine(TransitionLine newLine)
         {
             _outgoingTransitionLines.Add(newLine);
+            TransitionLineAdded?.Invoke();
         }
 
         public void RemoveTransitionByCondition(StateChartManager.TransitionCondition condition)
@@ -119,6 +124,8 @@ namespace UI.State
         {
             _outgoingTransitionLines.Remove(transitionLine);
             transitionLine.FadeColorToDestroy();
+            if(_outgoingTransitionLines.Count == 0)
+                LastTransitionLineRemoved?.Invoke();
         }
     }
 }
