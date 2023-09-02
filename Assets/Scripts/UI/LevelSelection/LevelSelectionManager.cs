@@ -1,23 +1,23 @@
 using System;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace UI.LevelSelection
 {
     public class LevelSelectionManager : MonoBehaviour
     {
         [SerializeField] private LevelSelectionButton[] selectionButtons;
-        [SerializeField] private LineRenderer line;
-        [SerializeField] private int testReachedLevel;
+        [SerializeField] private ScrollRect scrollRect;
 
         private const int MainSceneIndex = 2;
 
         private void Start()
         {
-            //PlayerPrefs.SetInt("ReachedLevelId", testReachedLevel);
             var reachedLevel = PlayerPrefs.GetInt("ReachedLevelId", 0);
-            
+            var markedButtonPosition = selectionButtons[reachedLevel].transform.position;
+            AlignScrollContentToPosition(markedButtonPosition.x);
+
             for (var i = 0; i < selectionButtons.Length; i++)
             {
                 if (i <= reachedLevel)
@@ -31,10 +31,13 @@ namespace UI.LevelSelection
                 
                 selectionButtons[i].SetMarking(i == reachedLevel);
             }
+        }
 
-            var selectionButtonPositions = selectionButtons.Select(button => button.transform.position).ToArray();
-            line.positionCount = selectionButtonPositions.Length;
-            line.SetPositions(selectionButtonPositions);
+        private void AlignScrollContentToPosition(float xValue)
+        {
+            var contentWidth = GetComponent<RectTransform>().sizeDelta.x;
+            var halfContentWidth = contentWidth * 0.5f;
+            scrollRect.horizontalNormalizedPosition = xValue / contentWidth;
         }
 
         public void LoadLevel(LevelSelectionButton selectionButton)

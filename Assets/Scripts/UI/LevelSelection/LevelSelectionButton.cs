@@ -1,14 +1,13 @@
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace UI.LevelSelection
 {
     public class LevelSelectionButton : MonoBehaviour
     {
-        [SerializeField] private Color unlockedColor;
-        [SerializeField] private Color lockedColor;
-        [SerializeField] private SpriteRenderer buttonSpriteRenderer;
+        [SerializeField] private Button button;
         [SerializeField] private GameObject marking;
 
         private LevelSelectionManager _levelSelectionManager;
@@ -22,13 +21,13 @@ namespace UI.LevelSelection
         public void Lock()
         {
             _locked = true;
-            buttonSpriteRenderer.color = lockedColor;
+            button.interactable = false;
         }
 
         public void Unlock()
         {
             _locked = false;
-            buttonSpriteRenderer.color = unlockedColor;
+            button.interactable = true;
         }
 
         public void SetMarking(bool value)
@@ -36,11 +35,8 @@ namespace UI.LevelSelection
             marking.SetActive(value);   
         }
 
-        private void OnMouseDown()
+        public void OnClick()
         {
-            if (_locked)
-                return;
-
             _levelSelectionManager.LoadLevel(this);
         }
     }
