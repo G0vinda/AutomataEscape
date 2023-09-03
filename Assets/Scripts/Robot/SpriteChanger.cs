@@ -10,9 +10,20 @@ namespace Robot
 {
     public class SpriteChanger : MonoBehaviour
     {
-        [SerializeField] private Animator animator;
-        
-        [Header("RobotSprites")]
+        [Header("Animators")] 
+        [SerializeField] private Animator headGateAnimator;
+        [SerializeField] private Animator headAnimator;
+        [SerializeField] private Animator bodyAnimator;
+
+        [Header("SpriteRenderers")] 
+        [SerializeField] private SpriteRenderer headGateSpriteRenderer;
+        [SerializeField] private SpriteRenderer headSpriteRenderer;
+        [SerializeField] private SpriteRenderer bodySpriteRenderer;
+
+        [Header("RobotHeadSprites")] 
+        [SerializeField] private Sprite offHeadSprite; 
+            
+        [Header("RobotBodySprites")]
         [SerializeField] private Sprite upRobot;
         [SerializeField] private Sprite sideRobot;
         [SerializeField] private Sprite downRobot;
@@ -36,10 +47,20 @@ namespace Robot
         private Sprite upSprite;
         private Sprite sideSprite;
         private Sprite downSprite;
-
-        private SpriteRenderer _spriteRenderer;
+        
         private LevelGridManager.KeyType _keyState;
         private Direction _direction;
+
+        private int _robotStartUpHash;
+        private int _robotShutDownHash;
+        private int _robotOffHash;
+        
+        private int _robotHeadOpenFrontHash;
+        private int _robotHeadOpenSideHash;
+        private int _robotHeadCloseFrontHash;
+        private int _robotHeadCloseSideHash;
+        private int _robotHeadIsClosedFront;
+        private int _robotHeadIsClosedSide;
 
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _idleAnimations;
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _moveAnimations;
@@ -47,7 +68,21 @@ namespace Robot
 
         private void Awake()
         {
-            _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            // Head animations
+
+            _robotStartUpHash = Animator.StringToHash("RobotStartUp");
+            _robotShutDownHash = Animator.StringToHash("RobotShutDown");
+            _robotOffHash = Animator.StringToHash("RobotOff");
+
+            _robotHeadOpenFrontHash = Animator.StringToHash("RobotHeadOpenFront");
+            _robotHeadOpenSideHash = Animator.StringToHash("RobotHeadOpenSide");
+            _robotHeadCloseFrontHash = Animator.StringToHash("RobotHeadCloseFront");
+            _robotHeadCloseSideHash = Animator.StringToHash("RobotHeadCloseSide");
+            _robotHeadIsClosedFront = Animator.StringToHash("RobotHeadIsClosedFront");
+            _robotHeadIsClosedSide = Animator.StringToHash("RobotHeadIsClosedSide");
+            
+            // Body animations
+            
             _idleAnimations = new Dictionary<(Direction, LevelGridManager.KeyType), int>()
             {
                 { (Direction.Up, LevelGridManager.KeyType.None), Animator.StringToHash("IdleUp") },
@@ -199,6 +234,92 @@ namespace Robot
         }
         
         #endregion
+        
+        public void SetSpriteSortingOrder(int sortingOrder)
+        {
+            bodySpriteRenderer.sortingOrder = sortingOrder;
+            headSpriteRenderer.sortingOrder = sortingOrder + 1;
+            headGateSpriteRenderer.sortingOrder = sortingOrder + 2;
+            frontParticles.GetComponent<Renderer>().sortingOrder = sortingOrder + 1;
+            backParticles.GetComponent<Renderer>().sortingOrder = sortingOrder - 1;
+        }
+
+        private void StartBeamSpawnEffect(float beamTime)
+        {
+            SoundPlayer.Instance.PlayBeamSpawn();
+            DOVirtual.Color(beamTransparentColor, beamSolidColor, beamTime, value =>
+            {
+                headGateSpriteRenderer.color = value;
+                headSpriteRenderer.color = value;
+                bodySpriteRenderer.color = value;
+            }).OnComplete(OpenHead);
+            frontParticles.Play();
+            backParticles.Play();
+        }
+
+        public void StartBeamDespawnEffect(float beamTime)
+        {
+            SoundPlayer.Instance.PlayBeamDespawn();
+            DOVirtual.Color(beamSolidColor, beamTransparentColor, beamTime, value =>
+            {
+                headGateSpriteRenderer.color = value;
+                headSpriteRenderer.color = value;
+                bodySpriteRenderer.color = value;
+            });
+            frontParticles.Play();
+            backParticles.Play();
+        }
+
+        #region Head
+
+        public void SetHeadToClosed()
+        {
+            if (_direction == Direction.Down || _direction == Direction.Up)
+            {
+                headGateAnimator.CrossFade(_robotHeadIsClosedFront, 0, 0);   
+            }else{
+                headGateAnimator.CrossFade(_robotHeadIsClosedSide, 0, 0);
+            }
+        }
+
+        public void OpenHead()
+        {
+            if (_direction == Direction.Down || _direction == Direction.Up)
+            {
+                headGateAnimator.CrossFade(_robotHeadOpenFrontHash, 0, 0);   
+            }else{
+                headGateAnimator.CrossFade(_robotHeadOpenSideHash, 0, 0);
+            }
+        }
+
+        public void CloseHead()
+        {
+            if (_direction == Direction.Down || _direction == Direction.Up)
+            {
+                headGateAnimator.CrossFade(_robotHeadCloseFrontHash, 0, 0);   
+            }else{
+                headGateAnimator.CrossFade(_robotHeadCloseSideHash, 0, 0);
+            }
+        }
+
+        public void StartUp()
+        {
+            headAnimator.CrossFade(_robotStartUpHash, 0, 0);
+        }
+
+        public void ShutDown()
+        {
+            headAnimator.CrossFade(_robotShutDownHash, 0, 0);   
+        }
+
+        public void SetHeadSpriteToOff()
+        {
+            headAnimator.CrossFade(_robotOffHash, 0, 0);
+        }
+
+        #endregion
+
+        #region Body
 
         public void SetCarryKeyType(LevelGridManager.KeyType keyType)
         {
@@ -213,12 +334,12 @@ namespace Robot
         public void Turn(Direction nextDirection)
         {
             if (nextDirection == Direction.Right)
-                _spriteRenderer.flipX = true;
+                bodySpriteRenderer.flipX = true;
             if (nextDirection == Direction.Left)
-                _spriteRenderer.flipX = false;
+                bodySpriteRenderer.flipX = false;
             
             var turnAnimation = _turnAnimations[(_direction, nextDirection, _keyState)];
-            animator.CrossFade(turnAnimation, 0, 0);
+            bodyAnimator.CrossFade(turnAnimation, 0, 0);
             _direction = nextDirection;
             Invoke(nameof(MovementToIdle), 0.6f);
         }
@@ -226,43 +347,22 @@ namespace Robot
         public void GoForward()
         {
             var moveAnimation = _moveAnimations[(_direction, _keyState)];
-            animator.CrossFade(moveAnimation, 0, 0);
+            bodyAnimator.CrossFade(moveAnimation, 0, 0);
             Invoke(nameof(MovementToIdle), 0.6f);
         }
 
         private void MovementToIdle()
         {
             var idleAnimation = _idleAnimations[(_direction, _keyState)];
-            animator.CrossFade(idleAnimation, 0, 0);
+            bodyAnimator.CrossFade(idleAnimation, 0, 0);
         }
 
         public void UpdateSprite()
         {
-            _spriteRenderer.flipX = _direction == Direction.Right;
+            bodySpriteRenderer.flipX = _direction == Direction.Right;
             MovementToIdle();
         }
 
-        public void SetSpriteSortingOrder(int sortingOrder)
-        {
-            _spriteRenderer.sortingOrder = sortingOrder;
-            frontParticles.GetComponent<Renderer>().sortingOrder = sortingOrder + 1;
-            backParticles.GetComponent<Renderer>().sortingOrder = sortingOrder - 1;
-        }
-
-        private void StartBeamSpawnEffect(float beamTime)
-        {
-            SoundPlayer.Instance.PlayBeamSpawn();
-            DOVirtual.Color(beamTransparentColor, beamSolidColor, beamTime, value => _spriteRenderer.color = value);
-            frontParticles.Play();
-            backParticles.Play();
-        }
-
-        public void StartBeamDespawnEffect(float beamTime)
-        {
-            SoundPlayer.Instance.PlayBeamDespawn();
-            DOVirtual.Color(beamSolidColor, beamTransparentColor, beamTime, value => _spriteRenderer.color = value);
-            frontParticles.Play();
-            backParticles.Play();
-        }
+        #endregion
     }
 }

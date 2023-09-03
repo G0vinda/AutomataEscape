@@ -92,7 +92,7 @@ namespace LevelGrid
         public static int GetSpriteSortingOrderFromCoordinates(
             Vector2Int coordinates)
         {
-            return -coordinates.y * 2;
+            return -coordinates.y * 10;
         }
 
         private void InstantiateTile(GameObject tilePrefab,

@@ -44,7 +44,7 @@ namespace Robot
         {
             _levelGridManager = GameManager.Instance.GetLevelGridManager();
             _spriteChanger = GetComponent<SpriteChanger>();
-            _stateChart = new List<RobotState> { new StartState() };
+            _stateChart = new List<RobotState> { new StartState(_spriteChanger) };
         }
     
         public int AddState(StateAction stateAction)

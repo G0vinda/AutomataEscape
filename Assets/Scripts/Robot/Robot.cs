@@ -32,6 +32,11 @@ namespace Robot
             _spriteChanger = GetComponent<SpriteChanger>();
         }
 
+        private void Start()
+        {
+            _spriteChanger.SetHeadToClosed();
+        }
+
         public void Initialize(Vector2Int coordinates, Direction direction, List<Enemy.Enemy> enemies)
         {
             _currentCoordinates = coordinates;
@@ -64,6 +69,7 @@ namespace Robot
         public void StopRun()
         {
             IsRunning = false;
+            _spriteChanger.SetHeadSpriteToOff();
             StopCoroutine(_currentRun);
             _currentAnimation?.Kill();
         }
@@ -107,6 +113,7 @@ namespace Robot
                     {
                         currentState = null;
                         StateChartStopped?.Invoke();
+                        _spriteChanger.ShutDown();
                         SoundPlayer.Instance.PlayRobotShutdown();
                         SoundPlayer.Instance.PlayMusicLevel();
                     }
@@ -118,6 +125,7 @@ namespace Robot
                 
             } while (true);
 
+            _spriteChanger.CloseHead();
             yield return _stateWait;
             GameManager.Instance.ReachGoal();
         }

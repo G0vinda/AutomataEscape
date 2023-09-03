@@ -48,7 +48,7 @@ namespace LevelGrid
             Vector2Int coordinates, int modifier = 0)
         {
             wall.GetComponentInChildren<SpriteRenderer>().sortingOrder =
-                -coordinates.y * 2 + modifier;
+                LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates) + modifier;
         }
 
         private Vector2 CoordinatesToPosition(Vector2Int coordinates)
@@ -387,7 +387,7 @@ namespace LevelGrid
                                      _tileSize * Vector2.down * 0.5f;
             var newWall =
                 InstantiateWall(transparentWallPrefab, bottomWallPosition);
-            AdjustWallSpriteLayer(newWall, coordinates, 1);
+            AdjustWallSpriteLayer(newWall, coordinates, 9);
         }
 
         private void CreateLeftWall(Vector2Int coordinates)
@@ -446,7 +446,7 @@ namespace LevelGrid
                 var newWallConnector = InstantiateWall(
                     transparentWallConnectorRightPrefab, connectorPosition);
 
-                AdjustWallSpriteLayer(newWallConnector, coordinates, 1);
+                AdjustWallSpriteLayer(newWallConnector, coordinates, 9);
             }
             else
             {
@@ -456,7 +456,7 @@ namespace LevelGrid
                 var newWallConnector = InstantiateWall(
                     transparentWallConnectorLeftPrefab, connectorPosition);
 
-                AdjustWallSpriteLayer(newWallConnector, coordinates, 1);
+                AdjustWallSpriteLayer(newWallConnector, coordinates, 9);
             }
         }
     }
