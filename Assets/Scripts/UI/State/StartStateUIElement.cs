@@ -19,19 +19,31 @@ namespace UI.State
         private Tween _fadeTween;
         private Color _frontImageColor;
 
+        private void Awake()
+        {
+            _uiElement = GetComponent<StateUIElement>();   
+        }
+
+        #region OnEnable/OnDisable
+
+        private void OnEnable()
+        {
+            _uiElement.TransitionLineAdded += StopFadeTween;
+            _uiElement.LastTransitionLineRemoved += StartFadeTween;
+        }
+
         private void OnDisable()
         {
             _uiElement.TransitionLineAdded -= StopFadeTween;
             _uiElement.LastTransitionLineRemoved -= StartFadeTween;
         }
+        
+        #endregion
 
         public void Initialize(StateChartCell connectedCell)
         {
-            _uiElement = GetComponent<StateUIElement>();
             _uiElement.Initialize(0);
             _uiElement.ConnectedCell = connectedCell;
-            _uiElement.TransitionLineAdded += StopFadeTween;
-            _uiElement.LastTransitionLineRemoved += StartFadeTween;
             _frontImageColor = frontImage.color;
 
             StartFadeTween();
