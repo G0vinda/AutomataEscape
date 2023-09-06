@@ -8,6 +8,7 @@ using UI.Grid;
 using UI.State;
 using UI.Transition;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace UI
 {
@@ -15,7 +16,7 @@ namespace UI
     {
         [SerializeField] private TransitionSelection transitionSelection;
         [SerializeField] private float transitionLineSelectionTime;
-        [SerializeField] private GameObject transitionDeleteButtonPrefab;
+        [SerializeField] private TransitionDeleteButton transitionDeleteButtonPrefab;
         [Header("Blocked Cell Marking")]
         [SerializeField] private Transform blockedCellMarkingLayer;
         [SerializeField] private GameObject blockedCellMarkingPrefab;
@@ -37,7 +38,7 @@ namespace UI
         private SubCell _previousHoveredSubCell;
         private float _transitionLineSelectionTimer;
         private TransitionLine _selectedTransitionLine;
-        private GameObject _activeTransitionDeleteButton;
+        private TransitionDeleteButton _activeTransitionDeleteButton;
 
         // Variables for dragging state element
         private StateUIPlaceElement _selectedDragStateElement;
@@ -304,10 +305,12 @@ namespace UI
 
         private void CreateTransitionDeleteButton()
         {
-            var buttonOffset = new Vector2(0, 20f);
-            var buttonPosition = _inputManager.GetPointerPosition() + buttonOffset;
-            _activeTransitionDeleteButton = Instantiate(transitionDeleteButtonPrefab, buttonPosition,
+            var buttonOffset = Random.insideUnitCircle.normalized * 60f;
+            var inputPosition = _inputManager.GetPointerPosition();
+            var buttonDestination = inputPosition + buttonOffset;
+            _activeTransitionDeleteButton = Instantiate(transitionDeleteButtonPrefab, inputPosition,
                 Quaternion.identity, transform);
+            _activeTransitionDeleteButton.Instantiate(buttonDestination);
         }
 
         private void HandleTransitionDeleteButtonPressed()
@@ -319,7 +322,7 @@ namespace UI
         private void ExitDeleteState()
         {
             _selectedTransitionLine.RemoveHighlight();
-            Destroy(_activeTransitionDeleteButton);
+            Destroy(_activeTransitionDeleteButton.gameObject);
 
             TransitionDeleteButton.ButtonPressed -= HandleTransitionDeleteButtonPressed;
             InputManager.InputOutsideOfDeleteButton -= ExitDeleteState;

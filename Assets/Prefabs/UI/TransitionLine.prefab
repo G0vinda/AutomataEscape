@@ -67,5 +67,8 @@ MonoBehaviour:
   fadeInTime: 0.8
   fadeOutTime: 0.15
   transitionLinePrefab: {fileID: 3460206341188733528}
-  highlightLineColor: {r: 1, g: 1, b: 1, a: 1}
+  highlightLineColor1: {r: 1, g: 1, b: 1, a: 0.6}
+  highlightLineColor2: {r: 1, g: 1, b: 1, a: 0.9019608}
+  highlightTweenDuration: 1
   highlightLineSizeFactor: 1.4
+  stateUIElement: {fileID: 0}

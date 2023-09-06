@@ -80,6 +80,12 @@ namespace Helper
             return dirA == dirB.Opposite();
         }
 
+        public static bool IsOrthogonal(this Direction dirA, Direction dirB)
+        {
+            return (dirA is Direction.Up or Direction.Down && dirB is Direction.Left or Direction.Right) ||
+                   (dirA is Direction.Left or Direction.Right && dirB is Direction.Up or Direction.Down);
+        }
+
         public static Quaternion ToZRotation(this Direction direction)
         {
             return direction switch
