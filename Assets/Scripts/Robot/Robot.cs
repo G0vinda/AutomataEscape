@@ -15,6 +15,7 @@ namespace Robot
     {
         public static event Action<StateChartManager.StateAction> NextStateStarts;
         public static event Action StateChartStopped;
+        public static event Action RobotClicked;
         public bool IsRunning { get; private set; }
         
         private SpriteChanger _spriteChanger;
@@ -142,6 +143,14 @@ namespace Robot
                 StartState => StateChartManager.StateAction.Start,
                 _ => throw new ArgumentException()
             };
+        }
+
+        private void OnMouseDown()
+        {
+            if(IsRunning)
+                return;
+            
+            RobotClicked?.Invoke();
         }
     }
 }

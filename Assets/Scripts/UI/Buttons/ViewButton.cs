@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.Buttons
@@ -7,9 +8,13 @@ namespace UI.Buttons
     {
         [SerializeField] private Sprite programViewSprite;
         [SerializeField] private Sprite levelViewSprite;
+        [SerializeField] private float robotClickWobbleTime;
+        [SerializeField] private float robotClickWobbleStrength;
 
         private Image _image;
         private Button _button;
+        private Tween _robotClickWobble;
+        private bool _listensToRobotClickEvent;
 
         private void Awake()
         {
@@ -21,22 +26,63 @@ namespace UI.Buttons
         {
             UIManager.ViewStateChanged += ChangeImage;
             GameManager.RobotStateChanged += SetButtonToInteractable;
+            ListenToRobotGotClickedEvent(true);
         }
-
+        
         private void OnDisable()
         {
             UIManager.ViewStateChanged -= ChangeImage;
             GameManager.RobotStateChanged -= SetButtonToInteractable;
+            ListenToRobotGotClickedEvent(false);
         }
 
         private void ChangeImage(bool programmingViewActive)
         {
-            _image.sprite = programmingViewActive ? levelViewSprite : programViewSprite;
+            if (programmingViewActive)
+            {
+                _image.sprite = levelViewSprite;
+                ListenToRobotGotClickedEvent(false);
+            }
+            else
+            {
+                _image.sprite = programViewSprite;
+                ListenToRobotGotClickedEvent(true);
+            }
+        }
+
+        private void ListenToRobotGotClickedEvent(bool listen)
+        {
+            if(listen == _listensToRobotClickEvent)
+                return;
+
+            if (listen)
+            {
+                Robot.Robot.RobotClicked += HandleRobotClicked;
+                _listensToRobotClickEvent = true;
+            }
+            else
+            {
+                Robot.Robot.RobotClicked -= HandleRobotClicked;
+                _listensToRobotClickEvent = false;
+            }
         }
 
         private void SetButtonToInteractable(bool isRunning)
         {
             _button.interactable = !isRunning;
         }
+        
+        private void HandleRobotClicked()
+        {
+            if(_robotClickWobble != null)
+                return;
+            
+            _robotClickWobble = transform.DOPunchScale(Vector2.one * robotClickWobbleStrength, robotClickWobbleTime, 10, 0f)
+                .OnComplete(() =>
+                {
+                    _robotClickWobble = null;
+                });
+        }
+
     }
 }

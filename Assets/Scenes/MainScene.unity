@@ -2395,6 +2395,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   programViewSprite: {fileID: 21300000, guid: 9a028b85026bf964586f5d2a73e6831b, type: 3}
   levelViewSprite: {fileID: 21300000, guid: 80681185615a41e43952dea1022ae352, type: 3}
+  robotClickWobbleTime: 0.8
+  robotClickWobbleStrength: 0.3
 --- !u!1 &1040296882
 GameObject:
   m_ObjectHideFlags: 0
