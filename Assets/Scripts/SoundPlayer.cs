@@ -208,7 +208,7 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayCableSelect()
     {
-        RuntimeManager.PlayOneShot(cableSelectEvent); //todo: neuer Methodentrigger für Auswählen des Kabels
+        RuntimeManager.PlayOneShot(cableSelectEvent); 
     }
 
     public void PlayBeamSpawn()

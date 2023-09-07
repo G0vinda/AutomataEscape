@@ -77,7 +77,7 @@ namespace UI.Buttons
             if(_robotClickWobble != null)
                 return;
             
-            _robotClickWobble = transform.DOPunchScale(Vector2.one * robotClickWobbleStrength, robotClickWobbleTime, 10, 0f)
+            _robotClickWobble = transform.DOPunchScale(Vector2.one * robotClickWobbleStrength, robotClickWobbleTime, 5, 0f)
                 .OnComplete(() =>
                 {
                     _robotClickWobble = null;

@@ -24,8 +24,7 @@ namespace Menu
 
         public void StartNewGame()
         {
-            PlayerPrefs.SetInt("ReachedLevelId", 0);
-            PlayerPrefs.SetInt("CurrentLevelId", 0);
+            PlayerPrefs.DeleteAll();
             SceneManager.LoadScene(MainSceneIndex);
         }
 

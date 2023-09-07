@@ -1,4 +1,5 @@
-﻿using Robot;
+﻿using System;
+using Robot;
 using UI.UIData;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -14,6 +15,7 @@ namespace UI.Transition
         [SerializeField] private Image selectionMarking;
         
         public StateChartManager.TransitionCondition Condition { get; private set; }
+        public static event Action<TransitionSelectElement> TransitionSelectElementEnabled;
 
         private void Awake()
         {
@@ -24,15 +26,21 @@ namespace UI.Transition
             }
             else
             {
-                Destroy(icon);
+                Destroy(icon.gameObject);
             }
 
             Condition = data.condition;
         }
 
+        private void OnEnable()
+        {
+            background.color = data.color;
+            TransitionSelectElementEnabled?.Invoke(this);
+        }
+
         public Color GetColor()
         {
-            return background.color;
+            return data.color;
         }
 
         public void ShowSelectionMarking()

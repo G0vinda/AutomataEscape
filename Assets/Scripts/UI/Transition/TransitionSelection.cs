@@ -11,7 +11,8 @@ namespace UI.Transition
     {
         [SerializeField] private List<TransitionSelectElement> selectElements;
         [SerializeField] private Image lineImage;
-        
+
+        public static event Action<TransitionSelectElement> TransitionSelectElementSelected;
         public TransitionSelectElement CurrentSelected { get; private set; }
 
         public void Setup(List<StateChartManager.TransitionCondition> availableTransitionConditions)
@@ -20,11 +21,13 @@ namespace UI.Transition
             {
                 if (availableTransitionConditions.Contains(element.Condition))
                 {
+                    element.enabled = true;
                     element.gameObject.SetActive(true);
                     element.HideSelectionMarking();
                 }
                 else
                 {
+                    element.enabled = false;
                     element.gameObject.SetActive(false);
                 }
             }
@@ -37,10 +40,10 @@ namespace UI.Transition
                 transitionSelectElement.HideSelectionMarking();
             }
         
-            SelectTransitionCondition(StateChartManager.TransitionCondition.Default);
+            SelectTransitionCondition(StateChartManager.TransitionCondition.Default, true);
         }
 
-        public void SelectTransitionCondition(StateChartManager.TransitionCondition condition)
+        public void SelectTransitionCondition(StateChartManager.TransitionCondition condition, bool isSetup = false)
         {
             if(CurrentSelected != null)
                 CurrentSelected.HideSelectionMarking();
@@ -51,6 +54,9 @@ namespace UI.Transition
             lineImage.color = selectElement.GetColor();
 
             TransitionLineDrawer.CurrentTransitionCondition = condition;
+            
+            if(!isSetup)
+                TransitionSelectElementSelected?.Invoke(selectElement);
         }
 
         public void TrySetActive(bool value)

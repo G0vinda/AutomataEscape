@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8723341858513063459}
   - component: {fileID: 3371936507158672765}
-  - component: {fileID: 6313598166237078098}
   - component: {fileID: 2527678880061927758}
+  - component: {fileID: 8968875346654038255}
+  - component: {fileID: 4191460917312808519}
   m_Layer: 5
   m_Name: TransitionSelectElement
   m_TagString: Untagged
@@ -50,7 +51,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2292753502210528267}
   m_CullTransparentMesh: 1
---- !u!114 &6313598166237078098
+--- !u!114 &2527678880061927758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2292753502210528267}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43ca9fbc6bb94e34899eec7c26d50453, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 0}
+  icon: {fileID: 2563161527223603816}
+  background: {fileID: 7182937425071553760}
+  selectionMarking: {fileID: 5721417652475120677}
+--- !u!114 &8968875346654038255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2292753502210528267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d1d990a822a463449358f8ffbff5814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiEffects:
+  - {fileID: 3202934437914137648}
+  effectPeriodTime: 0.6
+  effectMaxValue: 0.25
+  transitionSelectBackground: {fileID: 7182937425071553760}
+  maxBackgroundScaleFactor: 1.05
+--- !u!114 &4191460917312808519
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -63,14 +98,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -80,22 +115,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2527678880061927758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2292753502210528267}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43ca9fbc6bb94e34899eec7c26d50453, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  data: {fileID: 0}
-  icon: {fileID: 2563161527223603816}
-  background: {fileID: 7182937425071553760}
-  selectionMarking: {fileID: 5721417652475120677}
 --- !u!1 &3099187370614870635
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,6 +278,7 @@ GameObject:
   - component: {fileID: 7897001978336664116}
   - component: {fileID: 7265171406967377619}
   - component: {fileID: 2563161527223603816}
+  - component: {fileID: 3202934437914137648}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -324,3 +344,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3202934437914137648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651733741060842213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8b2ed11d675446c5a49da1ea296d490, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 1
+  m_ColorFactor: 0
+  m_BlurFactor: 1
+  m_EffectMode: 0
+  m_ColorMode: 2
+  m_BlurMode: 0
+  m_AdvancedBlur: 0

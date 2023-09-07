@@ -22,6 +22,7 @@ namespace Robot
             Start
         }
     
+        [Serializable]
         public enum TransitionCondition
         {
             Default,

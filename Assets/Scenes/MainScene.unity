@@ -1406,6 +1406,7 @@ GameObject:
   - component: {fileID: 654531688}
   - component: {fileID: 654531689}
   - component: {fileID: 654531690}
+  - component: {fileID: 654531691}
   m_Layer: 5
   m_Name: UICanvas
   m_TagString: Untagged
@@ -1561,6 +1562,19 @@ MonoBehaviour:
   dropStateData: {fileID: 11400000, guid: 9a3065a5844f6704d99c912620ca3cd7, type: 2}
   stateUIElementPrefab: {fileID: -1798996941539083538, guid: c940ff228ce3eff48a78774608fd049c, type: 3}
   stateChartPanelTransform: {fileID: 1189406608}
+--- !u!114 &654531691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 654531683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85acc1a18151e8347ac2d15f9217a5d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewButtonAnimator: {fileID: 1022330848}
 --- !u!1 &673613225
 GameObject:
   m_ObjectHideFlags: 0
@@ -2248,6 +2262,8 @@ GameObject:
   - component: {fileID: 1022330844}
   - component: {fileID: 1022330843}
   - component: {fileID: 1022330846}
+  - component: {fileID: 1022330847}
+  - component: {fileID: 1022330848}
   m_Layer: 5
   m_Name: ViewButton
   m_TagString: Untagged
@@ -2397,6 +2413,41 @@ MonoBehaviour:
   levelViewSprite: {fileID: 21300000, guid: 80681185615a41e43952dea1022ae352, type: 3}
   robotClickWobbleTime: 0.8
   robotClickWobbleStrength: 0.3
+--- !u!114 &1022330847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1022330841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8b2ed11d675446c5a49da1ea296d490, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 1
+  m_ColorFactor: 0
+  m_BlurFactor: 1
+  m_EffectMode: 0
+  m_ColorMode: 2
+  m_BlurMode: 0
+  m_AdvancedBlur: 0
+--- !u!114 &1022330848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1022330841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81ee1f18281b2ec419284e33b5e002ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiEffects:
+  - {fileID: 1022330847}
+  effectPeriodTime: 0.6
+  effectMaxValue: 0.25
 --- !u!1 &1040296882
 GameObject:
   m_ObjectHideFlags: 0
@@ -3080,6 +3131,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1729480797}
     m_Modifications:
+    - target: {fileID: 103317965775541199, guid: deadfd099f7bbfa4ab3d874a2d628737, type: 3}
+      propertyPath: effectMaxValue
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 2292753502210528267, guid: deadfd099f7bbfa4ab3d874a2d628737, type: 3}
       propertyPath: m_Name
       value: TransitionSelectElement (2)
