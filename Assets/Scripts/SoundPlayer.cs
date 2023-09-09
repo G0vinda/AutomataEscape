@@ -8,6 +8,9 @@ using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public class SoundPlayer : MonoBehaviour
 {
+    [SerializeField] private float defaultMusicVolume;
+    [SerializeField] private float defaultSfxVolume;
+    
     [SerializeField] private EventReference buttonClickEvent;
     [SerializeField] private EventReference buttonClickMenuEvent;
     
@@ -69,6 +72,9 @@ public class SoundPlayer : MonoBehaviour
             Instance = this;
             Music = RuntimeManager.GetBus("bus:/MusicMix");
             SFX = RuntimeManager.GetBus("bus:/Sounds");
+            
+            UpdateMusicVolume(PlayerPrefs.GetFloat("MusicVolume", defaultMusicVolume));
+            UpdateSfxVolume(PlayerPrefs.GetFloat("SfxVolume", defaultSfxVolume));
         }
         else
         {
@@ -98,6 +104,18 @@ public class SoundPlayer : MonoBehaviour
     public void UpdateMusicVolume(float newVolume)
     {
         Music.setVolume(newVolume);
+    }
+
+    public float GetSfxVolume()
+    {
+        SFX.getVolume(out var volume);
+        return volume;
+    }
+
+    public float GetMusicVolume()
+    {
+        Music.getVolume(out var volume);
+        return volume;
     }
 
     private void HandleRobotStateChanged(bool startsWalking)

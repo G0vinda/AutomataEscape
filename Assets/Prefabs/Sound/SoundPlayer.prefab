@@ -67,6 +67,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de4abc3bdd367af49b2e406c65506d6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultMusicVolume: 0.8
+  defaultSfxVolume: 0.8
   buttonClickEvent:
     Guid:
       Data1: 1925506511

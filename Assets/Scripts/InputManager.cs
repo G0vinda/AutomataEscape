@@ -5,10 +5,8 @@ using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Helper;
-using UI.Grid;
 using UI.State;
 using UI.Transition;
-using UnityEditorInternal;
 
 public class InputManager : MonoBehaviour
 {

@@ -1,4 +1,7 @@
+using System;
+using Unity.Plastic.Antlr3.Runtime.Debug;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -7,6 +10,9 @@ namespace UI
         [SerializeField] private GameObject runButton;
         [SerializeField] private GameObject viewButton;
         [SerializeField] private InputManager inputManager;
+        [SerializeField] private Slider sfxSlider;
+        [SerializeField] private Slider musicSlider;
+
         public void ToggleMenu()
         {
             SetMenuActive(!gameObject.activeSelf);
@@ -18,6 +24,12 @@ namespace UI
             runButton.SetActive(!value);
             viewButton.SetActive(!value);
             inputManager.enabled = !value;
+
+            if (value)
+            {
+                sfxSlider.value = SoundPlayer.Instance.GetSfxVolume();
+                musicSlider.value = SoundPlayer.Instance.GetMusicVolume();
+            }
         }
 
         public void CloseMenu()
@@ -32,11 +44,13 @@ namespace UI
 
         public void SfxSliderChanged(float newVolume)
         {
+            PlayerPrefs.SetFloat("SfxVolume", newVolume);
             SoundPlayer.Instance.UpdateSfxVolume(newVolume);
         }
 
         public void MusicSliderChanged(float newVolume)
         {
+            PlayerPrefs.SetFloat("MusicVolume", newVolume);
             SoundPlayer.Instance.UpdateMusicVolume(newVolume);
         }
     }

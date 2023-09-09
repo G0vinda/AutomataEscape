@@ -34,7 +34,7 @@ namespace UI.Buttons
 
         public void ReturnToMenu()
         {
-            
+            SceneManager.LoadScene(menuSceneIndex);
         }
 
         private void OnViewStateChanged(bool programmingViewActive)

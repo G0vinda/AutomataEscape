@@ -739,14 +739,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.18623175, g: 0.4245283, b: 0.29975745, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9a028b85026bf964586f5d2a73e6831b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 62807f847e181634eb3de4f156214d67, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1240,6 +1240,8 @@ MonoBehaviour:
   runButton: {fileID: 616424863}
   viewButton: {fileID: 1022330841}
   inputManager: {fileID: 868897339}
+  sfxSlider: {fileID: 1569476476}
+  musicSlider: {fileID: 1234857212}
 --- !u!1 &616424863
 GameObject:
   m_ObjectHideFlags: 0
@@ -2028,7 +2030,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 758433100}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43ca9fbc6bb94e34899eec7c26d50453, type: 3}
   m_Name: 
@@ -2643,7 +2645,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 1079237317}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43ca9fbc6bb94e34899eec7c26d50453, type: 3}
   m_Name: 
@@ -3240,7 +3242,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 1193440231}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43ca9fbc6bb94e34899eec7c26d50453, type: 3}
   m_Name: 
@@ -3619,7 +3621,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 1271294246}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43ca9fbc6bb94e34899eec7c26d50453, type: 3}
   m_Name: 
@@ -4702,7 +4704,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 774164602}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43ca9fbc6bb94e34899eec7c26d50453, type: 3}
   m_Name: 
