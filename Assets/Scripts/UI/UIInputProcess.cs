@@ -57,6 +57,8 @@ namespace UI
         private const float MINZoomFactor = 1f;
         private const float MAXZoomFactor = 2f;
 
+        private bool _invalidActionMarkerActive;
+
         #region OnEnable/OnDisable
 
         private void OnEnable()
@@ -67,7 +69,7 @@ namespace UI
 
         private void ListenToInputEvents()
         {
-            InputManager.StateElementSelected += HandleStatePlaceElementSelected;
+            InputManager.StateElementSelected += HandleStateElementSelected;
             InputManager.StateElementDragStarted += HandleStatePlaceElementDragStart;
             InputManager.StateChartPanelPressed += HandleStateChartPanelDragStart;
             InputManager.TransitionLineDragStarted += HandleTransitionLineDragStart;
@@ -82,7 +84,7 @@ namespace UI
 
         private void StopListeningToInputEvents()
         {
-            InputManager.StateElementSelected -= HandleStatePlaceElementSelected;
+            InputManager.StateElementSelected -= HandleStateElementSelected;
             InputManager.StateElementDragStarted -= HandleStatePlaceElementDragStart;
             InputManager.StateChartPanelPressed -= HandleStateChartPanelDragStart;
             InputManager.TransitionLineDragStarted -= HandleTransitionLineDragStart;
@@ -108,6 +110,11 @@ namespace UI
             {
                 case UIInputPhase.WaitingForInput:
                     _dragEnded = false;
+                    if (_invalidActionMarkerActive)
+                    {
+                        _uiManager.SetInvalidActionMarkerPosition(_inputManager.GetPointerPosition());
+                    }
+                    
                     break;
                 case UIInputPhase.DraggingStateElement:
                     if (_dragEnded)
@@ -194,6 +201,8 @@ namespace UI
         {
             InputManager.DragEnded -= HandleDragEnded;
             _uiManager.ResetAllStatesSize();
+            _uiManager.DisableInvalidActionMarker();
+            _invalidActionMarkerActive = false;
             _dragEnded = true;
         }
 
@@ -209,17 +218,29 @@ namespace UI
             _uiManager.ZoomStateChartPanel(_zoomFactor, zoomDelta, zoomCenter);
         }
 
-        private void HandleStatePlaceElementSelected(StateUIElement stateUIElement)
+        private void HandleStateElementSelected(StateUIElement stateUIElement)
         {
             stateUIElement.SetSizeToSelectedHighlight();
             InputManager.DragEnded += HandleDragEnded;
+            
+            var isStartStateElement = stateUIElement.GetComponent<StartStateUIElement>() != null;
+            var currentTransitionConditionIsDefault = transitionSelection.CurrentSelected.Condition ==
+                                                      StateChartManager.TransitionCondition.Default;
+
+            if (isStartStateElement && !currentTransitionConditionIsDefault)
+            {
+                _invalidActionMarkerActive = true;
+            }
         }
 
         private void HandleTransitionLineDragStart(StateUIElement stateElement)
         {
+            var isStartStateElement = stateElement.GetComponent<StartStateUIElement>() != null;
+            var currentTransitionConditionIsDefault = transitionSelection.CurrentSelected.Condition ==
+                                                      StateChartManager.TransitionCondition.Default;
+            
             if (transitionSelection.CurrentSelected != null &&
-                (stateElement.GetComponent<StartStateUIElement>() == null ||
-                 transitionSelection.CurrentSelected.Condition == StateChartManager.TransitionCondition.Default))
+                (!isStartStateElement || currentTransitionConditionIsDefault))
             {
                 InputManager.DragEnded += HandleDragEnded;
                 ChangeInputPhase(UIInputPhase.InitiateTransitionLineDraw);
@@ -228,6 +249,10 @@ namespace UI
                 _selectedDrawStateCellCoordinates = _uiGridManager.GetCoordinatesFromCell(_selectedDrawStateCell);
 
                 _selectedDragStateElement = null;
+            }
+            else if (isStartStateElement && !currentTransitionConditionIsDefault)
+            {
+                HandleDragEnded();
             }
         }
 

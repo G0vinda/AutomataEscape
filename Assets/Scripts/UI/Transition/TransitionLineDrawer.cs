@@ -15,7 +15,6 @@ namespace UI.Transition
         public static StateChartManager.TransitionCondition CurrentTransitionCondition { get; set; }
         public static TransitionLine CurrentTransitionLine { get; private set; }
         public static StateUIPlaceElement DestinationStateElement { get; set; }
-
         private static Dictionary<StateChartManager.TransitionCondition, int> _numberOfLinesByCondition;
 
         private static Dictionary<StateChartManager.TransitionCondition, (Color32 startColor, Color32 endColor)>
@@ -52,6 +51,7 @@ namespace UI.Transition
         private static StateUIElement _currentSourceState;
         private static Vector2 _plugPosition;
         private static Direction _plugDirection;
+        private static UIManager _uiManager;
 
         public static bool StartDrawingIfSubCellIsFree(Vector2 inputPosition, StateUIElement sourceState,
             Vector2Int sourceStateCoordinates)
@@ -71,6 +71,8 @@ namespace UI.Transition
             Color lineColor;
             Direction inputDirection;
             bool inputIsHorizontal;
+            if (_uiManager == null)
+                _uiManager = GameManager.Instance.GetUIManager();
 
             if (UIGridManager.CheckIfSubCellIsAdjacentToCell(sourceCell, inputPosition))
             {
@@ -147,16 +149,27 @@ namespace UI.Transition
             if (!UIGridManager.IsPositionInsideGrid(inputPosition))
                 return true;
 
-            if (UIGridManager.IsPositionInsideSubCell(_currentSubCell, inputPosition)) // Input did not move
+            if (UIGridManager.IsPositionInsideSubCell(_currentSubCell,
+                inputPosition)) // Input was on same subCell last time
+            {
+                _uiManager.DisableInvalidActionMarker();
                 return true;
+            }
 
             var hoveredStateElement = UIGridManager.GetStateUIElementOnPosition(inputPosition);
 
             if (hoveredStateElement != null)
             {
-                // is hovered state start state or already hovered
                 var hoveredStatePlaceElement = hoveredStateElement.GetComponent<StateUIPlaceElement>();
-                if (hoveredStatePlaceElement == null || hoveredStatePlaceElement == DestinationStateElement)
+                // is hovered state start state
+                if (hoveredStatePlaceElement == null)
+                {
+                    _uiManager.SetInvalidActionMarkerPosition(inputPosition);
+                    return true;   
+                }
+                _uiManager.DisableInvalidActionMarker();
+                
+                if (hoveredStatePlaceElement == DestinationStateElement)
                     return true;
 
                 // is line completely reverted
@@ -181,7 +194,8 @@ namespace UI.Transition
 
                 return true;
             }
-
+            _uiManager.DisableInvalidActionMarker();
+            
             if (DestinationStateElement != null)
             {
                 DestinationStateElement.RemoveHighlight();
@@ -309,11 +323,12 @@ namespace UI.Transition
             SoundPlayer.Instance.PlayCableRelease();
             if (DestinationStateElement != null)
                 DestinationStateElement.RemoveHighlight();
-
+            
             DestinationStateElement = null;
             _currentSubCell = null;
             _currentSourceState = null;
             _currentLinePath = null;
+            _uiManager.DisableInvalidActionMarker();
         }
 
         public static void FinishLine()

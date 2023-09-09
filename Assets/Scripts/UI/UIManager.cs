@@ -23,6 +23,7 @@ namespace UI
         [SerializeField] private Transform stateLayer;
         [SerializeField] private Transform transitionLayer;
         [SerializeField] private TransitionLine transitionLinePrefab;
+        [SerializeField] private Image invalidActionMarker;
 
         public static event Action<bool> ViewStateChanged;
 
@@ -278,6 +279,18 @@ namespace UI
         public void SetStateImageToInactive(int stateId)
         {
             _placedStateElements.First(state => state.GetAssignedId() == stateId).SetImageToActive(false);
+        }
+
+        public void SetInvalidActionMarkerPosition(Vector2 position)
+        {
+            invalidActionMarker.gameObject.SetActive(true);
+            invalidActionMarker.transform.position = position;
+            invalidActionMarker.transform.SetAsLastSibling();
+        }
+
+        public void DisableInvalidActionMarker()
+        {
+            invalidActionMarker.gameObject.SetActive(false);
         }
         
         public float ScaleFloat(float scaledFloat)
