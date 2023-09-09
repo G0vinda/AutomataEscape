@@ -334,7 +334,6 @@ namespace UI.Transition
         public static void FinishLine()
         {
             _numberOfLinesByCondition[CurrentTransitionCondition]++;
-            DestinationStateElement.RemoveHighlight();
             SoundPlayer.Instance.PlayCableConnect();
 
             CurrentTransitionLine.CreatePlug(_plugPosition, _plugDirection.ToZRotation());

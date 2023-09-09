@@ -59,7 +59,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 516f3d26ad4d8a64ea1d79f63f931c7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transitionLinePrefab: {fileID: 3460206341188733528, guid: d0c76a2c42b1b8e44812e81c52d52c21, type: 3}
+  connectionGrowEffectSize: 1.1
+  connectionGrowEffectTime: 0.3
   image: {fileID: 590796217757801763}
 --- !u!1 &8303073760858174976
 GameObject:

@@ -380,11 +380,13 @@ namespace UI
                 _selectedDrawStateElement.UpdateScaling();
             if (TransitionLineDrawer.DestinationStateElement != null)
             {
-                var destinationState = TransitionLineDrawer.DestinationStateElement;
-                destinationState.GetComponent<StateUIElement>().UpdateScaling();
-                TransitionLineDrawer.FinishLine();
-                _uiManager.AddTransition(_selectedDrawStateElement, destinationState,
+                var destinationState = TransitionLineDrawer.DestinationStateElement.GetComponent<StateUIElement>();
+                destinationState.UpdateScaling();
+                _uiManager.AddTransition(_selectedDrawStateElement, TransitionLineDrawer.DestinationStateElement,
                     transitionSelection.CurrentSelected.Condition);
+                TransitionLineDrawer.FinishLine();
+
+                _selectedDrawStateElement.PlayConnectionEffect(() => destinationState.PlayConnectionEffect(() => { }));
             }
             else
             {

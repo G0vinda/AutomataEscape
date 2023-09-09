@@ -250,7 +250,8 @@ namespace UI
             }
 
             var transitionWithSameCondition =
-                _connectedTransitions.FirstOrDefault(transition => transition.Key.Item1 == sourceState && transition.Value == condition);
+                _connectedTransitions.FirstOrDefault(transition =>
+                    transition.Key.Item1 == sourceState && transition.Value == condition);
             if (!transitionWithSameCondition.IsDefault())
             {
                 RemoveTransition(sourceState, condition);

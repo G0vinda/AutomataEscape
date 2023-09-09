@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using DG.Tweening;
 using Robot;
 using UI.Grid;
 using UI.Transition;
 using UnityEngine;
 using UnityEngine.UI;
+using Vector2 = UnityEngine.Vector2;
 
 namespace UI.State
 {
@@ -41,7 +44,8 @@ namespace UI.State
             }
         }
 
-        [SerializeField] private TransitionLine transitionLinePrefab;
+        [SerializeField] private float connectionGrowEffectSize;
+        [SerializeField] private float connectionGrowEffectTime;
 
         public static SizeAttributes StateSizeAttributes;
         
@@ -63,6 +67,13 @@ namespace UI.State
             SetSizeToDefault();
 
             AssignedId = assignedId;
+        }
+
+        public void PlayConnectionEffect(TweenCallback onCompleteAction)
+        {
+            _imageTransform.localScale = Vector2.one * connectionGrowEffectSize;
+            _imageTransform.DOScale(Vector2.one, connectionGrowEffectTime).SetEase(Ease.InBounce)
+                .OnComplete(onCompleteAction);
         }
 
         public int GetNumberOfOutgoingTransitions()

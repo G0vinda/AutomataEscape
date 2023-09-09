@@ -1,5 +1,3 @@
-using System;
-using Unity.Plastic.Antlr3.Runtime.Debug;
 using UnityEngine;
 using UnityEngine.UI;
 
