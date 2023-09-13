@@ -53,6 +53,7 @@ namespace Robot
 
         private int _robotStartUpHash;
         private int _robotShutDownHash;
+        private int _robotOnIdleHash;
         private int _robotOffHash;
         
         private int _robotHeadOpenFrontHash;
@@ -72,6 +73,7 @@ namespace Robot
 
             _robotStartUpHash = Animator.StringToHash("RobotStartUp");
             _robotShutDownHash = Animator.StringToHash("RobotShutDown");
+            _robotOnIdleHash = Animator.StringToHash("RobotOnIdle");
             _robotOffHash = Animator.StringToHash("RobotOff");
 
             _robotHeadOpenFrontHash = Animator.StringToHash("RobotHeadOpenFront");
