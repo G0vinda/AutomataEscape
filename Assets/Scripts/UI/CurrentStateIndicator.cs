@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using Robot;
 using UI.UIData;
 using UnityEngine;
@@ -10,14 +11,23 @@ namespace UI
     {
         [SerializeField] private Sprite startStateSprite;
         [SerializeField] private List<StateUIData> stateUIData;
+        [Header("OnChange Animation Values")]
+        [SerializeField] private float onChangeSizeAnimationMax;
+        [SerializeField] private float onChangeSizeAnimationTime;
+        [Header("Idle Animation Values")]
+        [SerializeField] private float idleSizeAnimationPeriodTime;
+        [SerializeField] private float idleSizeAnimationMax;
 
         private Image _image;
+        private UIHighlightEffectAnimator _highlightEffectAnimator;
         private Dictionary<StateChartManager.StateAction, Sprite> _stateSprites;
         private bool _playMusicOnNextState;
+        private Tween _idleAnimation;
 
         private void Awake()
         {
             _image = GetComponent<Image>();
+            _highlightEffectAnimator = GetComponent<UIHighlightEffectAnimator>();
             _stateSprites = new Dictionary<StateChartManager.StateAction, Sprite>();
             _stateSprites.Add(StateChartManager.StateAction.Start, startStateSprite);
             foreach (var data in stateUIData)
@@ -34,6 +44,7 @@ namespace UI
 
         private void OnDisable()
         {
+            StopIdleAnimation();
             Robot.Robot.NextStateStarts -= OnNextState;
             Robot.Robot.StateChartStopped -= HandleStateChartStopped;
         }
@@ -51,6 +62,23 @@ namespace UI
                 SoundPlayer.Instance.PlayMusicWalking();
                 _playMusicOnNextState = false;
             }
+
+            StopIdleAnimation();
+            _image.transform.DOScale(Vector3.one * onChangeSizeAnimationMax, onChangeSizeAnimationTime).SetEase(Ease.OutCirc).SetLoops(2, LoopType.Yoyo)
+                .OnComplete(StartIdleAnimation);
+        }
+
+        private void StartIdleAnimation()
+        {
+            Debug.Log("StartIdleAnimation called");
+            _idleAnimation = _image.transform.DOScale(Vector3.one * idleSizeAnimationMax, idleSizeAnimationPeriodTime).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
+            _highlightEffectAnimator.PlayEffect();
+        }
+
+        private void StopIdleAnimation()
+        {
+            _idleAnimation?.Kill();
+            _highlightEffectAnimator.StopEffect();
         }
 
         private void HandleStateChartStopped()

@@ -4799,6 +4799,8 @@ GameObject:
   - component: {fileID: 2127462070}
   - component: {fileID: 2127462069}
   - component: {fileID: 2127462071}
+  - component: {fileID: 2127462073}
+  - component: {fileID: 2127462072}
   m_Layer: 5
   m_Name: CurrentStateIndicator
   m_TagString: Untagged
@@ -4824,7 +4826,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -20, y: 199}
-  m_SizeDelta: {x: 150, y: 150}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &2127462069
 MonoBehaviour:
@@ -4883,3 +4885,42 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 63e9aa90d2dc9304798b0e7ec3b72f70, type: 2}
   - {fileID: 11400000, guid: d7e9d848b691ccb4183cbec2b23c800c, type: 2}
   - {fileID: 11400000, guid: 4c128e0ba55de0c408019bf60eb2db50, type: 2}
+  onChangeSizeAnimationMax: 1.25
+  onChangeSizeAnimationTime: 0.06
+  idleSizeAnimationPeriodTime: 0.5
+  idleSizeAnimationMax: 1.02
+--- !u!114 &2127462072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2127462067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81ee1f18281b2ec419284e33b5e002ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiEffects:
+  - {fileID: 2127462073}
+  effectPeriodTime: 0.25
+  effectMaxValue: 0.05
+--- !u!114 &2127462073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2127462067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8b2ed11d675446c5a49da1ea296d490, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 1
+  m_ColorFactor: 0
+  m_BlurFactor: 1
+  m_EffectMode: 0
+  m_ColorMode: 2
+  m_BlurMode: 0
+  m_AdvancedBlur: 0

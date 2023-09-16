@@ -26,6 +26,7 @@ namespace Robot
         private Coroutine _currentRun;
         private List<Enemy.Enemy> _activeEnemies;
         private Tween _currentAnimation;
+        private StateChartManager.StateAction _lastStateAction;
 
         private void Awake()
         {
@@ -48,6 +49,7 @@ namespace Robot
             _spriteChanger.SetDirection(direction);
             _spriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
             _spriteChanger.UpdateSprite();
+            _lastStateAction = StateChartManager.StateAction.GoForward; // As startState is always the first state this is fine
         }
 
         public void SetCoordinates(Vector2Int newCoordinates)
@@ -86,8 +88,13 @@ namespace Robot
                     yield return _stateWait;
                     continue;
                 }
+
+                if (GetStateActionIfNew(currentState, out var newStateAction))
+                {
+                    _lastStateAction = newStateAction;
+                    NextStateStarts?.Invoke(newStateAction);
+                }
                 
-                NextStateStarts?.Invoke(DetermineStateAction(currentState));
                 _activeEnemies.ForEach(enemy => enemy.Move());
 
                 if (currentStatus == RobotState.Status.Pause)
@@ -131,9 +138,9 @@ namespace Robot
             GameManager.Instance.ReachGoal();
         }
 
-        private StateChartManager.StateAction DetermineStateAction(RobotState robotState)
+        private bool GetStateActionIfNew(RobotState robotState, out StateChartManager.StateAction newStateAction)
         {
-            return robotState switch
+            newStateAction = robotState switch
             {
                 GoForwardState => StateChartManager.StateAction.GoForward,
                 TurnRightState => StateChartManager.StateAction.TurnRight,
@@ -143,6 +150,8 @@ namespace Robot
                 StartState => StateChartManager.StateAction.Start,
                 _ => throw new ArgumentException()
             };
+
+            return newStateAction != _lastStateAction;
         }
 
         private void OnMouseDown()
