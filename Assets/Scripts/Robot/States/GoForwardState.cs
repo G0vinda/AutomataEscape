@@ -19,7 +19,7 @@ namespace Robot.States
         {
             animation = null;
             
-            if (LevelGridManager.CheckIfWayIsBlocked(coordinates, direction))
+            if (LevelGridManager.CheckIfWayIsBlocked(coordinates, direction)) // Robot will bump into wall
             {
                 var bumpIntoWallTime = 0.2f;
                 var bumpRetreatTime = 0.4f;
@@ -28,8 +28,9 @@ namespace Robot.States
                 var bumpPosition = robotStartPosition + (Vector3)bumpDistance;
 
                 var animationSequence = DOTween.Sequence();
+                SpriteChanger.GoForward();
                 animationSequence.Append(_robotTransform.DOMove(bumpPosition, bumpIntoWallTime)
-                    .SetEase(Ease.InCubic));
+                    .SetEase(Ease.InCubic)).OnComplete(() => SpriteChanger.GoReverse(bumpRetreatTime));
                 animationSequence.Append(_robotTransform.DOMove(robotStartPosition, bumpRetreatTime)
                     .SetEase(Ease.OutSine));
                 animation = animationSequence;

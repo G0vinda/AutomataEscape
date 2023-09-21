@@ -1,0 +1,664 @@
+fileFormatVersion: 2
+guid: 3945d9e9042939d4a82e111e3586293c
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMasterTextureLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Robo_Atlas_1
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 1875
+        width: 182
+        height: 141
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 209d85bc63f45364f833d54a9ad8d946
+      internalID: 375561278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_2
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 943
+        width: 814
+        height: 495
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4964e6df751fed5438e4c708aadb3e60
+      internalID: -429865074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_3
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 1882
+        width: 248
+        height: 126
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b85afe34bf92ecd45ae6b4ca372242a3
+      internalID: -1458345794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_6
+      rect:
+        serializedVersion: 2
+        x: 1504
+        y: 1320
+        width: 512
+        height: 681
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ef9285a991a8ae46bafa3e41e79c459
+      internalID: 93822578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_7
+      rect:
+        serializedVersion: 2
+        x: 2016
+        y: 2000
+        width: 8
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa227d048a66fec4e8475be59b2d118a
+      internalID: 1170975269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_10
+      rect:
+        serializedVersion: 2
+        x: 578
+        y: 1902
+        width: 83
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45e120da29c6bf54e8be0c944221fe14
+      internalID: -1632980428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_11
+      rect:
+        serializedVersion: 2
+        x: 1160
+        y: 1820
+        width: 297
+        height: 176
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1dd2d6b968797904c88848f1be69bea1
+      internalID: -356409380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_13
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 1580
+        width: 333
+        height: 248
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c13e9388d799234cb791210bbdab854
+      internalID: -1318839999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_17
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 1572
+        width: 332
+        height: 248
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1751dd1bbbc02cf43971007f037fab94
+      internalID: -180294903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_18
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 1528
+        width: 172
+        height: 220
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b70aa98b9188cd94083899982f4e724d
+      internalID: 684227044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_20
+      rect:
+        serializedVersion: 2
+        x: 1357
+        y: 1644
+        width: 95
+        height: 91
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5afbba5ec9e858d40b98d0dec8df8224
+      internalID: -907515047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_21
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 1543
+        width: 31
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50fcc9118a5ecf346a3b9d3b56469f34
+      internalID: -162900942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_22
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 1556
+        width: 64
+        height: 53
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8d012d35d43eb847b42e6e231da2dbb
+      internalID: 2054651967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_25
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 1539
+        width: 57
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb8d45426c4236e47bd3795e4399ff93
+      internalID: 479403231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_26
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 1498
+        width: 33
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d38f13f8355c92c46b5ca57da9931901
+      internalID: 1976546046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_27
+      rect:
+        serializedVersion: 2
+        x: 1298
+        y: 1242
+        width: 202
+        height: 65
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf82e7343a49cf9438687bee3196c393
+      internalID: -627673808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_29
+      rect:
+        serializedVersion: 2
+        x: 1556
+        y: 1145
+        width: 233
+        height: 165
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 626aca0ea5615e2429b4802737585bde
+      internalID: -1977868979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_31
+      rect:
+        serializedVersion: 2
+        x: 1845
+        y: 1151
+        width: 180
+        height: 134
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc7144c6a709fbc418644a276c30553a
+      internalID: 698601701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_34
+      rect:
+        serializedVersion: 2
+        x: 1561
+        y: 990
+        width: 105
+        height: 111
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd6db223ea0f89442b3594103127bd04
+      internalID: -924697712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_40
+      rect:
+        serializedVersion: 2
+        x: 1292
+        y: 389
+        width: 703
+        height: 528
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb46f7242ccf60745829df6394485cdf
+      internalID: -971129819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_41
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 58
+        width: 914
+        height: 754
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4dca0f32c4e8a84c8d9c00597dd363d
+      internalID: 1174865777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_44
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 56
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 780e5f64ca0e51047813e1e2c8bd4579
+      internalID: -327091824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Robo_Atlas_0
+      rect:
+        serializedVersion: 2
+        x: 1298
+        y: 1083
+        width: 203
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a47511b607848054cb5f701e0e22b688
+      internalID: -1188305884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Robo_Atlas_15: 122484950
+      Robo_Atlas_10: -1632980428
+      Robo_Atlas_37: -499783163
+      Robo_Atlas_4: 1626308099
+      Robo_Atlas_31: 698601701
+      Robo_Atlas_22: 2054651967
+      Robo_Atlas_34: -924697712
+      Robo_Atlas_5: 297772282
+      Robo_Atlas_30: -704691319
+      Robo_Atlas_2: -429865074
+      Robo_Atlas_42: -425542880
+      Robo_Atlas_27: -627673808
+      Robo_Atlas_3: -1458345794
+      Robo_Atlas_26: 1976546046
+      Robo_Atlas_19: 411883645
+      Robo_Atlas_25: 479403231
+      Robo_Atlas_6: 93822578
+      Robo_Atlas_14: 292455107
+      Robo_Atlas_8: 1213945354
+      Robo_Atlas_24: 1242213342
+      Robo_Atlas_39: -1948446976
+      Robo_Atlas_32: -409479790
+      Robo_Atlas_21: -162900942
+      Robo_Atlas_40: -971129819
+      Robo_Atlas_17: -180294903
+      Robo_Atlas_1: 375561278
+      Robo_Atlas_7: 1170975269
+      Robo_Atlas_23: -1882712075
+      Robo_Atlas_43: -1395234264
+      Robo_Atlas_45: 8844147
+      Robo_Atlas_18: 684227044
+      Robo_Atlas_0: -1188305884
+      Robo_Atlas_44: -327091824
+      Robo_Atlas_36: -1453245331
+      Robo_Atlas_13: -1318839999
+      Robo_Atlas_29: -1977868979
+      Robo_Atlas_20: -907515047
+      Robo_Atlas_12: 617219379
+      Robo_Atlas_28: -1074733115
+      Robo_Atlas_16: 179146022
+      Robo_Atlas_33: 624735012
+      Robo_Atlas_9: 2030953076
+      Robo_Atlas_38: 551635427
+      Robo_Atlas_41: 1174865777
+      Robo_Atlas_35: -854458954
+      Robo_Atlas_11: -356409380
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

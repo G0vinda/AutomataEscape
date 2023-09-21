@@ -65,6 +65,7 @@ namespace Robot
 
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _idleAnimations;
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _moveAnimations;
+        private Dictionary<(Direction, LevelGridManager.KeyType), int> _reverseMoveAnimations;
         private Dictionary<(Direction, Direction, LevelGridManager.KeyType), int> _turnAnimations;
 
         private void Awake()
@@ -118,6 +119,13 @@ namespace Robot
                 { (Direction.Down, LevelGridManager.KeyType.Blue), Animator.StringToHash("WalkDownWithBlueKey") },
                 { (Direction.Left, LevelGridManager.KeyType.Blue), Animator.StringToHash("WalkSideWithBlueKey") },
                 { (Direction.Right, LevelGridManager.KeyType.Blue), Animator.StringToHash("WalkSideWithBlueKey") }
+            };
+            _reverseMoveAnimations = new Dictionary<(Direction, LevelGridManager.KeyType), int>()
+            {
+                { (Direction.Up, LevelGridManager.KeyType.None), Animator.StringToHash("WalkUpReverse") },
+                { (Direction.Down, LevelGridManager.KeyType.None), Animator.StringToHash("WalkDownReverse") },
+                { (Direction.Left, LevelGridManager.KeyType.None), Animator.StringToHash("WalkSideReverse") },
+                { (Direction.Right, LevelGridManager.KeyType.None), Animator.StringToHash("WalkSideReverse") }
             };
             _turnAnimations = new Dictionary<(Direction, Direction, LevelGridManager.KeyType), int>()
             {
@@ -351,6 +359,13 @@ namespace Robot
             var moveAnimation = _moveAnimations[(_direction, _keyState)];
             bodyAnimator.CrossFade(moveAnimation, 0, 0);
             Invoke(nameof(MovementToIdle), 0.6f);
+        }
+
+        public void GoReverse(float moveTime)
+        {
+            var reverseAnimation = _reverseMoveAnimations[(_direction, _keyState)];
+            bodyAnimator.CrossFade(reverseAnimation, 0, 0);
+            Invoke(nameof(MovementToIdle), moveTime);
         }
 
         private void MovementToIdle()
