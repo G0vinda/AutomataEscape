@@ -64,6 +64,7 @@ namespace Robot
         private int _robotHeadIsClosedSide;
 
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _idleAnimations;
+        private Dictionary<Direction, int> _idleClosedAnimations;
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _moveAnimations;
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _reverseMoveAnimations;
         private Dictionary<(Direction, Direction, LevelGridManager.KeyType), int> _turnAnimations;
@@ -102,6 +103,13 @@ namespace Robot
                 { (Direction.Down, LevelGridManager.KeyType.Blue), Animator.StringToHash("IdleDownWithBlueKey") },
                 { (Direction.Left, LevelGridManager.KeyType.Blue), Animator.StringToHash("IdleSideWithBlueKey") },
                 { (Direction.Right, LevelGridManager.KeyType.Blue), Animator.StringToHash("IdleSideWithBlueKey") }
+            };
+            _idleClosedAnimations = new Dictionary<Direction, int>()
+            {
+                { Direction.Up, Animator.StringToHash("IdleUpClosed") },
+                { Direction.Down, Animator.StringToHash("IdleDownClosed") },
+                { Direction.Left, Animator.StringToHash("IdleSideClosed") },
+                { Direction.Right, Animator.StringToHash("IdleSideClosed") }
             };
             _moveAnimations = new Dictionary<(Direction, LevelGridManager.KeyType), int>()
             {
@@ -257,12 +265,12 @@ namespace Robot
         private void StartBeamSpawnEffect(float beamTime)
         {
             SoundPlayer.Instance.PlayBeamSpawn();
+
             DOVirtual.Color(beamTransparentColor, beamSolidColor, beamTime, value =>
             {
-                headGateSpriteRenderer.color = value;
-                headSpriteRenderer.color = value;
                 bodySpriteRenderer.color = value;
             }).OnComplete(OpenHead);
+            
             frontParticles.Play();
             backParticles.Play();
         }
@@ -272,8 +280,6 @@ namespace Robot
             SoundPlayer.Instance.PlayBeamDespawn();
             DOVirtual.Color(beamSolidColor, beamTransparentColor, beamTime, value =>
             {
-                headGateSpriteRenderer.color = value;
-                headSpriteRenderer.color = value;
                 bodySpriteRenderer.color = value;
             });
             frontParticles.Play();
@@ -294,6 +300,9 @@ namespace Robot
 
         public void OpenHead()
         {
+            MovementToIdle();
+            headSpriteRenderer.enabled = true;
+            headGateSpriteRenderer.enabled = true;
             if (_direction == Direction.Down || _direction == Direction.Up)
             {
                 headGateAnimator.CrossFade(_robotHeadOpenFrontHash, 0, 0);   
@@ -304,12 +313,9 @@ namespace Robot
 
         public void CloseHead()
         {
-            if (_direction == Direction.Down || _direction == Direction.Up)
-            {
-                headGateAnimator.CrossFade(_robotHeadCloseFrontHash, 0, 0);   
-            }else{
-                headGateAnimator.CrossFade(_robotHeadCloseSideHash, 0, 0);
-            }
+            SetToIdleClosed();
+            headSpriteRenderer.enabled = false;
+            headGateSpriteRenderer.enabled = false;
         }
 
         public void StartUp()
@@ -378,6 +384,18 @@ namespace Robot
         {
             bodySpriteRenderer.flipX = _direction == Direction.Right;
             MovementToIdle();
+        }
+
+        public void Initialize()
+        {
+            bodySpriteRenderer.flipX = _direction == Direction.Right;
+            SetToIdleClosed();
+        }
+
+        private void SetToIdleClosed()
+        {
+            var closedIdleAnimation = _idleClosedAnimations[_direction];
+            bodyAnimator.CrossFade(closedIdleAnimation, 0, 0);
         }
 
         #endregion

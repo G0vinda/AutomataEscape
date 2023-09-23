@@ -11,7 +11,7 @@ namespace UI.LevelSelection
         [SerializeField] private ScrollRect scrollRect;
         [SerializeField] private LevelSelectionConnector selectionConnector;
 
-        private const int MainSceneIndex = 2;
+        private const int MainSceneIndex = 3;
 
         private void Start()
         {

@@ -48,7 +48,7 @@ namespace Robot
             _spriteChanger.SetCarryKeyType(LevelGridManager.KeyType.None);
             _spriteChanger.SetDirection(direction);
             _spriteChanger.SetSpriteSortingOrder(LevelGridManager.GetSpriteSortingOrderFromCoordinates(coordinates));
-            _spriteChanger.UpdateSprite();
+            _spriteChanger.Initialize();
             _lastStateAction = StateChartManager.StateAction.GoForward; // As startState is always the first state this is fine
         }
 

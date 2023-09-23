@@ -11,7 +11,7 @@ namespace Menu
         [SerializeField] private Button continueButton;
 
         private const int LevelSelectionSceneIndex = 1;
-        private const int MainSceneIndex = 2;
+        private const int IntroSceneIndex = 2;
         private bool _playerHasReachedLevel;
 
         private void Start()
@@ -41,7 +41,7 @@ namespace Menu
         {
             PlayerPrefs.DeleteAll();
             PlayerPrefs.SetInt("ReachedLevelId", 0);
-            SceneManager.LoadScene(MainSceneIndex);
+            SceneManager.LoadScene(IntroSceneIndex);
         }
 
         public void QuitGame()
