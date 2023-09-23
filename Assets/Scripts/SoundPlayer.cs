@@ -244,6 +244,11 @@ public class SoundPlayer : MonoBehaviour
         RuntimeManager.PlayOneShot(RobotTeleportEvent);   //todo: neuer Methodentrigger fürs Teleportieren durch die Teleportfelder
     }
 
+    public void PlayRunStateChange()
+    {
+        // trigger sound here
+    }
+
     public void PlayStateDragStart()
     {
         RuntimeManager.PlayOneShot(stateDragEvent);

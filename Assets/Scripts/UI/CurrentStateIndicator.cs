@@ -63,6 +63,11 @@ namespace UI
                 _playMusicOnNextState = false;
             }
 
+            if (action != StateChartManager.StateAction.Start)
+            {
+                SoundPlayer.Instance.PlayRunStateChange();
+            }
+
             StopIdleAnimation();
             _image.transform.DOScale(Vector3.one * onChangeSizeAnimationMax, onChangeSizeAnimationTime).SetEase(Ease.OutCirc).SetLoops(2, LoopType.Yoyo)
                 .OnComplete(StartIdleAnimation);
