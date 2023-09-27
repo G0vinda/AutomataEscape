@@ -265,7 +265,6 @@ namespace Robot
         private void StartBeamSpawnEffect(float beamTime)
         {
             SoundPlayer.Instance.PlayBeamSpawn();
-
             DOVirtual.Color(beamTransparentColor, beamSolidColor, beamTime, value =>
             {
                 bodySpriteRenderer.color = value;
@@ -277,11 +276,15 @@ namespace Robot
 
         public void StartBeamDespawnEffect(float beamTime)
         {
+            headSpriteRenderer.enabled = false;
+            headGateSpriteRenderer.enabled = false;
+            SetToIdleClosed();
             SoundPlayer.Instance.PlayBeamDespawn();
             DOVirtual.Color(beamSolidColor, beamTransparentColor, beamTime, value =>
             {
                 bodySpriteRenderer.color = value;
             });
+            
             frontParticles.Play();
             backParticles.Play();
         }
@@ -313,9 +316,13 @@ namespace Robot
 
         public void CloseHead()
         {
-            SetToIdleClosed();
-            headSpriteRenderer.enabled = false;
-            headGateSpriteRenderer.enabled = false;
+            headGateSpriteRenderer.enabled = true;
+            if (_direction == Direction.Down || _direction == Direction.Up)
+            {
+                headGateAnimator.CrossFade(_robotHeadCloseFrontHash, 0, 0);
+            }else{
+                headGateAnimator.CrossFade(_robotHeadCloseSideHash, 0, 0);
+            }
         }
 
         public void StartUp()
