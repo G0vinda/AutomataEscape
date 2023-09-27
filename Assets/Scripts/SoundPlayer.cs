@@ -139,17 +139,16 @@ public class SoundPlayer : MonoBehaviour
             case 0: 
                 PlayMusicMenu();
                 break;
-            case 1:
+            case 1: // this is only for test purposes
                 PlayMusicLevel();
                 PlayAtmoLevel();
                 break;
         }
     }
 
-    public void SetLevelBackgroundVolume(float volume)
+    public void SetLevelMusicVolume(float volume)
     {
         _musicInstance.setVolume(volume);
-        _atmoInstance.setVolume(volume);
     }
 
     public void PlayButtonClick()
@@ -165,13 +164,16 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayMusicMenu()
     {
-        _musicInstance.stop(STOP_MODE.IMMEDIATE);
+        if(_musicInstance.hasHandle())
+            return;
         _musicInstance = RuntimeManager.CreateInstance(musicMenuEvent);
         _musicInstance.start();
     }
     
     public void PlayAtmoLevel()
     {
+        if(_atmoInstance.hasHandle())
+            return;
         _atmoInstance = RuntimeManager.CreateInstance(atmoLevelEvent);
         _atmoInstance.start();
     }
@@ -193,11 +195,13 @@ public class SoundPlayer : MonoBehaviour
     public void StopMusic()
     {
         _musicInstance.stop(STOP_MODE.IMMEDIATE);
+        _musicInstance.clearHandle();
     }
 
     public void StopAtmoLevel()
     {
         _atmoInstance.stop(STOP_MODE.IMMEDIATE);
+        _atmoInstance.clearHandle();
     }
 
     public void PlayCableStart()
@@ -231,17 +235,17 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayBeamSpawn()
     {
-        RuntimeManager.PlayOneShot(RobotSpawnEvent);   //todo: neuer Methodentrigger für das Spawnen des Roboters
+        RuntimeManager.PlayOneShot(RobotSpawnEvent);   
     }
     
     public void PlayBeamDespawn()
     {
-        RuntimeManager.PlayOneShot(RobotDespawnEvent);   //todo: neuer Methodentrigger für das Despawnen des Roboters
+        RuntimeManager.PlayOneShot(RobotDespawnEvent);   
     }
     
     public void PlayBeamTeleport()
     {
-        RuntimeManager.PlayOneShot(RobotTeleportEvent);   //todo: neuer Methodentrigger fürs Teleportieren durch die Teleportfelder
+        RuntimeManager.PlayOneShot(RobotTeleportEvent);
     }
 
     public void PlayRunStateChange()
@@ -311,7 +315,7 @@ public class SoundPlayer : MonoBehaviour
         RuntimeManager.PlayOneShot(RobotOpenGateEvent);
     }
     
-    public void PlayEnemyMove()                             //todo: trigger me please
+    public void PlayEnemyMove()                            
     {
         RuntimeManager.PlayOneShot(EnemyWalkEvent);
     }
