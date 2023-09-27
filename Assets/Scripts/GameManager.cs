@@ -173,7 +173,11 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("CurrentLevelId", _currentLevelId);
         var reachedLevel = PlayerPrefs.GetInt("ReachedLevelId", 0);
         if (_currentLevelId > reachedLevel)
+        {
             PlayerPrefs.SetInt("ReachedLevelId", _currentLevelId);
+            PlayerPrefs.SetString("ReachedNewLevel", true.ToString());
+        }
+        
         
         SceneManager.LoadScene(LevelSelectionSceneIndex);
     }
@@ -277,7 +281,6 @@ public class GameManager : MonoBehaviour
         uiManager.SetButtonsActive(false);
         currentStateIndicator.gameObject.SetActive(false);
         BeamRobotOut?.Invoke(levelBeamTime);
-        PlayerPrefs.SetString("ReachedNewLevel", true.ToString());
         Invoke(nameof(FadeLevelOut), 2.7f);
     }
 
