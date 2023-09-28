@@ -332,6 +332,7 @@ namespace Robot
 
         public void ShutDown()
         {
+            headSpriteRenderer.enabled = true;
             headAnimator.CrossFade(_robotShutDownHash, 0, 0);   
         }
 
@@ -369,6 +370,7 @@ namespace Robot
 
         public void GoForward()
         {
+            headSpriteRenderer.enabled = false;
             var moveAnimation = _moveAnimations[(_direction, _keyState)];
             bodyAnimator.CrossFade(moveAnimation, 0, 0);
             Invoke(nameof(MovementToIdle), 0.6f);
@@ -376,6 +378,7 @@ namespace Robot
 
         public void GoReverse(float moveTime)
         {
+            headSpriteRenderer.enabled = false;
             var reverseAnimation = _reverseMoveAnimations[(_direction, _keyState)];
             bodyAnimator.CrossFade(reverseAnimation, 0, 0);
             Invoke(nameof(MovementToIdle), moveTime);
@@ -383,6 +386,7 @@ namespace Robot
 
         private void MovementToIdle()
         {
+            headSpriteRenderer.enabled = true;
             var idleAnimation = _idleAnimations[(_direction, _keyState)];
             bodyAnimator.CrossFade(idleAnimation, 0, 0);
         }

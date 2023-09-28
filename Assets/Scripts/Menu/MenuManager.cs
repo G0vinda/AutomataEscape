@@ -22,6 +22,7 @@ namespace Menu
 
         public void ContinueGame()
         {
+            SoundPlayer.Instance.PlayAtmoLevel();
             SceneManager.LoadScene(LevelSelectionSceneIndex);
         }
 
@@ -41,6 +42,7 @@ namespace Menu
         {
             PlayerPrefs.DeleteAll();
             PlayerPrefs.SetInt("ReachedLevelId", 0);
+            SoundPlayer.Instance.StopMusic();
             SceneManager.LoadScene(IntroSceneIndex);
         }
 

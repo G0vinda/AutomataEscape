@@ -78,8 +78,9 @@ public class GameManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
-        SoundPlayer.Instance.PlayMusicMenu();
+        SoundPlayer.Instance.StopMusic();
         SoundPlayer.Instance.StopAtmoLevel();
+        SoundPlayer.Instance.PlayMusicMenu();
         SceneManager.LoadScene(MenuSceneIndex);
     }
 
@@ -168,7 +169,12 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(FinishSceneIndex);
 
         _currentLevelId++;
-        PlayerPrefs.SetInt("ReachedLevelId", _currentLevelId);
+        SoundPlayer.Instance.StopMusic();
+        PlayerPrefs.SetInt("CurrentLevelId", _currentLevelId);
+        var reachedLevel = PlayerPrefs.GetInt("ReachedLevelId", 0);
+        if (_currentLevelId > reachedLevel)
+            PlayerPrefs.SetInt("ReachedLevelId", _currentLevelId);
+        
         SceneManager.LoadScene(LevelSelectionSceneIndex);
     }
 
@@ -250,7 +256,7 @@ public class GameManager : MonoBehaviour
         fadeSequence.Append(DOVirtual.Color(levelFadeColor, transparent, levelFadeTime,
             value => levelFadeImage.color = value));
         fadeSequence.Join(DOVirtual.Float(0, 1, levelFadeTime,
-            value => SoundPlayer.Instance.SetLevelBackgroundVolume(value)));
+            value => SoundPlayer.Instance.SetLevelMusicVolume(value)));
         fadeSequence.SetEase(Ease.InCirc);
     }
 
@@ -261,7 +267,7 @@ public class GameManager : MonoBehaviour
         fadeSequence.Append(DOVirtual.Color(transparent, levelFadeColor, levelFadeTime,
             value => levelFadeImage.color = value));
         fadeSequence.Join(DOVirtual.Float(1, 0, levelFadeTime,
-            value => SoundPlayer.Instance.SetLevelBackgroundVolume(value)));
+            value => SoundPlayer.Instance.SetLevelMusicVolume(value)));
         fadeSequence.SetEase(Ease.InCirc).OnComplete(FinishLevel);
     }
     
@@ -271,6 +277,7 @@ public class GameManager : MonoBehaviour
         uiManager.SetButtonsActive(false);
         currentStateIndicator.gameObject.SetActive(false);
         BeamRobotOut?.Invoke(levelBeamTime);
+        PlayerPrefs.SetString("ReachedNewLevel", true.ToString());
         Invoke(nameof(FadeLevelOut), 2.7f);
     }
 

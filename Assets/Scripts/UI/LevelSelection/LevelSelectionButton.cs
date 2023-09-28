@@ -7,27 +7,45 @@ namespace UI.LevelSelection
 {
     public class LevelSelectionButton : MonoBehaviour
     {
-        [SerializeField] private Button button;
+        [SerializeField] private Animator buttonAnimator;
+        [SerializeField] private Animator gearAnimator;
         [SerializeField] private GameObject marking;
-
+        
         private LevelSelectionManager _levelSelectionManager;
+        private Image _gearSpriteRenderer;
         private bool _locked;
+        private int _levelSelectIsOpenHash;
+        private int _levelSelectIsClosedHash;
+        private int _openLevelSelectHash;
+        private int _openGearHash;
 
         private void Awake()
         {
             _levelSelectionManager = GetComponentInParent<LevelSelectionManager>();
+            _gearSpriteRenderer = gearAnimator.GetComponent<Image>();
+            
+            //Button
+            _levelSelectIsOpenHash = Animator.StringToHash("LevelSelectIsOpen");
+            _levelSelectIsClosedHash = Animator.StringToHash("LevelSelectIsClosed");
+            _openLevelSelectHash = Animator.StringToHash("LevelSelectOpen");
+            
+            //Gear
+            _openGearHash = Animator.StringToHash("openGear");
         }
 
-        public void Lock()
+        public void SetLockState(bool lockState)
         {
-            _locked = true;
-            button.interactable = false;
+            _locked = lockState;
+            _gearSpriteRenderer.enabled = _locked;
+            var animationState = _locked ? _levelSelectIsClosedHash : _levelSelectIsOpenHash;
+            buttonAnimator.CrossFade(animationState, 0, 0);
         }
 
         public void Unlock()
         {
+            buttonAnimator.CrossFade(_openLevelSelectHash, 0, 0);
+            gearAnimator.CrossFade(_openGearHash, 0, 0);
             _locked = false;
-            button.interactable = true;
         }
 
         public void SetMarking(bool value)
@@ -37,6 +55,9 @@ namespace UI.LevelSelection
 
         public void OnClick()
         {
+            if(_locked)
+                return;
+            
             _levelSelectionManager.LoadLevel(this);
         }
     }

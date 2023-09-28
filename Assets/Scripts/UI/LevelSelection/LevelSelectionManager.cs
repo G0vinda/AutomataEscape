@@ -16,16 +16,16 @@ namespace UI.LevelSelection
         private void Start()
         {
             var reachedLevel = PlayerPrefs.GetInt("ReachedLevelId", 0);
+            var newLevelReached = bool.Parse(PlayerPrefs.GetString("ReachedNewLevel", "false"));
+            if (newLevelReached)
+                reachedLevel--;
             var markedButtonPosition = selectionButtons[reachedLevel].transform.position;
             AlignScrollContentToPosition(markedButtonPosition.x);
 
             for (var i = 0; i < selectionButtons.Length; i++)
             {
                 var levelAvailable = i <= reachedLevel;
-                if (levelAvailable)
-                    selectionButtons[i].Unlock();
-                else
-                    selectionButtons[i].Lock();
+                selectionButtons[i].SetLockState(!levelAvailable);
 
                 if (i > 0)
                 {
@@ -34,6 +34,13 @@ namespace UI.LevelSelection
                 }
                 
                 selectionButtons[i].SetMarking(i == reachedLevel);
+            }
+
+            if (newLevelReached)
+            {
+                reachedLevel++;
+                selectionButtons[reachedLevel].Unlock();
+                PlayerPrefs.SetString("ReachedNewLevel", false.ToString());
             }
         }
 
