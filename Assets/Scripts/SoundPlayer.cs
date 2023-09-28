@@ -28,13 +28,15 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference levelStartFailEvent;
     [SerializeField] private EventReference VictorySFXEvent;
     [SerializeField] private EventReference SceneSwitchSFXEvent;
-
+    [SerializeField] private EventReference RunStateChange;
+    
     [SerializeField] private EventReference RobotSpawnEvent;
     [SerializeField] private EventReference RobotDespawnEvent;
     [SerializeField] private EventReference RobotTurnOnEvent;
     [SerializeField] private EventReference RobotTurnOffEvent;
     [SerializeField] private EventReference RobotWalkEvent;
     [SerializeField] private EventReference RobotTurnEvent;
+    [SerializeField] private EventReference RobotHitWallEvent;
     [SerializeField] private EventReference RobotDropEvent;
     [SerializeField] private EventReference RobotGrabEvent;
     [SerializeField] private EventReference RobotTeleportEvent;
@@ -250,7 +252,7 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayRunStateChange()
     {
-        // trigger sound here
+        RuntimeManager.PlayOneShot(RunStateChange);   
     }
 
     public void PlayStateDragStart()
@@ -315,6 +317,11 @@ public class SoundPlayer : MonoBehaviour
         RuntimeManager.PlayOneShot(RobotTurnEvent);
     }
 
+    public void PlayRobotHitWall()                          //Trigger this Event when Robo hits wall
+    {
+        RuntimeManager.PlayOneShot(RobotHitWallEvent);
+    }
+    
     public void PlayOpenGate()
     {
         RuntimeManager.PlayOneShot(RobotOpenGateEvent);
