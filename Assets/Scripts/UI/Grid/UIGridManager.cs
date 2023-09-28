@@ -57,6 +57,11 @@ namespace UI.Grid
                 
                 connectedStateElement.transform.position = newStatePosition;
                 connectedStateElement.UpdateScaling();
+
+                if (connectedStateElement.TryGetComponent(out StartStateUIElement startState))
+                {
+                    startState.UpdateFrontImagScaling();
+                }
             }
         }
         

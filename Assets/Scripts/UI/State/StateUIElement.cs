@@ -26,10 +26,10 @@ namespace UI.State
             private float _defaultFirstLineElementLength;
             private float _defaultLineWidth;
 
-            public void SetDefaults(float sateSize, float lineWidth)
+            public void SetDefaults(float stateSize, float lineWidth)
             {
-                DefaultStateSize = sateSize * Vector2.one;
-                _defaultLineElementLength = sateSize / 3;
+                DefaultStateSize = stateSize * Vector2.one;
+                _defaultLineElementLength = stateSize / 3;
                 _defaultLineWidth = lineWidth;
                 _defaultFirstLineElementLength = (_defaultLineElementLength + _defaultLineWidth) * 0.5f;
                 SetScaling(1);

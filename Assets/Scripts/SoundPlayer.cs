@@ -317,7 +317,7 @@ public class SoundPlayer : MonoBehaviour
         RuntimeManager.PlayOneShot(RobotTurnEvent);
     }
 
-    public void PlayRobotHitWall()                          //Trigger this Event when Robo hits wall
+    public void PlayRobotHitWall()                          
     {
         RuntimeManager.PlayOneShot(RobotHitWallEvent);
     }

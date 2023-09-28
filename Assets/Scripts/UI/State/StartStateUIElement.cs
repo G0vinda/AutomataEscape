@@ -18,6 +18,7 @@ namespace UI.State
         private StateUIElement _uiElement;
         private Tween _fadeTween;
         private Color _frontImageColor;
+        private RectTransform _frontImageTransform;
 
         private void Awake()
         {
@@ -45,8 +46,15 @@ namespace UI.State
             _uiElement.Initialize(0);
             _uiElement.ConnectedCell = connectedCell;
             _frontImageColor = frontImage.color;
+            _frontImageTransform = frontImage.GetComponent<RectTransform>();
+            UpdateFrontImagScaling();
 
             StartFadeTween();
+        }
+
+        public void UpdateFrontImagScaling()
+        {
+            _frontImageTransform.sizeDelta = StateUIElement.StateSizeAttributes.StateSize;
         }
 
         public void PlayErrorEffect(float effectTime)
