@@ -83,6 +83,13 @@ MonoBehaviour:
       Data3: 976647862
       Data4: -1947256804
     Path: event:/Foleys/Menu Button UI
+  unlockLevelEvent:
+    Guid:
+      Data1: -1272279324
+      Data2: 1244483937
+      Data3: 1489100687
+      Data4: 1079671391
+    Path: event:/Foleys/LevelUnlock
   cableConnectEvent:
     Guid:
       Data1: -438105875

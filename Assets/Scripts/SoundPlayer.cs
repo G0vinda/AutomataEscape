@@ -13,6 +13,8 @@ public class SoundPlayer : MonoBehaviour
     
     [SerializeField] private EventReference buttonClickEvent;
     [SerializeField] private EventReference buttonClickMenuEvent;
+
+    [SerializeField] private EventReference unlockLevelEvent;
     
     [SerializeField] private EventReference cableConnectEvent;
     [SerializeField] private EventReference cableHoldEvent;
@@ -294,7 +296,7 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayLevelUnlock()
     {
-        
+        RuntimeManager.PlayOneShot(unlockLevelEvent);
     }
 
     public void PlayRobotGrab()
