@@ -290,6 +290,11 @@ public class SoundPlayer : MonoBehaviour
         _musicInstance.stop(STOP_MODE.IMMEDIATE);
     }
 
+    public void PlayLevelUnlock()
+    {
+        
+    }
+
     public void PlayRobotGrab()
     {
         RuntimeManager.PlayOneShot(RobotGrabEvent);

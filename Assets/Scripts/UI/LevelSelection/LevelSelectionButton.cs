@@ -43,6 +43,7 @@ namespace UI.LevelSelection
 
         public void Unlock()
         {
+            SoundPlayer.Instance.PlayLevelUnlock();
             buttonAnimator.CrossFade(_openLevelSelectHash, 0, 0);
             gearAnimator.CrossFade(_openGearHash, 0, 0);
             _locked = false;
