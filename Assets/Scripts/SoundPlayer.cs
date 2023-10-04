@@ -254,7 +254,7 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayRunStateChange()
     {
-        RuntimeManager.PlayOneShot(RunStateChange);   
+        RuntimeManager.PlayOneShot(RunStateChange);
     }
 
     public void PlayStateDragStart()

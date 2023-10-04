@@ -8,7 +8,7 @@ namespace UI
         [SerializeField] private Image levelSelectionConnectionPrefab;
         [SerializeField] private Color disabledConnectionColor;
 
-        public void CreateConnection(Vector2 from, Vector2 to, bool isEnabled)
+        public void CreateConnection(Vector2 from, Vector2 to, bool isEnabled, float scaleFactor)
         {
             var path = to - from;
             var connectionAngle = Vector2.SignedAngle(Vector2.up, path);
@@ -17,7 +17,7 @@ namespace UI
                 transform);
 
             var connectionSize = newConnection.rectTransform.sizeDelta;
-            connectionSize.y = path.magnitude;
+            connectionSize.y = path.magnitude / scaleFactor;
             newConnection.rectTransform.sizeDelta = connectionSize;
 
             if (!isEnabled)

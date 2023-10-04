@@ -10,11 +10,13 @@ namespace UI.LevelSelection
         [SerializeField] private LevelSelectionButton[] selectionButtons;
         [SerializeField] private ScrollRect scrollRect;
         [SerializeField] private LevelSelectionConnector selectionConnector;
+        [SerializeField] private Canvas mainCanvasScaler;
 
         private const int MainSceneIndex = 3;
 
         private void Start()
         {
+            var scaleFactor = mainCanvasScaler.scaleFactor;
             var reachedLevel = PlayerPrefs.GetInt("ReachedLevelId", 0);
             var newLevelReached = bool.Parse(PlayerPrefs.GetString("ReachedNewLevel", "false"));
             if (newLevelReached)
@@ -30,7 +32,7 @@ namespace UI.LevelSelection
                 if (i > 0)
                 {
                     selectionConnector.CreateConnection(selectionButtons[i - 1].transform.position,
-                        selectionButtons[i].transform.position, levelAvailable);
+                        selectionButtons[i].transform.position, levelAvailable, scaleFactor);
                 }
                 
                 selectionButtons[i].SetMarking(i == reachedLevel);

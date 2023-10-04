@@ -2337,7 +2337,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -4.9, y: 6.9}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1684824714
@@ -2592,6 +2592,7 @@ MonoBehaviour:
   - {fileID: 1856815405}
   scrollRect: {fileID: 1546575045}
   selectionConnector: {fileID: 1684824714}
+  mainCanvasScaler: {fileID: 1484688819}
 --- !u!114 &1856815405 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5719344719421895911, guid: dd176737506d7d84c929959348298da5, type: 3}
