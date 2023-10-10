@@ -137,14 +137,33 @@ namespace LevelGrid
                    gateTile.IsBlockingWay(moveDirection);
         }
 
-        public bool CheckIfTileIsPortal(Vector2Int tileCoordinates)
+        public GameObject GetTileOnCoordinates(Vector2Int coordinates)
         {
-            return CheckIfTileHasTag(tileCoordinates, "Portal");
+            return Grid[coordinates];
         }
 
-        public bool CheckIfTileIsGoal(Vector2Int tileCoordinates)
+        public bool CheckIfTileIsPortal(Vector2Int tileCoordinates, out PortalTileAnimator portalTileAnimator)
         {
-            return CheckIfTileHasTag(tileCoordinates, "Goal");
+            portalTileAnimator = null;
+            if (CheckIfTileHasTag(tileCoordinates, "Portal"))
+            {
+                portalTileAnimator =  Grid[tileCoordinates].GetComponent<PortalTileAnimator>();
+                return true;
+            }
+            
+            return false;
+        }
+
+        public bool CheckIfTileIsGoal(Vector2Int tileCoordinates, out PortalTileAnimator portalTileAnimator)
+        {
+            portalTileAnimator = null;
+            if (CheckIfTileHasTag(tileCoordinates, "Goal"))
+            {
+                portalTileAnimator =  Grid[tileCoordinates].GetComponent<PortalTileAnimator>();
+                return true;
+            }
+            
+            return false;
         }
 
         public bool CheckIfTileIsOrange(Vector2Int tileCoordinates)

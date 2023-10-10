@@ -47,18 +47,28 @@ namespace Robot.States
             SoundPlayer.Instance.PlayRobotMove();
             GameManager.Instance.CheckForEnemyCollision();
 
-            if (LevelGridManager.CheckIfTileIsPortal(coordinates))
+            if (LevelGridManager.CheckIfTileIsPortal(coordinates, out var portalAnimator))
             {
                 var startPortalCoordinates = coordinates;
                 animation.onComplete = () =>
                 {
                     GameManager.Instance.InitiateMoveThroughPortal(startPortalCoordinates);
+                    portalAnimator.PlayTeleport();
                 };
                 
                 return Status.Pause;
             }
+
+            if (LevelGridManager.CheckIfTileIsGoal(coordinates, out var goalAnimator))
+            {
+                animation.onComplete = () =>
+                {
+                    goalAnimator.PlayTeleport();
+                };
+                return Status.ReachedGoal;
+            }
             
-            return LevelGridManager.CheckIfTileIsGoal(coordinates) ? Status.ReachedGoal : Status.Running;
+            return Status.Running;
         }
     }
 }

@@ -309,6 +309,9 @@ public class GameManager : MonoBehaviour
         
         _robot.transform.position = levelGridManager.GetTilePosition(destinationCoordinates);
         _robot.SetCoordinates(destinationCoordinates);
+        var destinationPortalAnimator = levelGridManager.GetTileOnCoordinates(destinationCoordinates)
+            .GetComponent<PortalTileAnimator>();
+        destinationPortalAnimator.PlayReverseTeleport();
         BeamRobotIn?.Invoke(portalBeamTime);
     }
 
