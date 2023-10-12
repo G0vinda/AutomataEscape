@@ -61,10 +61,7 @@ namespace Robot.States
 
             if (LevelGridManager.CheckIfTileIsGoal(coordinates, out var goalAnimator))
             {
-                animation.onComplete = () =>
-                {
-                    goalAnimator.PlayTeleport();
-                };
+                goalAnimator.PlayTeleport();
                 return Status.ReachedGoal;
             }
             
