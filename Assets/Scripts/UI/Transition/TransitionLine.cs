@@ -254,7 +254,6 @@ namespace UI.Transition
 
         private LineElement CreateLineElement(Direction direction, LineElement lastLineElement, float lineLengthFactor = 1f)
         {
-            Debug.Log($"Element created with factor {lineLengthFactor}");
             return direction switch
             {
                 Direction.Up => CreateUpElement(lastLineElement, _elementLength * lineLengthFactor),

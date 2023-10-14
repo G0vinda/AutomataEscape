@@ -13,15 +13,19 @@ namespace Robot.States
         public override Status ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
         {
             animation = null;
-            
-            if (GrabbedKeyType == LevelGridManager.KeyType.None || CheckIfOnKey(coordinates))
+
+            var keyTypeOnGround = CheckForKey(coordinates);
+            if (GrabbedKeyType == LevelGridManager.KeyType.None || keyTypeOnGround != LevelGridManager.KeyType.None)
                 return Status.Running;
             
-            GameManager.Instance.DropKeyOnCoordinates(coordinates, GrabbedKeyType);
+            var dropCoordinates = coordinates;
+            var dropKeyType = GrabbedKeyType;
+            SpriteChanger.DropKey(() =>
+            {
+                GameManager.Instance.DropKeyOnCoordinates(dropCoordinates, dropKeyType);
+                SoundPlayer.Instance.PlayRobotDrop();
+            });
             GrabbedKeyType = LevelGridManager.KeyType.None;
-            SpriteChanger.SetCarryKeyType(LevelGridManager.KeyType.None);
-            SpriteChanger.UpdateSprite();
-            SoundPlayer.Instance.PlayRobotDrop();
             return Status.Running;
         }
     }

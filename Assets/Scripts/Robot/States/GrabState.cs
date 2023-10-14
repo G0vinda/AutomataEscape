@@ -1,7 +1,9 @@
-﻿using DG.Tweening;
+﻿using System.Collections;
+using DG.Tweening;
 using LevelGrid;
 using UI;
 using UI.Transition;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 namespace Robot.States
@@ -13,13 +15,19 @@ namespace Robot.States
         public override Status ProcessState(ref Vector2Int coordinates, ref Direction direction, out Tween animation)
         {
             animation = null;
-            if (!CheckIfOnKey(coordinates) || GrabbedKeyType != LevelGridManager.KeyType.None)
+            var keyTypeOnGround = CheckForKey(coordinates);
+            if (keyTypeOnGround == LevelGridManager.KeyType.None || GrabbedKeyType != LevelGridManager.KeyType.None)
                 return Status.Running;
-            
-            GrabbedKeyType = GameManager.Instance.GrabKeyOnCoordinates(coordinates);
-            SpriteChanger.SetCarryKeyType(GrabbedKeyType);
-            SpriteChanger.UpdateSprite();
-            SoundPlayer.Instance.PlayRobotGrab();
+
+            GrabbedKeyType = keyTypeOnGround;
+            var pickUpCoordinates = coordinates;
+            SpriteChanger.GrabKey(keyTypeOnGround,
+                () =>
+                {
+                    Debug.Log("GrabAction got called!");
+                    GameManager.Instance.GrabKeyOnCoordinates(pickUpCoordinates);
+                    SoundPlayer.Instance.PlayRobotGrab();
+                });
             return Status.Running;
         }
     }

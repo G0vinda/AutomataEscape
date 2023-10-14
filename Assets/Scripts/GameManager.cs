@@ -84,11 +84,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(MenuSceneIndex);
     }
 
-    public bool IsKeyOnCoordinates(Vector2Int coordinates)
-    {
-        return _currentKeyObjectData.ContainsKey(coordinates);
-    }
-
     public void DropKeyOnCoordinates(Vector2Int coordinates, LevelGridManager.KeyType keyType)
     {
         if(levelGridManager.UnlockGateWithKeyIfPossible(coordinates, keyType))
@@ -112,12 +107,20 @@ public class GameManager : MonoBehaviour
         _currentKeyObjectData.Add(coordinates, (keyType, newKey));
     }
 
-    public LevelGridManager.KeyType GrabKeyOnCoordinates(Vector2Int coordinates)
+    public LevelGridManager.KeyType GetKeyTypeOnCoordinates(Vector2Int coordinates)
     {
-        var (keyType, keyObject) = _currentKeyObjectData[coordinates];
+        if (!_currentKeyObjectData.ContainsKey(coordinates))
+            return LevelGridManager.KeyType.None;
+        
+        var (keyType, _) = _currentKeyObjectData[coordinates];
+        return keyType;
+    }
+
+    public void GrabKeyOnCoordinates(Vector2Int coordinates)
+    {
+        var (_, keyObject) = _currentKeyObjectData[coordinates];
         Destroy(keyObject);
         _currentKeyObjectData.Remove(coordinates);
-        return keyType;
     }
 
     public void ToggleRobotRunState()

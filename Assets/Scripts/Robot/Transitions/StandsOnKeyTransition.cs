@@ -13,7 +13,7 @@ namespace Robot.Transitions
 
         public override bool CheckCondition(Vector2Int coordinates, Direction direction, LevelGridManager levelGridManager)
         {
-            return GameManager.Instance.IsKeyOnCoordinates(coordinates);
+            return GameManager.Instance.GetKeyTypeOnCoordinates(coordinates) != LevelGridManager.KeyType.None;
         }
     }
 }

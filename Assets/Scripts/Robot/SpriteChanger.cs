@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using LevelGrid;
+using log4net.Core;
 using UI;
 using UI.Transition;
 using UnityEngine;
@@ -20,22 +22,6 @@ namespace Robot
         [SerializeField] private SpriteRenderer headSpriteRenderer;
         [SerializeField] private SpriteRenderer bodySpriteRenderer;
 
-        [Header("RobotHeadSprites")] 
-        [SerializeField] private Sprite offHeadSprite; 
-            
-        [Header("RobotBodySprites")]
-        [SerializeField] private Sprite upRobot;
-        [SerializeField] private Sprite sideRobot;
-        [SerializeField] private Sprite downRobot;
-
-        [SerializeField] private Sprite upRobotWithBlueKey;
-        [SerializeField] private Sprite sideRobotWithBlueKey;
-        [SerializeField] private Sprite downRobotWithBlueKey;
-
-        [SerializeField] private Sprite upRobotWithRedKey;
-        [SerializeField] private Sprite sideRobotWithRedKey;
-        [SerializeField] private Sprite downRobotWithRedKey;
-
         [Header("BeamParticles")] 
         [SerializeField] private ParticleSystem frontParticles;
         [SerializeField] private ParticleSystem backParticles;
@@ -53,7 +39,6 @@ namespace Robot
 
         private int _robotStartUpHash;
         private int _robotShutDownHash;
-        private int _robotOnIdleHash;
         private int _robotOffHash;
         
         private int _robotHeadOpenFrontHash;
@@ -68,6 +53,8 @@ namespace Robot
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _moveAnimations;
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _reverseMoveAnimations;
         private Dictionary<(Direction, Direction, LevelGridManager.KeyType), int> _turnAnimations;
+        private Dictionary<(Direction, LevelGridManager.KeyType), int> _grabAnimations;
+        private Dictionary<(Direction, LevelGridManager.KeyType), int> _dropAnimations;
 
         private void Awake()
         {
@@ -75,7 +62,6 @@ namespace Robot
 
             _robotStartUpHash = Animator.StringToHash("RobotStartUp");
             _robotShutDownHash = Animator.StringToHash("RobotShutDown");
-            _robotOnIdleHash = Animator.StringToHash("RobotOnIdle");
             _robotOffHash = Animator.StringToHash("RobotOff");
 
             _robotHeadOpenFrontHash = Animator.StringToHash("RobotHeadOpenFront");
@@ -235,6 +221,28 @@ namespace Robot
                     Animator.StringToHash("TurnUpToSideWithRedKey")
                 }
             };
+            _grabAnimations = new Dictionary<(Direction, LevelGridManager.KeyType), int>()
+            {
+                { (Direction.Up, LevelGridManager.KeyType.Red), Animator.StringToHash("GrabBackWithRedKey") },
+                { (Direction.Up, LevelGridManager.KeyType.Blue), Animator.StringToHash("GrabBackWithBlueKey") },
+                { (Direction.Left, LevelGridManager.KeyType.Red), Animator.StringToHash("GrabSideWithRedKey") },
+                { (Direction.Left, LevelGridManager.KeyType.Blue), Animator.StringToHash("GrabSideWithBlueKey") },
+                { (Direction.Right, LevelGridManager.KeyType.Red), Animator.StringToHash("GrabSideWithRedKey") },
+                { (Direction.Right, LevelGridManager.KeyType.Blue), Animator.StringToHash("GrabSideWithBlueKey") },
+                { (Direction.Down, LevelGridManager.KeyType.Red), Animator.StringToHash("GrabFrontWithRedKey") },
+                { (Direction.Down, LevelGridManager.KeyType.Blue), Animator.StringToHash("GrabFrontWithBlueKey") },
+            };
+            _dropAnimations = new Dictionary<(Direction, LevelGridManager.KeyType), int>()
+            {
+                { (Direction.Up, LevelGridManager.KeyType.Red), Animator.StringToHash("DropBackWithRedKey") },
+                { (Direction.Up, LevelGridManager.KeyType.Blue), Animator.StringToHash("DropBackWithBlueKey") },
+                { (Direction.Left, LevelGridManager.KeyType.Red), Animator.StringToHash("DropSideWithRedKey") },
+                { (Direction.Left, LevelGridManager.KeyType.Blue), Animator.StringToHash("DropSideWithBlueKey") },
+                { (Direction.Right, LevelGridManager.KeyType.Red), Animator.StringToHash("DropSideWithRedKey") },
+                { (Direction.Right, LevelGridManager.KeyType.Blue), Animator.StringToHash("DropSideWithBlueKey") },
+                { (Direction.Down, LevelGridManager.KeyType.Red), Animator.StringToHash("DropFrontWithRedKey") },
+                { (Direction.Down, LevelGridManager.KeyType.Blue), Animator.StringToHash("DropFrontWithBlueKey") },
+            };
         }
 
         #region OnEnable/OnDisable
@@ -366,6 +374,34 @@ namespace Robot
             bodyAnimator.CrossFade(turnAnimation, 0, 0);
             _direction = nextDirection;
             Invoke(nameof(MovementToIdle), 0.6f);
+        }
+
+        public void GrabKey(LevelGridManager.KeyType keyType, Action pickUpAction)
+        {
+            headSpriteRenderer.enabled = false;
+            _keyState = keyType;
+            var grabAnimation = _grabAnimations[(_direction, keyType)];
+            var animationToFloorTime = 22f / 60f;
+            bodyAnimator.CrossFade(grabAnimation, 0, 0);
+            StartCoroutine(PlayDelayedAction(pickUpAction, animationToFloorTime));
+            Invoke(nameof(MovementToIdle), 0.6f);
+        }
+
+        public void DropKey(Action dropAction)
+        {
+            headSpriteRenderer.enabled = false;
+            var dropAnimation = _dropAnimations[(_direction, _keyState)];
+            var animationToFloorTime = 18f / 60f;
+            bodyAnimator.CrossFade(dropAnimation, 0, 0);
+            _keyState = LevelGridManager.KeyType.None;
+            StartCoroutine(PlayDelayedAction(dropAction, animationToFloorTime));
+            Invoke(nameof(MovementToIdle), 0.6f);
+        }
+        
+        private IEnumerator PlayDelayedAction(Action pickUpAction, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            pickUpAction();
         }
 
         public void GoForward()

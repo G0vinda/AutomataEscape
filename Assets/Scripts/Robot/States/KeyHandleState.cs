@@ -17,10 +17,10 @@ namespace Robot.States
         {
             GrabbedKeyType = LevelGridManager.KeyType.None;
         }
-        
-        protected bool CheckIfOnKey(Vector2Int coordinates)
+
+        protected LevelGridManager.KeyType CheckForKey(Vector2Int coordinates)
         {
-            return GameManager.Instance.IsKeyOnCoordinates(coordinates);
+            return GameManager.Instance.GetKeyTypeOnCoordinates(coordinates);
         }
     }
 }
