@@ -76,6 +76,11 @@ public class GameManager : MonoBehaviour
         return levelGridManager;
     }
 
+    public int GetCurrentLevelId()
+    {
+        return _currentLevelId;
+    }
+
     public void ReturnToMainMenu()
     {
         SoundPlayer.Instance.StopMusic();

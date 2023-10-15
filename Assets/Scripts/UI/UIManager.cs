@@ -26,6 +26,8 @@ namespace UI
         [SerializeField] private Image invalidActionMarker;
 
         public static event Action<bool> ViewStateChanged;
+        public static event Action<(StateUIElement, StateUIPlaceElement)> TransitionCreated;
+        public static event Action<(StateUIElement, StateUIPlaceElement)> TransitionRemoved;
 
         private StateChartManager _stateChartManager;
         private UIGridManager _uiGridManager;
@@ -257,6 +259,7 @@ namespace UI
                 RemoveTransition(sourceState, condition);
             }
 
+            TransitionCreated?.Invoke(newKey);
             _connectedTransitions.Add(newKey, condition);
             _stateChartManager.AddTransition(condition, sourceState.AssignedId, destinationState.GetAssignedId());
         }
@@ -267,6 +270,7 @@ namespace UI
                 transition.Key.Item1 == sourceState && transition.Value == condition).Key;
             _connectedTransitions.Remove(keyToRemove);
 
+            TransitionRemoved?.Invoke(keyToRemove);
             sourceState.RemoveTransitionByCondition(condition);
             _stateChartManager.RemoveTransition(condition, sourceState.AssignedId);
             TransitionLineDrawer.TransitionLineRemoved(condition);

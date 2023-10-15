@@ -105,9 +105,11 @@ namespace LevelGrid
             newTile.name =
                 $"Tile_{placementCoordinates.x}_{placementCoordinates.y}";
             if (newTile.TryGetComponent<GateTile>(out var newGateTile))
-                newGateTile.Initialize(placementDirection,
-                    -placementCoordinates.y * 2);
-
+            {
+                var spriteSortingOrder = GetSpriteSortingOrderFromCoordinates(placementCoordinates);
+                var modifierToBringToFront = 5;
+                newGateTile.Initialize(placementDirection, spriteSortingOrder + modifierToBringToFront);
+            }
             Grid.Add(placementCoordinates, newTile);
         }
         

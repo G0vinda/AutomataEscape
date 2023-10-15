@@ -16,16 +16,20 @@ PrefabInstance:
       value: Portal
       objectReference: {fileID: 0}
     - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -500411421, guid: 92045dd1efab1ec43a75c101a52c4dce, type: 3}
+    - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
       propertyPath: m_Color.b
-      value: 0.025697991
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
       propertyPath: m_Color.g
-      value: 0.6886792
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6709964081681571125, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7418705001458743379, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
       propertyPath: m_RootOrder
@@ -73,3 +77,46 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
+--- !u!1 &4579448921719649121 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5331026665144558421, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
+  m_PrefabInstance: {fileID: 8536260874492874804}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &3942289571536499831
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4579448921719649121}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 60bbb80e2bd35c1468509c05dd7ca173, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+--- !u!1 &6166132525780701941 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2586302952462516929, guid: 936d25ae083e08f4ba51f1080e53a74e, type: 3}
+  m_PrefabInstance: {fileID: 8536260874492874804}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4780276977593957325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6166132525780701941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3198e58f1f85a44da0dd2e3e2444c00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 3942289571536499831}

@@ -252,12 +252,6 @@ namespace UI.Grid
             var distanceFactor = fromBorder ? 0.5f : 1;
             return GetSubCellOnPosition(startPosition + direction.ToVector2() * _subCellSize * distanceFactor);
         }
-
-        public Vector2 GetNextSubCellPositionInDirection(Vector2 startPosition, Direction direction, bool fromBorder = false)
-        {
-            var distanceFactor = fromBorder ? 0.5f : 1;
-            return startPosition + direction.ToVector2() * _subCellSize * distanceFactor;
-        }
         
         public Vector2 GetStateBorderPosition(Vector2 statePosition, Vector2 inputPosition)
         {
