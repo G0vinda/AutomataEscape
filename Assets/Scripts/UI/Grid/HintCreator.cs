@@ -16,7 +16,8 @@ namespace UI.Grid
         private bool _loopCreated;
         private bool _firstConnectionCreated;
         private bool _isInProgramView;
-        private StateUIPlaceElement _hintState;
+        private StateUIPlaceElement _hintStateUIPlaceElement;
+        private CreateLoopHint _createLoopHint;
 
         #region OnEnable/OnDisable
 
@@ -41,7 +42,7 @@ namespace UI.Grid
             _gridManager = GetComponent<UIGridManager>();
         }
         
-        void Start()
+        private void Start()
         {
             if (GameManager.Instance.GetCurrentLevelId() == 0)
             {
@@ -49,7 +50,7 @@ namespace UI.Grid
             }
             else
             {
-                // Destroy this
+                Destroy(this);
             }
         }
 
@@ -61,12 +62,13 @@ namespace UI.Grid
             if (sourceState.GetComponent<StartStateUIElement>() != null)
             {
                 _firstConnectionCreated = true;
-                _hintState = destinationState;
+                _hintStateUIPlaceElement = destinationState;
             }
             else if (sourceState == destinationState.GetComponent<StateUIElement>())
             {
                 _loopCreated = true;
-                // Destroy this and hint object
+                Destroy(_createLoopHint.gameObject);
+                Destroy(this);
             }
         }
         
@@ -98,8 +100,12 @@ namespace UI.Grid
 
                 if (_timeSpentInProgramViewWithOneConnection > createLoopHintWaitTime)
                 {
-                    var hintInstance = Instantiate(createLoopHintPrefab, transform);
-                    // initialize hint
+                    _createLoopHint = Instantiate(createLoopHintPrefab, transform);
+                    var stateCell = _hintStateUIPlaceElement.GetComponent<StateUIElement>().ConnectedCell;
+                    _createLoopHint.StartDraw(
+                        _gridManager.GetSubCellSize(), 
+                        _hintStateUIPlaceElement.transform.position, 
+                        _gridManager.GetCoordinatesFromCell(stateCell).y < 6);
                     break;
                 }
                 

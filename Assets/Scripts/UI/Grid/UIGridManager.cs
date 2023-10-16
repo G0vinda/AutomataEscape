@@ -43,6 +43,11 @@ namespace UI.Grid
             _bottomLeftPosition = bottomLeftPosition;
         }
 
+        public float GetSubCellSize()
+        {
+            return _subCellSize;
+        }
+        
         public void UpdateGrid(float gridHeight, Vector2 bottomLeftPosition)
         {
             SetGridValues(gridHeight, bottomLeftPosition);
