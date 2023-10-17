@@ -408,26 +408,55 @@ public static class LevelDataStorage
                 {new Vector2Int(1, -2), LevelGridManager.KeyType.Red},
                 {new Vector2Int(0, -2), LevelGridManager.KeyType.Blue}
              }),
-        new LevelData( // Portal test
+        new LevelData( // Level 15
             new Vector2Int(0, 0),
             Direction.Down,
             new[,]
             {
-                {Floor, None, None },
-                {Floor, None, Portal },
-                {Portal, None, Floor },
-                {None, None, Goal }
+                {Floor, Floor, None, Goal, Portal },
+                {Floor, Portal, None, Floor, Floor },
             },
             new List<LevelData.AvailableStateInfo>()
             {
-                new (GoForward, new Vector2Int(3, 3))
+                new (GoForward, new Vector2Int(3, 3)),
+                new (TurnLeft, new Vector2Int(2, 5)),
+                new (TurnRight, new Vector2Int(4, 5))
             },new List<StateChartManager.TransitionCondition>()
             {
-                Default
+                Default,
+                IsInFrontOfWall
             },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
-            (new Vector2Int(0, -2), new Vector2Int(2, -1))
-            ),
+            (new Vector2Int(1,-1), new Vector2Int(4,0))),
+        new LevelData( // Level 16
+            new Vector2Int(2, 0),
+            Direction.Up,
+            new [,]
+            {
+                { Goal, RedGateLeft, Floor, Portal },
+                { None, None, None, None},
+                { Portal, Floor, Floor, Floor}
+            },
+            new List<LevelData.AvailableStateInfo>()
+            {
+                new (GoForward, new Vector2Int(3, 1)),
+                new (TurnLeft, new Vector2Int(5, 1)),
+                new (TurnRight, new Vector2Int(3, 6)),
+                new (Grab, new Vector2Int(5, 6)),
+                new (Drop, new Vector2Int(1, 6))
+            },
+            new List<StateChartManager.TransitionCondition>()
+            {
+                Default,
+                IsInFrontOfWall,
+                StandsOnKey
+            },
+            new Dictionary<Vector2Int, LevelGridManager.KeyType>()
+            {
+                {new Vector2Int(3, -2), LevelGridManager.KeyType.Red}
+            },
+            (new Vector2Int(0,-2), new Vector2Int(3,0))),
+            
 
         // new LevelData( // Level 16
         //     new Vector2Int(0, -2),
