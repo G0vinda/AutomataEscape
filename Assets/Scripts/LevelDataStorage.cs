@@ -441,9 +441,9 @@ public static class LevelDataStorage
             {
                 new (GoForward, new Vector2Int(3, 1)),
                 new (TurnLeft, new Vector2Int(5, 1)),
-                new (TurnRight, new Vector2Int(3, 6)),
-                new (Grab, new Vector2Int(5, 6)),
-                new (Drop, new Vector2Int(1, 6))
+                new (TurnRight, new Vector2Int(3, 5)),
+                new (Grab, new Vector2Int(5, 5)),
+                new (Drop, new Vector2Int(1, 5))
             },
             new List<StateChartManager.TransitionCondition>()
             {
@@ -456,6 +456,29 @@ public static class LevelDataStorage
                 {new Vector2Int(3, -2), LevelGridManager.KeyType.Red}
             },
             (new Vector2Int(0,-2), new Vector2Int(3,0))),
+        new LevelData( // Level 17
+            new Vector2Int(0, -1),
+            Direction.Down,
+            new [,]
+            {
+                { Goal, Floor, Floor, Floor, Portal },
+                { Floor, Portal, Orange, Floor, Floor},
+                { Floor, Floor, Orange, Floor, Floor},
+                { Orange, Floor, Orange, Floor, Orange}
+            },
+            new List<LevelData.AvailableStateInfo>()
+            {
+                new (GoForward, new Vector2Int(3, 1)),
+                new (GoForward, new Vector2Int(3, 5)),
+                new (TurnLeft, new Vector2Int(5, 3)),
+            },
+            new List<StateChartManager.TransitionCondition>()
+            {
+                Default,
+                StandsOnOrange
+            },
+            new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
+            (new Vector2Int(1,-1), new Vector2Int(4,0))),
             
 
         // new LevelData( // Level 16

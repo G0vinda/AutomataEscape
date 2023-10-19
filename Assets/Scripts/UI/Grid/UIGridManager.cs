@@ -122,7 +122,7 @@ namespace UI.Grid
             return _gridCells[cellCoordinates];
         }
 
-        public SubCell GetSubCellOnPosition(Vector2 position) // Check if position is inside grid before
+        public SubCell GetSubCellOnPosition(Vector2 position) 
         {
             if (!IsPositionInsideGrid(position))
                 return null;
@@ -133,6 +133,12 @@ namespace UI.Grid
             var subCellCoordinates = new Vector2Int(xCoordinate, yCoordinate);
 
             return SubCell.Grid[subCellCoordinates];
+        }
+
+        public SubCell GetNeighborSubCellInDirection(Vector2 sourceSubCellPosition, Direction direction)
+        {
+            var neighborSubCellPosition = sourceSubCellPosition + direction.ToVector2() * _subCellSize;
+            return GetSubCellOnPosition(neighborSubCellPosition);
         }
 
         public bool IsPositionInsideSubCell(SubCell subCell, Vector2 checkPosition)

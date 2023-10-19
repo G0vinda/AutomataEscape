@@ -9,7 +9,7 @@ namespace UI.Transition
         [SerializeField] private float initiationDuration;
         public static event Action ButtonPressed;
 
-        public void Instantiate(Vector2 destination)
+        public void Initialize(Vector2 destination)
         {
             transform.localScale = Vector3.one * 0.2f;
             

@@ -75,6 +75,16 @@ namespace Helper
             };
         }
 
+        public static bool IsHorizontal(this Direction direction)
+        {
+            return direction is Direction.Left or Direction.Right;
+        }
+
+        public static bool IsVertical(this Direction direction)
+        {
+            return direction is Direction.Up or Direction.Down;
+        }
+
         public static bool IsOpposite(this Direction dirA, Direction dirB)
         {
             return dirA == dirB.Opposite();

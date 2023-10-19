@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
 using System.Linq;
+using Codice.Utils;
+using Helper;
 using Lofelt.NiceVibrations;
 using Robot;
 using UI.Grid;
@@ -330,12 +331,69 @@ namespace UI
 
         private void CreateTransitionDeleteButton()
         {
-            var buttonOffset = Random.insideUnitCircle.normalized * 60f;
             var inputPosition = _inputManager.GetPointerPosition();
-            var buttonDestination = inputPosition + buttonOffset;
+            
+            var buttonDestination = DetermineTransitionDeleteButtonPositioning(inputPosition);
             _activeTransitionDeleteButton = Instantiate(transitionDeleteButtonPrefab, inputPosition,
                 Quaternion.identity, transform);
-            _activeTransitionDeleteButton.Instantiate(buttonDestination);
+            _activeTransitionDeleteButton.Initialize(buttonDestination);
+        }
+
+        private Vector2 DetermineTransitionDeleteButtonPositioning(Vector2 inputPosition)
+        {
+            // Todo: fit the buttonOffset to the current uiScale
+            var buttonOffsetValue = 60f;
+            Vector2 buttonOffset;
+            var selectedSubCell = _uiGridManager.GetSubCellOnPosition(inputPosition);
+            if (selectedSubCell.BlockingHorizontalLine == _selectedTransitionLine &&
+                selectedSubCell.BlockingVerticalLine != _selectedTransitionLine)
+            {
+                buttonOffset = Vector2.up * buttonOffsetValue;
+            }else if (selectedSubCell.BlockingHorizontalLine != _selectedTransitionLine &&
+                      selectedSubCell.BlockingVerticalLine == _selectedTransitionLine)
+            {
+                buttonOffset = Vector2.left * buttonOffsetValue;    
+            }
+            else // The selected Line has a corner piece on the selected subCell
+            {
+                var neighborSubCells = new Dictionary<Direction, SubCell>();
+                neighborSubCells.Add(Direction.Up, _uiGridManager.GetNeighborSubCellInDirection(inputPosition, Direction.Up));
+                neighborSubCells.Add(Direction.Right, _uiGridManager.GetNeighborSubCellInDirection(inputPosition, Direction.Right));
+                neighborSubCells.Add(Direction.Down, _uiGridManager.GetNeighborSubCellInDirection(inputPosition, Direction.Down));
+                neighborSubCells.Add(Direction.Left, _uiGridManager.GetNeighborSubCellInDirection(inputPosition, Direction.Left));
+                var cornerDirections = new List<Direction>();
+
+                foreach (var (direction, neighbor) in neighborSubCells)
+                {
+                    if (direction.IsHorizontal() && neighbor.BlockingHorizontalLine == _selectedTransitionLine ||
+                        direction.IsVertical() && neighbor.BlockingVerticalLine == _selectedTransitionLine)
+                    {
+                        cornerDirections.Add(direction);
+                    }
+                }
+
+                if (cornerDirections.Count == 1) // one part of the corner goes to a stateUIElement
+                {
+                    foreach (var (direction, neighbor) in neighborSubCells)
+                    {
+                        if (neighbor.BlockingState != null)
+                        {
+                            cornerDirections.Add(direction);
+                            break;
+                        }
+                    }
+                }
+
+                if (cornerDirections.Count != 2)
+                {
+                    throw new Exception("Determination of transition line corner directions failed.");
+                }
+
+                var offsetVector = -(cornerDirections[0].ToVector2() + cornerDirections[1].ToVector2()).normalized;
+                buttonOffset = offsetVector * buttonOffsetValue;
+            }
+
+            return inputPosition + buttonOffset;
         }
 
         private void HandleTransitionDeleteButtonPressed()
