@@ -11,6 +11,7 @@ namespace UI
     public class CreateLoopHint : MonoBehaviour
     {
         [SerializeField] private Image hintElementPrefab;
+        [SerializeField] private Image arrowHintElementPrefab;
         [SerializeField] private float elementSpawnTime;
         [SerializeField] private float highlightEffectTime;
 
@@ -52,31 +53,31 @@ namespace UI
 
         private IEnumerator DrawHintUpwards()
         {
-            CreateHintElement(Vector2.up, Quaternion.identity);
+            CreateHintElement(hintElementPrefab, Vector2.up, Quaternion.identity);
             yield return _spawnWait;
 
-            CreateHintElement(Vector2.up, Quaternion.Euler(0, 0, -90));
+            CreateHintElement(hintElementPrefab, Vector2.up, Quaternion.Euler(0, 0, -90));
             yield return _spawnWait;
             
-            CreateHintElement(Vector2.right, Quaternion.Euler(0, 0, -90));
+            CreateHintElement(hintElementPrefab, Vector2.right, Quaternion.Euler(0, 0, -90));
             yield return _spawnWait;
             
-            CreateHintElement(Vector2.right, Quaternion.Euler(0, 0, -180));
+            CreateHintElement(hintElementPrefab, Vector2.right, Quaternion.Euler(0, 0, -180));
             yield return _spawnWait;
             
-            CreateHintElement(Vector2.down, Quaternion.Euler(0, 0, -180));
+            CreateHintElement(hintElementPrefab, Vector2.down, Quaternion.Euler(0, 0, -180));
             yield return _spawnWait;
             
-            CreateHintElement(Vector2.down, Quaternion.Euler(0, 0, -270));
+            CreateHintElement(arrowHintElementPrefab, Vector2.down, Quaternion.Euler(0, 0, -90));
             yield return _spawnWait;
         }
 
-        private void CreateHintElement(Vector2 direction, Quaternion rotation)
+        private void CreateHintElement(Image elementPrefab, Vector2 direction, Quaternion rotation)
         {
             var offsetLength = _subCellSize * 2;
             var previousPosition = _hintElements.Count > 0 ? (Vector2)_hintElements.Last().transform.position : _statePosition;
             var spawnPosition = previousPosition + direction * offsetLength;
-            var newHintElement = Instantiate(hintElementPrefab, spawnPosition, rotation, transform);
+            var newHintElement = Instantiate(elementPrefab, spawnPosition, rotation, transform);
             newHintElement.gameObject.SetActive(!_hide);
             _hintElements.Add(newHintElement);
         }

@@ -50,5 +50,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hintElementPrefab: {fileID: 8597033640017934237, guid: 0bb40421d41eb924fb4d212424512dbf, type: 3}
+  arrowHintElementPrefab: {fileID: 6396716971488859091, guid: 71e004d0b7f21d44da6896173463a7e0, type: 3}
   elementSpawnTime: 0.3
   highlightEffectTime: 0
