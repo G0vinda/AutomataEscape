@@ -13,31 +13,6 @@ public static class LevelDataStorage
     
     private static List<LevelData> _levels = new ()
     {
-
-        //new LevelData( // Enemy test
-        //    new Vector2Int(1, 0),
-        //    Direction.Down,
-        //    new[,]
-        //    {
-        //        {None, Floor, None },
-        //        {None, Floor, None },
-        //        {Floor, Floor, Floor },
-        //        {None, Goal, None }
-        //    },
-        //    new List<LevelData.AvailableStateInfo>()
-        //    {
-        //        new (GoForward, new Vector2Int(3, 3))
-        //    },new List<StateChartManager.TransitionCondition>()
-        //    {
-        //        Default
-        //    },
-        //    new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
-        //    new Dictionary<Vector2Int, Direction>
-        //    {
-        //        {new Vector2Int(1, -2), Direction.Left}
-        //    }
-        //),
-
         new LevelData( // Level 1 
             new Vector2Int(0, 0),
             Direction.Down,
@@ -479,8 +454,79 @@ public static class LevelDataStorage
             },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
             (new Vector2Int(1,-1), new Vector2Int(4,0))),
-            
-
+        new LevelData( // PurpleLevel 1
+            new Vector2Int(0, 0),
+            Direction.Right,
+            new [,]
+            {
+                { Purple, Purple, Purple, Floor, Purple, Purple },
+                { Orange, Orange, Orange, None, Orange, Goal},
+            },
+            new List<LevelData.AvailableStateInfo>()
+            {
+                new (GoForward, new Vector2Int(2, 3)),
+                new (TurnRight, new Vector2Int(4, 3)),
+                new (TurnLeft, new Vector2Int(6, 3)),
+            },
+            new List<StateChartManager.TransitionCondition>()
+            {
+                Default,
+                StandsOnOrange,
+                StandsOnPurple
+            },
+            new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        new LevelData( // EnemyLevel 1
+            new Vector2Int(0, -1),
+            Direction.Right,
+            new[,]
+            {
+                {Floor, Floor, Floor, Floor, Floor },
+                {Floor, Floor, Floor, Floor, Goal },
+                {Floor, Floor, Floor, Floor, Floor },
+            },
+            new List<LevelData.AvailableStateInfo>()
+            {
+                new (GoForward, new Vector2Int(2, 3)),
+                new (GoForward, new Vector2Int(5, 2)),
+                new (TurnLeft, new Vector2Int(3, 4)),
+                new (TurnRight, new Vector2Int(3, 2))
+            },new List<StateChartManager.TransitionCondition>()
+            {
+                Default,
+                IsInFrontOfWall
+            },
+            new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
+            new Dictionary<Vector2Int, Direction>
+            {
+                {new Vector2Int(2, 0), Direction.Down}
+            }
+        ),
+        new LevelData( // EnemyLevel 2 
+            new Vector2Int(0, -1),
+            Direction.Right,
+            new[,]
+            {
+                {Floor, Floor, Floor, Floor, Floor },
+                {Floor, Floor, Floor, Floor, Goal },
+                {Floor, Floor, Floor, Floor, Floor },
+            },
+            new List<LevelData.AvailableStateInfo>()
+            {
+                new (GoForward, new Vector2Int(2, 3)),
+                new (GoForward, new Vector2Int(5, 2)),
+                new (TurnLeft, new Vector2Int(3, 4)),
+                new (TurnRight, new Vector2Int(3, 2))
+            },new List<StateChartManager.TransitionCondition>()
+            {
+                Default,
+                IsInFrontOfWall
+            },
+            new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
+            new Dictionary<Vector2Int, Direction>
+            {
+                {new Vector2Int(2, 0), Direction.Down}
+            }
+        )
         // new LevelData( // Level 16
         //     new Vector2Int(0, -2),
         //     Direction.Right,

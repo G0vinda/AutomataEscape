@@ -35,7 +35,6 @@ namespace Enemy
             {
                 _currentDirection = _currentDirection.Opposite();
                 _spriteChanger.AdjustSpriteToDirection(_currentDirection);
-                return;   
             }
 
             _currentCoordinates += _currentDirection.ToVector2Int();
