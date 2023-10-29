@@ -21,7 +21,7 @@ namespace UI.LevelSelection
         {
             var scaleFactor = mainCanvasScaler.scaleFactor;
             var reachedLevel = applyReachedLevelOverwrite 
-                ? Math.Min(reachedLevelOverwrite, selectionButtons.Length - 1)
+                ? Math.Min(reachedLevelOverwrite, selectionButtons.Length)
                 : PlayerPrefs.GetInt("ReachedLevelId", 0);
             
             var newLevelReached = bool.Parse(PlayerPrefs.GetString("ReachedNewLevel", "false"));
