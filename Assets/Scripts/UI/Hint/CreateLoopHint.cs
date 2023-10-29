@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UI.Hint;
 using UI.State;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,12 +11,12 @@ namespace UI
 {
     public class CreateLoopHint : MonoBehaviour
     {
-        [SerializeField] private Image hintElementPrefab;
-        [SerializeField] private Image arrowHintElementPrefab;
+        [SerializeField] private HintElement hintElementPrefab;
+        [SerializeField] private HintElement arrowHintElementPrefab;
         [SerializeField] private float elementSpawnTime;
         [SerializeField] private float highlightEffectTime;
 
-        private List<Image> _hintElements = new ();
+        private List<HintElement> _hintElements = new ();
         private float _subCellSize;
         private Vector2 _statePosition;
         private WaitForSeconds _spawnWait;
@@ -70,9 +71,11 @@ namespace UI
             
             CreateHintElement(arrowHintElementPrefab, Vector2.down, Quaternion.Euler(0, 0, -90));
             yield return _spawnWait;
+            
+            _hintElements.ForEach(element => element.StartYoyoEffect(highlightEffectTime));
         }
 
-        private void CreateHintElement(Image elementPrefab, Vector2 direction, Quaternion rotation)
+        private void CreateHintElement(HintElement elementPrefab, Vector2 direction, Quaternion rotation)
         {
             var offsetLength = _subCellSize * 2;
             var previousPosition = _hintElements.Count > 0 ? (Vector2)_hintElements.Last().transform.position : _statePosition;

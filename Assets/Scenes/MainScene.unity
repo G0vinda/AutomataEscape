@@ -2710,6 +2710,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8968875346654038255, guid: deadfd099f7bbfa4ab3d874a2d628737, type: 3}
+      propertyPath: maxBackgroundScaleFactor
+      value: 1.05
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: deadfd099f7bbfa4ab3d874a2d628737, type: 3}
 --- !u!224 &1079237318 stripped
@@ -3217,7 +3221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: effae77f640a9f940b7306e7c2806c8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  createLoopHintWaitTime: 5
+  createLoopHintWaitTime: 10
   createLoopHintPrefab: {fileID: 4476324427422963084, guid: 3d725e1be5721ef4bbd9bb62c5f7bd88, type: 3}
 --- !u!1001 &1193440231
 PrefabInstance:

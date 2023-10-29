@@ -15,7 +15,6 @@ namespace UI.Grid
         private float _timeSpentInProgramViewWithOneConnection;
         private bool _loopCreated;
         private bool _firstConnectionCreated;
-        private bool _isInProgramView;
         private StateUIPlaceElement _hintStateUIPlaceElement;
         private CreateLoopHint _createLoopHint;
 
@@ -25,25 +24,7 @@ namespace UI.Grid
         {
             UIManager.TransitionCreated += HandleTransitionCreated;
             UIManager.TransitionRemoved += HandleTransitionRemoved;
-            UIManager.ViewStateChanged += HandleViewStateChanged;
-        }
-
-        private void OnDisable()
-        {
-            UIManager.TransitionCreated -= HandleTransitionCreated;
-            UIManager.TransitionRemoved -= HandleTransitionRemoved;
-            UIManager.ViewStateChanged -= HandleViewStateChanged;
-        }
-
-        #endregion
-
-        private void Awake()
-        {
-            _gridManager = GetComponent<UIGridManager>();
-        }
-        
-        private void Start()
-        {
+            
             if (GameManager.Instance.GetCurrentLevelId() == 0)
             {
                 StartCoroutine(WaitForCreateLoopHint());
@@ -52,6 +33,19 @@ namespace UI.Grid
             {
                 Destroy(this);
             }
+        }
+
+        private void OnDisable()
+        {
+            UIManager.TransitionCreated -= HandleTransitionCreated;
+            UIManager.TransitionRemoved -= HandleTransitionRemoved;
+        }
+
+        #endregion
+
+        private void Awake()
+        {
+            _gridManager = GetComponent<UIGridManager>();
         }
 
         private void HandleTransitionCreated((StateUIElement, StateUIPlaceElement) connectedStates)
@@ -75,17 +69,11 @@ namespace UI.Grid
         private void HandleTransitionRemoved((StateUIElement, StateUIPlaceElement) disconnectedStates)
         {
             var sourceState = disconnectedStates.Item1;
-            var destinationState = disconnectedStates.Item2;
 
             if (sourceState.GetComponent<StartStateUIElement>() != null)
             {
                 _firstConnectionCreated = false;
             }
-        }
-
-        private void HandleViewStateChanged(bool newViewState)
-        {
-            _isInProgramView = newViewState;
         }
 
         private IEnumerator WaitForCreateLoopHint()
@@ -95,8 +83,11 @@ namespace UI.Grid
                 if(_loopCreated)
                     break;
 
-                if (_isInProgramView && _firstConnectionCreated)
+                if (_firstConnectionCreated)
+                {
                     _timeSpentInProgramViewWithOneConnection += Time.deltaTime;
+                    Debug.Log($"Time spent in PV with first connection: {_timeSpentInProgramViewWithOneConnection}");
+                }
 
                 if (_timeSpentInProgramViewWithOneConnection > createLoopHintWaitTime)
                 {

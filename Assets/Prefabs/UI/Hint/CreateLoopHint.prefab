@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd3dca9b557f46fe8a3cf6001160340c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hintElementPrefab: {fileID: 8597033640017934237, guid: 0bb40421d41eb924fb4d212424512dbf, type: 3}
-  arrowHintElementPrefab: {fileID: 6396716971488859091, guid: 71e004d0b7f21d44da6896173463a7e0, type: 3}
-  elementSpawnTime: 0.3
-  highlightEffectTime: 0
+  hintElementPrefab: {fileID: 8086757196518590349, guid: 0bb40421d41eb924fb4d212424512dbf, type: 3}
+  arrowHintElementPrefab: {fileID: 6895739359157773251, guid: 71e004d0b7f21d44da6896173463a7e0, type: 3}
+  elementSpawnTime: 0.15
+  highlightEffectTime: 0.3
