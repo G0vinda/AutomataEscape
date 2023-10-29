@@ -13,17 +13,17 @@ namespace UI
         [SerializeField] protected float effectPeriodTime;
         [SerializeField] protected float effectMaxValue;
         
-        protected Tween _effectTween;
+        protected Tween EffectTween;
         
         public virtual void PlayEffect()
         {
-            _effectTween = DOVirtual.Float(0, effectMaxValue, effectPeriodTime, value => uiEffects.ForEach(effect => effect.colorFactor = value))
+            EffectTween = DOVirtual.Float(0, effectMaxValue, effectPeriodTime, value => uiEffects.ForEach(effect => effect.colorFactor = value))
                 .SetEase(Ease.OutSine).SetLoops(-1, LoopType.Yoyo);
         }
 
         public virtual void StopEffect()
         {
-            _effectTween.Kill();
+            EffectTween.Kill();
             uiEffects.ForEach(effect => effect.colorFactor = 0);
         }
     }

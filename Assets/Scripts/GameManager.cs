@@ -166,6 +166,7 @@ public class GameManager : MonoBehaviour
         }
 
         var level = LevelDataStorage.GetLevelData(_currentLevelId);
+        uiManager.SetButtonsActive(true);
         LoadLevelGrid(level);
         PositionEnemiesInLevel(level);
         PositionRobotInLevel(level);
@@ -342,11 +343,23 @@ public class GameManager : MonoBehaviour
             if (enemy.GetCoordinates() == robotCoordinates)
             {
                 currentStateIndicator.gameObject.SetActive(false);
+                uiManager.SetButtonsActive(false);
                 _robot.StopRun();
+                enemy.StartAlarm();
                 RobotStateChanged?.Invoke(false);
                 SoundPlayer.Instance.PlayMusicLevel();
-                ReloadLevel();
+                var catchPosition = levelGridManager.GetTilePosition(robotCoordinates);
+                StartCoroutine(EnemyCatchEffect(catchPosition));
             }
         }
+    }
+
+    private IEnumerator EnemyCatchEffect(Vector3 catchTilePosition)
+    {
+        var zoomTime = 1f;
+        cameraController.ZoomCameraToTilePosition(catchTilePosition,zoomTime);
+        yield return new WaitForSeconds(zoomTime + 1f);
+        
+        ReloadLevel();
     }
 }

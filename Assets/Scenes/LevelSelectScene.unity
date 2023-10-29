@@ -2947,6 +2947,8 @@ MonoBehaviour:
   scrollRect: {fileID: 1546575045}
   selectionConnector: {fileID: 1684824714}
   mainCanvasScaler: {fileID: 1484688819}
+  reachedLevelOverwrite: 3
+  applyReachedLevelOverwrite: 1
 --- !u!114 &1856815405 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5719344719421895911, guid: dd176737506d7d84c929959348298da5, type: 3}

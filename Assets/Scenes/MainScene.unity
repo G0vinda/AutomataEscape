@@ -1007,6 +1007,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraBuffer: 8
   cameraYOffset: 2
+  zoomCameraOrthographicSize: 7
 --- !u!114 &519420034
 MonoBehaviour:
   m_ObjectHideFlags: 0

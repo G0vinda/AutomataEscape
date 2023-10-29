@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI.LevelSelection
@@ -11,13 +12,18 @@ namespace UI.LevelSelection
         [SerializeField] private ScrollRect scrollRect;
         [SerializeField] private LevelSelectionConnector selectionConnector;
         [SerializeField] private Canvas mainCanvasScaler;
+        [SerializeField] private int reachedLevelOverwrite;
+        [SerializeField] private bool applyReachedLevelOverwrite;
 
         private const int MainSceneIndex = 3;
 
         private void Start()
         {
             var scaleFactor = mainCanvasScaler.scaleFactor;
-            var reachedLevel = PlayerPrefs.GetInt("ReachedLevelId", 0);
+            var reachedLevel = applyReachedLevelOverwrite 
+                ? Math.Min(reachedLevelOverwrite, selectionButtons.Length - 1)
+                : PlayerPrefs.GetInt("ReachedLevelId", 0);
+            
             var newLevelReached = bool.Parse(PlayerPrefs.GetString("ReachedNewLevel", "false"));
             if (newLevelReached)
                 reachedLevel--;

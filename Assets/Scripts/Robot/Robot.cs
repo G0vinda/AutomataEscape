@@ -83,6 +83,8 @@ namespace Robot
             var currentStatus = RobotState.Status.Running;
             do
             {
+                _activeEnemies.ForEach(enemy => enemy.Move());
+                
                 if (currentState == null)
                 {
                     yield return _stateWait;
@@ -94,8 +96,6 @@ namespace Robot
                     _lastStateAction = newStateAction;
                     NextStateStarts?.Invoke(newStateAction);
                 }
-                
-                _activeEnemies.ForEach(enemy => enemy.Move());
 
                 if (currentStatus == RobotState.Status.Pause)
                 {

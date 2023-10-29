@@ -18,7 +18,7 @@ namespace UI
             _backgroundStartColor = transitionSelectBackground.color;
             _backgroundTransform = transitionSelectBackground.transform;
             var maxBackgroundScaleVector = maxBackgroundScaleFactor * Vector3.one;
-            _effectTween = DOVirtual.Float(0, effectMaxValue, effectPeriodTime, value =>
+            EffectTween = DOVirtual.Float(0, effectMaxValue, effectPeriodTime, value =>
             {
                 uiEffects.ForEach(effect => effect.colorFactor = value);
                 transitionSelectBackground.color = Color.Lerp(_backgroundStartColor, Color.white, value);

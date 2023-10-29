@@ -487,7 +487,6 @@ public static class LevelDataStorage
             new List<LevelData.AvailableStateInfo>()
             {
                 new (GoForward, new Vector2Int(2, 3)),
-                new (GoForward, new Vector2Int(5, 2)),
                 new (TurnLeft, new Vector2Int(3, 4)),
                 new (TurnRight, new Vector2Int(3, 2))
             },new List<StateChartManager.TransitionCondition>()
