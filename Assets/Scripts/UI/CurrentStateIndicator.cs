@@ -75,7 +75,6 @@ namespace UI
 
         private void StartIdleAnimation()
         {
-            Debug.Log("StartIdleAnimation called");
             _idleAnimation = _image.transform.DOScale(Vector3.one * idleSizeAnimationMax, idleSizeAnimationPeriodTime).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
             _highlightEffectAnimator.PlayEffect();
         }

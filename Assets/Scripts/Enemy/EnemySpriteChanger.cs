@@ -20,10 +20,6 @@ namespace Enemy
 
         public void AdjustSpriteToDirection(Direction direction)
         {
-            return;
-            if (direction != Direction.Right && direction != Direction.Left)
-                throw new ArgumentException("Enemy does not contain sprite for given direction");
-
             _spriteRenderer.flipX = direction == Direction.Left;
         }
     }

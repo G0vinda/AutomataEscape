@@ -1600,8 +1600,8 @@ MonoBehaviour:
   transitionSelection: {fileID: 1552901017}
   startStateUIElement: {fileID: 714388723}
   stateChartPanel: {fileID: 1189406611}
-  runButton: {fileID: 616424863}
-  viewButton: {fileID: 1022330841}
+  runButtonObject: {fileID: 616424863}
+  viewButtonObject: {fileID: 1022330841}
   stateUIElementFactory: {fileID: 654531690}
   stateLayer: {fileID: 1218300470}
   transitionLayer: {fileID: 1869224222}

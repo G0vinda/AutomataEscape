@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     private const int MenuSceneIndex = 0;
     private const int LevelSelectionSceneIndex = 1;
-    private const int FinishSceneIndex = 3;
+    private const int FinishSceneIndex = 4;
     
     private Dictionary<Vector2Int, (LevelGridManager.KeyType, GameObject)> _currentKeyObjectData = new ();
     private Vector2Int[] _currentPortalCoordinates;
@@ -166,7 +166,7 @@ public class GameManager : MonoBehaviour
         }
 
         var level = LevelDataStorage.GetLevelData(_currentLevelId);
-        uiManager.SetButtonsActive(true);
+        uiManager.ResetInGameButtons();
         LoadLevelGrid(level);
         PositionEnemiesInLevel(level);
         PositionRobotInLevel(level);
@@ -174,8 +174,11 @@ public class GameManager : MonoBehaviour
 
     private void FinishLevel()
     {
-        if (_currentLevelId >= LevelDataStorage.LevelCount)
+        if (_currentLevelId == LevelDataStorage.LevelCount - 1)
+        {
             SceneManager.LoadScene(FinishSceneIndex);
+            return;
+        }
 
         _currentLevelId++;
         SoundPlayer.Instance.StopMusic();
@@ -194,7 +197,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator LoadLevel(int levelId)
     {
         SoundPlayer.Instance.PlayMusicLevel();
-        uiManager.SetButtonsActive(true);
+        uiManager.ResetInGameButtons();
         RobotStateChanged?.Invoke(false);
         
         var level = LevelDataStorage.GetLevelData(levelId);
@@ -287,7 +290,7 @@ public class GameManager : MonoBehaviour
     public void ReachGoal()
     {
         SoundPlayer.Instance.PlayVictory();
-        uiManager.SetButtonsActive(false);
+        uiManager.HideInGameButtons();
         currentStateIndicator.gameObject.SetActive(false);
         BeamRobotOut?.Invoke(levelBeamTime);
         Invoke(nameof(FadeLevelOut), 2.7f);
@@ -343,7 +346,7 @@ public class GameManager : MonoBehaviour
             if (enemy.GetCoordinates() == robotCoordinates)
             {
                 currentStateIndicator.gameObject.SetActive(false);
-                uiManager.SetButtonsActive(false);
+                uiManager.HideInGameButtons();
                 _robot.StopRun();
                 enemy.StartAlarm();
                 RobotStateChanged?.Invoke(false);

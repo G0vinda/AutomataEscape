@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace UI.Buttons
 {
-    public class ViewButton : MonoBehaviour
+    public class ViewButton : MonoBehaviour, IButtonResettable
     {
         [SerializeField] private Sprite programViewSprite;
         [SerializeField] private Sprite levelViewSprite;
@@ -83,6 +83,17 @@ namespace UI.Buttons
                     _robotClickWobble = null;
                 });
         }
+        
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
 
+        public void Reset()
+        {
+            gameObject.SetActive(true);
+            _button.interactable = true;
+            _image.sprite = programViewSprite;
+        }
     }
 }

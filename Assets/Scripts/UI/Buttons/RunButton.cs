@@ -1,13 +1,14 @@
 using System;
 using DG.Tweening;
 using TMPro;
+using UI.Buttons;
 using UI.State;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI
 {
-    public class RunButton : MonoBehaviour
+    public class RunButton : MonoBehaviour, IButtonResettable
     {
         [SerializeField] private Sprite runSprite;
         [SerializeField] private Sprite stopSprite;
@@ -56,6 +57,17 @@ namespace UI
         private void ChangeImage(bool isRunning)
         {
             _image.sprite = isRunning ? stopSprite : runSprite;
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public void Reset()
+        {
+            gameObject.SetActive(true);
+            _image.sprite = runSprite;
         }
     }
 }

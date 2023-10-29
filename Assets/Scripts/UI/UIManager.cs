@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Helper;
 using Robot;
+using UI.Buttons;
 using UI.Grid;
 using UI.State;
 using UI.Transition;
@@ -17,8 +18,8 @@ namespace UI
         [SerializeField] private TransitionSelection transitionSelection;
         [SerializeField] private StartStateUIElement startStateUIElement;
         [SerializeField] private StateChartPanel stateChartPanel;
-        [SerializeField] private GameObject runButton;
-        [SerializeField] private GameObject viewButton;
+        [SerializeField] private GameObject runButtonObject;
+        [SerializeField] private GameObject viewButtonObject;
         [SerializeField] private StateUIElementFactory stateUIElementFactory;
         [SerializeField] private Transform stateLayer;
         [SerializeField] private Transform transitionLayer;
@@ -43,6 +44,8 @@ namespace UI
         private bool _availableSelectChanged;
         private bool _uiActive;
         private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionCondition> _connectedTransitions = new();
+        private IButtonResettable _runButton;
+        private IButtonResettable _viewButton;
 
         private void OnEnable()
         {
@@ -65,6 +68,8 @@ namespace UI
             _uiGridManager = stateChartPanel.GetComponent<UIGridManager>();
             TransitionLineDrawer.UIGridManager = _uiGridManager;
             _placedStateElements = new List<StateUIPlaceElement>();
+            _runButton = runButtonObject.GetComponent<IButtonResettable>();
+            _viewButton = viewButtonObject.GetComponent<IButtonResettable>();
         }
 
         public void SetupUIForLevel(List<LevelData.AvailableStateInfo> availableStateInfo,
@@ -167,12 +172,18 @@ namespace UI
             transitionSelection.TrySetActive(false);
             ViewStateChanged?.Invoke(false);
             _inputManager.enabled = false;
+        } 
+
+        public void HideInGameButtons()
+        {
+            _runButton.Hide();
+            _viewButton.Hide();
         }
 
-        public void SetButtonsActive(bool active)
+        public void ResetInGameButtons()
         {
-            runButton.SetActive(active);
-            viewButton.SetActive(active);
+            _runButton.Reset();
+            _viewButton.Reset();
         }
 
         public void ZoomStateChartPanel(float zoomFactor, float zoomDelta, Vector2 zoomCenter)
