@@ -1,5 +1,4 @@
 ﻿using LevelGrid;
-using UI;
 using UnityEngine;
 
 namespace Robot.States
@@ -11,6 +10,11 @@ namespace Robot.States
         public static void ResetGrabbedKeyType()
         {
             GrabbedKeyType = LevelGridManager.KeyType.None;
+        }
+
+        public static LevelGridManager.KeyType GetCurrentKeyType()
+        {
+            return GrabbedKeyType;
         }
 
         protected KeyHandleState(LevelGridManager levelGridManager, SpriteChanger spriteChanger) : base(levelGridManager, spriteChanger)

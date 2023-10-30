@@ -24,6 +24,14 @@ namespace Robot.States
                 var bumpIntoWallTime = 0.2f;
                 var bumpRetreatTime = 0.4f;
                 var bumpDistance = 0.9f * (Vector2)direction.ToVector2Int();
+
+                if (KeyHandleState.GetCurrentKeyType() != LevelGridManager.KeyType.None)
+                {
+                    bumpIntoWallTime *= 0.3f;
+                    bumpRetreatTime *= 0.3f;
+                    bumpDistance *= 0.3f;
+                }
+                
                 var robotStartPosition = _robotTransform.position;
                 var bumpPosition = robotStartPosition + (Vector3)bumpDistance;
 
