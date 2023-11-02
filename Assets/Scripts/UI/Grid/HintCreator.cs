@@ -61,7 +61,9 @@ namespace UI.Grid
             else if (sourceState == destinationState.GetComponent<StateUIElement>())
             {
                 _loopCreated = true;
-                Destroy(_createLoopHint.gameObject);
+                if (_createLoopHint != null) 
+                    Destroy(_createLoopHint.gameObject);   
+                    
                 Destroy(this);
             }
         }
