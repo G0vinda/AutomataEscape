@@ -52,6 +52,7 @@ namespace Enemy
             _currentCoordinates += _currentDirection.ToVector2Int();
             var moveTime = 0.4f;
             transform.DOMove(_levelGridManager.Grid[_currentCoordinates].transform.position, moveTime).SetEase(Ease.InOutSine);
+            SoundPlayer.Instance.PlayEnemyMove();
             animator.CrossFade(_walkingScanHash, 0, 0);
             GameManager.Instance.CheckForEnemyCollision();
         }

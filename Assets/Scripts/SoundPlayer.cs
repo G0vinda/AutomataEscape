@@ -331,7 +331,17 @@ public class SoundPlayer : MonoBehaviour
     
     public void PlayEnemyMove()                            
     {
-        RuntimeManager.PlayOneShot(EnemyWalkEvent);
+        // Todo: Play Sound for enemy move and scanning 
+    }
+
+    public void PlayEnemyAlarmSoundLoop()
+    {
+        // Todo: Play loop for enemy alarm state
+    }
+
+    public void PlayRobotGotCaughtSound()
+    {
+        // Todo: Play Sound for when the player got caught by the enemy
     }
     
 }

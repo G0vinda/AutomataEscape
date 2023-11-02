@@ -345,6 +345,8 @@ public class GameManager : MonoBehaviour
         {
             if (enemy.GetCoordinates() == robotCoordinates)
             {
+                SoundPlayer.Instance.PlayRobotGotCaughtSound();
+                SoundPlayer.Instance.PlayEnemyAlarmSoundLoop();
                 currentStateIndicator.gameObject.SetActive(false);
                 uiManager.HideInGameButtons();
                 _robot.StopRun();
