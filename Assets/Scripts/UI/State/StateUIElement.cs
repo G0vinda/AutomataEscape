@@ -43,10 +43,7 @@ namespace UI.State
                 LineWidth = _defaultLineWidth * scaleFactor;
             }
         }
-
-        [SerializeField] private float connectionGrowEffectSize;
-        [SerializeField] private float connectionGrowEffectTime;
-
+        
         public static SizeAttributes StateSizeAttributes;
         
         public Image image;
@@ -67,13 +64,6 @@ namespace UI.State
             SetSizeToDefault();
 
             AssignedId = assignedId;
-        }
-
-        public void PlayConnectionEffect(TweenCallback onCompleteAction)
-        {
-            _imageTransform.localScale = Vector2.one * connectionGrowEffectSize;
-            _imageTransform.DOScale(Vector2.one, connectionGrowEffectTime).SetEase(Ease.InBounce)
-                .OnComplete(onCompleteAction);
         }
 
         public int GetNumberOfOutgoingTransitions()

@@ -443,8 +443,6 @@ namespace UI
                 _uiManager.AddTransition(_selectedDrawStateElement, TransitionLineDrawer.DestinationStateElement,
                     transitionSelection.CurrentSelected.Condition);
                 TransitionLineDrawer.FinishLine();
-
-                _selectedDrawStateElement.PlayConnectionEffect(() => destinationState.PlayConnectionEffect(() => { }));
             }
             else
             {
