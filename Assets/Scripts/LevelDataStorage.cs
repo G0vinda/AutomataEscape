@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using LevelGrid;
 using Robot;
+using Robot.States;
 using static LevelGrid.LevelGridManager.TileType;
 using static Robot.StateChartManager.StateAction;
 using static Robot.StateChartManager.TransitionCondition;
@@ -445,6 +446,69 @@ public static class LevelDataStorage
                 StandsOnPurple
             },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>()),
+        new LevelData( // PurpleLevel 2
+            new Vector2Int(0, -2),
+            Direction.Up,
+            new [,]
+            {
+                { Floor, Floor, Portal, None, None, None, None, None, None },
+                { Floor, Floor, Floor, None, None, None, Goal, Purple, Purple },
+                { Floor, Floor, Floor, None, None, None, None, Orange, Orange },
+                { None, None, None, None, None, Floor, Floor, Floor, Floor },
+                { None, None, None, None, None, Orange, None, None, None },
+                { None, None, None, Floor, None, Orange, Floor, None, None },
+                { None, None, None, Portal, Floor, Floor, Floor, None, None },
+            },
+            new List<LevelData.AvailableStateInfo>()
+            {
+                new (GoForward, new Vector2Int(3, 3)),
+                new (GoForward, new Vector2Int(3, 5)),
+                new (GoForward, new Vector2Int(3, 1)),
+                new (TurnRight, new Vector2Int(4, 4)),
+                new (TurnLeft, new Vector2Int(2, 4)),
+            },
+            new List<StateChartManager.TransitionCondition>()
+            {
+                Default,
+                StandsOnOrange,
+                StandsOnPurple
+            },
+            new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
+            (new Vector2Int(2,0), new Vector2Int(3,-6))),
+        new LevelData( // PurpleLevel 3
+            new Vector2Int(0, -5),
+            Direction.Up,
+            new [,]
+            {
+                { None, None, None, None, Floor, Floor, Floor, None, None, None },
+                { None, None, None, None, Floor, Floor, Floor, RedGateRight, Floor, Goal },
+                { None, None, Orange, Purple, Purple, Purple, Purple, None, None, None  },
+                { Floor, None, Orange, Purple, Purple, Purple, Purple, None, None, None  },
+                { Floor, Orange, Orange, Purple, Purple, None, None, None, None, None  },
+                { Floor, Orange, Orange, Purple, Purple, Purple, None, None, None, None  },
+            },
+            new List<LevelData.AvailableStateInfo>()
+            {
+                new (GoForward, new Vector2Int(3, 3)),
+                new (GoForward, new Vector2Int(3, 5)),
+                new (GoForward, new Vector2Int(3, 1)),
+                new (TurnRight, new Vector2Int(4, 2)),
+                new (TurnLeft, new Vector2Int(2, 2)),
+                new (Grab, new Vector2Int(5, 4)),
+                new (Drop, new Vector2Int(5, 1))
+            },
+            new List<StateChartManager.TransitionCondition>()
+            {
+                Default,
+                StandsOnOrange,
+                StandsOnPurple,
+                IsInFrontOfWall,
+                StandsOnKey
+            },
+            new Dictionary<Vector2Int, LevelGridManager.KeyType>()
+            {
+                {new Vector2Int(4, -3), LevelGridManager.KeyType.Red}
+            }),
         new LevelData( // EnemyLevel 1
             new Vector2Int(0, -1),
             Direction.Right,
