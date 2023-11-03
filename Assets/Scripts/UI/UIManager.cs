@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FMOD;
 using Helper;
 using Robot;
 using UI.Buttons;
@@ -306,7 +307,11 @@ namespace UI
 
         public void DisableInvalidActionMarker()
         {
-            invalidActionMarker.gameObject.SetActive(false);
+            if (invalidActionMarker.gameObject.activeSelf)
+            {
+                SoundPlayer.Instance.PlayInvalidActionSound();
+                invalidActionMarker.gameObject.SetActive(false);   
+            }
         }
         
         public float ScaleFloat(float scaledFloat)

@@ -80,8 +80,8 @@ public class SoundPlayer : MonoBehaviour
             Music = RuntimeManager.GetBus("bus:/MusicMix");
             SFX = RuntimeManager.GetBus("bus:/Sounds");
             
-            UpdateMusicVolume(PlayerPrefs.GetFloat("MusicVolume", defaultMusicVolume));
-            UpdateSfxVolume(PlayerPrefs.GetFloat("SfxVolume", defaultSfxVolume));
+            UpdateMusicVolume();
+            UpdateSfxVolume();
         }
         else
         {
@@ -103,13 +103,15 @@ public class SoundPlayer : MonoBehaviour
     }
     #endregion
 
-    public void UpdateSfxVolume(float newVolume)
+    public void UpdateSfxVolume()
     {
+        var newVolume = PlayerPrefs.GetFloat("SfxVolume", defaultSfxVolume);
         SFX.setVolume(newVolume);
     }
 
-    public void UpdateMusicVolume(float newVolume)
+    public void UpdateMusicVolume()
     {
+        var newVolume = PlayerPrefs.GetFloat("MusicVolume", defaultMusicVolume);
         Music.setVolume(newVolume);
     }
 
@@ -339,14 +341,25 @@ public class SoundPlayer : MonoBehaviour
 
     public void PlayEnemyAlarmSoundLoop()
     {
-        _alarmInstance.stop(STOP_MODE.IMMEDIATE);   //use this somewhere to stop the alarm
+        StopMusic();
+        _alarmInstance.stop(STOP_MODE.IMMEDIATE);  
         _alarmInstance = RuntimeManager.CreateInstance(AlarmLoop);
         _alarmInstance.start();
+    }
+
+    public void StopEnemyAlarmSoundLoop()
+    {
+        _alarmInstance.stop(STOP_MODE.IMMEDIATE);
+        PlayMusicLevel();
     }
 
     public void PlayRobotGotCaughtSound()
     {
         RuntimeManager.PlayOneShot(EnemyRageEvent);
     }
-    
+
+    public void PlayInvalidActionSound()
+    {
+        RuntimeManager.PlayOneShot(ImpossibleActionSFXEvent);
+    }
 }
