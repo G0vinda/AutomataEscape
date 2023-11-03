@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using DG.Tweening;
+﻿using DG.Tweening;
 using LevelGrid;
-using UI;
 using UI.Transition;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 namespace Robot.States

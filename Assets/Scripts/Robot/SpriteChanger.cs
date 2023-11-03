@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using LevelGrid;
-using log4net.Core;
-using UI;
 using UI.Transition;
 using UnityEngine;
 

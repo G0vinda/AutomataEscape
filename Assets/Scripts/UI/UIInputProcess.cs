@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Codice.Utils;
 using Helper;
 using Lofelt.NiceVibrations;
 using Robot;
@@ -9,7 +8,6 @@ using UI.Grid;
 using UI.State;
 using UI.Transition;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace UI
 {

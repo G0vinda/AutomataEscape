@@ -2,7 +2,6 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI.LevelSelection
@@ -15,7 +14,6 @@ namespace UI.LevelSelection
         [SerializeField] private Canvas mainCanvasScaler;
         [SerializeField] private int reachedLevelOverwrite;
         [SerializeField] private bool applyReachedLevelOverwrite;
-        [SerializeField] private TextMeshProUGUI debugText;
 
         private const int MainSceneIndex = 3;
 
@@ -53,12 +51,7 @@ namespace UI.LevelSelection
                 PlayerPrefs.SetString("ReachedNewLevel", false.ToString());
             }
         }
-
-        private void Update()
-        {
-            debugText.text = $"{scrollRect.horizontalNormalizedPosition}";
-        }
-
+        
         private void AlignScrollContentToPosition(float xValue)
         {
             var contentWidth = GetComponent<RectTransform>().sizeDelta.x;
