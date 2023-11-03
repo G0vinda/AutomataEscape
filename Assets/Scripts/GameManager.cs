@@ -352,7 +352,6 @@ public class GameManager : MonoBehaviour
                 _robot.StopRun();
                 enemy.StartAlarm();
                 RobotStateChanged?.Invoke(false);
-                SoundPlayer.Instance.PlayMusicLevel();
                 var catchPosition = levelGridManager.GetTilePosition(robotCoordinates);
                 StartCoroutine(EnemyCatchEffect(catchPosition));
             }
@@ -363,7 +362,8 @@ public class GameManager : MonoBehaviour
     {
         var zoomTime = 1f;
         cameraController.ZoomCameraToTilePosition(catchTilePosition,zoomTime);
-        yield return new WaitForSeconds(zoomTime + 1f);
+        yield return new WaitForSeconds(zoomTime + 2f);
+        SoundPlayer.Instance.StopEnemyAlarmSoundLoop();
         
         ReloadLevel();
     }

@@ -495,6 +495,7 @@ namespace UI
                 var cellPosition = _uiGridManager.CellCoordinatesToScreenPosition(cellCoordinates);
                 _selectedDragStateElement.transform.position = cellPosition;
                 _selectedDragStateElement.SwitchAppearanceToOnGrid();
+                SoundPlayer.Instance.PlayInvalidActionSound();
             }
 
             foreach (var blockedCellMarking in _blockedCellMarkings)

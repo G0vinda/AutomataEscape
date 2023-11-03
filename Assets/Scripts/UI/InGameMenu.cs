@@ -43,13 +43,13 @@ namespace UI
         public void SfxSliderChanged(float newVolume)
         {
             PlayerPrefs.SetFloat("SfxVolume", newVolume);
-            SoundPlayer.Instance.UpdateSfxVolume(newVolume);
+            SoundPlayer.Instance.UpdateSfxVolume();
         }
 
         public void MusicSliderChanged(float newVolume)
         {
             PlayerPrefs.SetFloat("MusicVolume", newVolume);
-            SoundPlayer.Instance.UpdateMusicVolume(newVolume);
+            SoundPlayer.Instance.UpdateMusicVolume();
         }
     }
 }
