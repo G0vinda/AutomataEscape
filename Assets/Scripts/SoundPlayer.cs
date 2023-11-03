@@ -44,6 +44,8 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference RobotTeleportEvent;
     [SerializeField] private EventReference RobotOpenGateEvent;
     [SerializeField] private EventReference EnemyWalkEvent;
+    [SerializeField] private EventReference EnemyRageEvent;
+    [SerializeField] private EventReference AlarmLoop;
     
     [SerializeField] private EventReference musicMenuEvent;
     [SerializeField] private EventReference atmoLevelEvent;
@@ -59,6 +61,7 @@ public class SoundPlayer : MonoBehaviour
     private EventInstance _musicInstance;
     private EventInstance _cableHoldInstance;
     private EventInstance _atmoInstance;
+    private EventInstance _alarmInstance;
 
     private const string WalkStateParameterName = "Walkstate";
     private const string IdleLabelName = "Idle";
@@ -331,17 +334,19 @@ public class SoundPlayer : MonoBehaviour
     
     public void PlayEnemyMove()                            
     {
-        // Todo: Play Sound for enemy move and scanning 
+        RuntimeManager.PlayOneShot(EnemyWalkEvent); 
     }
 
     public void PlayEnemyAlarmSoundLoop()
     {
-        // Todo: Play loop for enemy alarm state
+        _alarmInstance.stop(STOP_MODE.IMMEDIATE);   //use this somewhere to stop the alarm
+        _alarmInstance = RuntimeManager.CreateInstance(AlarmLoop);
+        _alarmInstance.start();
     }
 
     public void PlayRobotGotCaughtSound()
     {
-        // Todo: Play Sound for when the player got caught by the enemy
+        RuntimeManager.PlayOneShot(EnemyRageEvent);
     }
     
 }

@@ -218,11 +218,11 @@ MonoBehaviour:
     Path: event:/Foleys/Robo Shutdown
   RobotWalkEvent:
     Guid:
-      Data1: -1106963896
-      Data2: 1121800355
-      Data3: -514510175
-      Data4: -6179742
-    Path: event:/Foleys/Robo Walk
+      Data1: -1247880929
+      Data2: 1088536807
+      Data3: 1447359639
+      Data4: 59582839
+    Path: event:/Foleys/Enemy Moving
   RobotTurnEvent:
     Guid:
       Data1: 526816976
@@ -267,11 +267,25 @@ MonoBehaviour:
     Path: event:/Foleys/Open Gate
   EnemyWalkEvent:
     Guid:
-      Data1: 903848905
-      Data2: 1203997006
-      Data3: 1803500187
-      Data4: 643191684
-    Path: event:/Foleys/Enemy Walk
+      Data1: -1247880929
+      Data2: 1088536807
+      Data3: 1447359639
+      Data4: 59582839
+    Path: event:/Foleys/Enemy Moving
+  EnemyRageEvent:
+    Guid:
+      Data1: 504192196
+      Data2: 1135655226
+      Data3: 546278032
+      Data4: -1267658090
+    Path: event:/Foleys/Enemy Raging
+  AlarmLoop:
+    Guid:
+      Data1: 175967800
+      Data2: 1083426785
+      Data3: 1990067094
+      Data4: 576169031
+    Path: event:/Foleys/Alarm
   musicMenuEvent:
     Guid:
       Data1: 1835304012
