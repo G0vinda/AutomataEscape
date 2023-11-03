@@ -44,6 +44,7 @@ public class SoundPlayer : MonoBehaviour
     [SerializeField] private EventReference RobotTeleportEvent;
     [SerializeField] private EventReference RobotOpenGateEvent;
     [SerializeField] private EventReference EnemyWalkEvent;
+    [SerializeField] private EventReference EnemyMovementEvent;
     [SerializeField] private EventReference EnemyRageEvent;
     [SerializeField] private EventReference AlarmLoop;
     
@@ -334,7 +335,7 @@ public class SoundPlayer : MonoBehaviour
     
     public void PlayEnemyMove()                            
     {
-        RuntimeManager.PlayOneShot(EnemyWalkEvent); 
+        RuntimeManager.PlayOneShot(EnemyMovementEvent); 
     }
 
     public void PlayEnemyAlarmSoundLoop()
