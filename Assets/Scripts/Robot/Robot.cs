@@ -5,6 +5,7 @@ using System.Linq;
 using DG.Tweening;
 using LevelGrid;
 using Robot.States;
+using TMPro;
 using UI;
 using UI.Transition;
 using UnityEngine;
@@ -37,6 +38,12 @@ namespace Robot
         private void Start()
         {
             _spriteChanger.SetHeadToClosed();
+        }
+
+        public void ResetPosition(Vector2Int coordinates, Direction direction, List<Enemy.Enemy> enemies)
+        {
+            Initialize(coordinates, direction, enemies);
+            _spriteChanger.SetHeadToOpen();
         }
 
         public void Initialize(Vector2Int coordinates, Direction direction, List<Enemy.Enemy> enemies)

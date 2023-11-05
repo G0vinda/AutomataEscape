@@ -169,7 +169,7 @@ public class GameManager : MonoBehaviour
         uiManager.ResetInGameButtons();
         LoadLevelGrid(level);
         PositionEnemiesInLevel(level);
-        PositionRobotInLevel(level);
+        PositionRobotInLevel(level, true);
     }
 
     private void FinishLevel()
@@ -219,11 +219,14 @@ public class GameManager : MonoBehaviour
         uiManager.SetupUIForLevel(level.AvailableActions, level.AvailableTransitionConditions, _stateChartManager);
     }
 
-    private void PositionRobotInLevel(LevelData level)
+    private void PositionRobotInLevel(LevelData level, bool reset = false)
     {
         var robotStartPositionOnGrid = levelGridManager.GetTilePosition(level.RobotStartPosition);
         _robot.transform.position = robotStartPositionOnGrid;
-        _robot.Initialize(level.RobotStartPosition, level.RobotStartDirection, _enemiesInLevel);
+        if (reset)
+            _robot.ResetPosition(level.RobotStartPosition, level.RobotStartDirection, _enemiesInLevel);
+        else
+            _robot.Initialize(level.RobotStartPosition, level.RobotStartDirection, _enemiesInLevel);
     }
 
     private void PositionEnemiesInLevel(LevelData level)

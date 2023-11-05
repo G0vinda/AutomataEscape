@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Codice.CM.WorkspaceServer.Tree.GameUI.Checkin.Updater;
 using DG.Tweening;
 using LevelGrid;
 using UI.Transition;
@@ -13,11 +14,13 @@ namespace Robot
         [Header("Animators")] 
         [SerializeField] private Animator headGateAnimator;
         [SerializeField] private Animator headAnimator;
+        [SerializeField] private Animator faceAnimator;
         [SerializeField] private Animator bodyAnimator;
 
         [Header("SpriteRenderers")] 
         [SerializeField] private SpriteRenderer headGateSpriteRenderer;
         [SerializeField] private SpriteRenderer headSpriteRenderer;
+        [SerializeField] private SpriteRenderer facePlateRenderer;
         [SerializeField] private SpriteRenderer bodySpriteRenderer;
 
         [Header("BeamParticles")] 
@@ -35,9 +38,14 @@ namespace Robot
         private LevelGridManager.KeyType _keyState;
         private Direction _direction;
 
-        private int _robotStartUpHash;
-        private int _robotShutDownHash;
-        private int _robotOffHash;
+        private int _headStartUpHash;
+        private int _headShutDownHash;
+        private int _headOffHash;
+
+        private int _faceStartUpHash;
+        private int _faceShutDownHash;
+        private int _faceOffHash;
+        private int _faceOnHash;
         
         private int _robotHeadOpenFrontHash;
         private int _robotHeadOpenSideHash;
@@ -58,10 +66,15 @@ namespace Robot
         {
             // Head animations
 
-            _robotStartUpHash = Animator.StringToHash("RobotStartUp");
-            _robotShutDownHash = Animator.StringToHash("RobotShutDown");
-            _robotOffHash = Animator.StringToHash("RobotOff");
+            _headStartUpHash = Animator.StringToHash("RobotStartUp");
+            _headShutDownHash = Animator.StringToHash("RobotShutDown");
+            _headOffHash = Animator.StringToHash("RobotOff");
 
+            _faceStartUpHash = Animator.StringToHash("RobotStartUp");
+            _faceShutDownHash = Animator.StringToHash("RobotShutDown");
+            _faceOffHash = Animator.StringToHash("RobotOff");
+            _faceOnHash = Animator.StringToHash("RobotOn");
+            
             _robotHeadOpenFrontHash = Animator.StringToHash("RobotHeadOpenFront");
             _robotHeadOpenSideHash = Animator.StringToHash("RobotHeadOpenSide");
             _robotHeadCloseFrontHash = Animator.StringToHash("RobotHeadCloseFront");
@@ -307,6 +320,11 @@ namespace Robot
             }
         }
 
+        public void SetHeadToOpen()
+        {
+            headGateSpriteRenderer.enabled = false;
+        }
+
         public void OpenHead()
         {
             MovementToIdle();
@@ -314,7 +332,7 @@ namespace Robot
             headGateSpriteRenderer.enabled = true;
             if (_direction == Direction.Down || _direction == Direction.Up)
             {
-                headGateAnimator.CrossFade(_robotHeadOpenFrontHash, 0, 0);   
+                headGateAnimator.CrossFade(_robotHeadOpenFrontHash, 0, 0);
             }else{
                 headGateAnimator.CrossFade(_robotHeadOpenSideHash, 0, 0);
             }
@@ -333,18 +351,18 @@ namespace Robot
 
         public void StartUp()
         {
-            headAnimator.CrossFade(_robotStartUpHash, 0, 0);
+            headAnimator.CrossFade(_headStartUpHash, 0, 0);
         }
 
         public void ShutDown()
         {
             headSpriteRenderer.enabled = true;
-            headAnimator.CrossFade(_robotShutDownHash, 0, 0);   
+            headAnimator.CrossFade(_headShutDownHash, 0, 0);
         }
 
         public void SetHeadSpriteToOff()
         {
-            headAnimator.CrossFade(_robotOffHash, 0, 0);
+            headAnimator.CrossFade(_headOffHash, 0, 0);
         }
 
         #endregion
@@ -396,10 +414,10 @@ namespace Robot
             Invoke(nameof(MovementToIdle), 0.6f);
         }
         
-        private IEnumerator PlayDelayedAction(Action pickUpAction, float delay)
+        private IEnumerator PlayDelayedAction(Action action, float delay)
         {
             yield return new WaitForSeconds(delay);
-            pickUpAction();
+            action();
         }
 
         public void GoForward()
@@ -421,6 +439,7 @@ namespace Robot
         private void MovementToIdle()
         {
             headSpriteRenderer.enabled = true;
+            
             var idleAnimation = _idleAnimations[(_direction, _keyState)];
             bodyAnimator.CrossFade(idleAnimation, 0, 0);
         }
