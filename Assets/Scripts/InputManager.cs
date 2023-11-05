@@ -34,8 +34,8 @@ public class InputManager : MonoBehaviour
         _uiInput.DragAndSelect.Press.started += HandlePress;
         _uiInput.DragAndSelect.PressRelease.performed += HandlePressRelease;
         
-        _uiInput.TouchZoom.Enable();
-        _uiInput.TouchZoom.SecondaryFingerPressed.performed += EnterZoomMode;
+        // _uiInput.TouchZoom.Enable();
+        // _uiInput.TouchZoom.SecondaryFingerPressed.performed += EnterZoomMode;
     }
 
     private void OnDisable()
@@ -44,8 +44,8 @@ public class InputManager : MonoBehaviour
         _uiInput.DragAndSelect.Press.started -= HandlePress;
         _uiInput.DragAndSelect.PressRelease.performed -= HandlePressRelease;
         
-        _uiInput.TouchZoom.Disable();
-        _uiInput.TouchZoom.SecondaryFingerPressed.performed -= EnterZoomMode;
+        // _uiInput.TouchZoom.Disable();
+        // _uiInput.TouchZoom.SecondaryFingerPressed.performed -= EnterZoomMode;
     }
 
     private void HandlePress(InputAction.CallbackContext context)

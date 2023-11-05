@@ -1028,6 +1028,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 654531687}
     m_Modifications:
+    - target: {fileID: 8944880905799518446, guid: 863ad8ace9aad134bb90f9a3ab559bf3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8944880906180975772, guid: 863ad8ace9aad134bb90f9a3ab559bf3, type: 3}
       propertyPath: m_Name
       value: CustomCardCreator
