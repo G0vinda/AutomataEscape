@@ -1624,6 +1624,11 @@ MonoBehaviour:
   transitionDeleteButtonPrefab: {fileID: 8818391680269194411, guid: 239176b3d1c95b943851d5979b458763, type: 3}
   blockedCellMarkingLayer: {fileID: 1962720464}
   blockedCellMarkingPrefab: {fileID: 2628453099235809261, guid: 90e6ec1ad1e11834fb7d9627d6465bc4, type: 3}
+  stateDragStartVibrationDuration: 0.08
+  statePlaceVibrationDuration: 0.04
+  transitionDrawStartVibrationDuration: 0.04
+  transitionDrawCompleteVibrationDuration: 0.08
+  transitionDeleteSelectionVibrationDuration: 0.04
 --- !u!114 &654531690
 MonoBehaviour:
   m_ObjectHideFlags: 0

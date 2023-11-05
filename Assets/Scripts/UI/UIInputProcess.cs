@@ -20,6 +20,13 @@ namespace UI
         [SerializeField] private Transform blockedCellMarkingLayer;
         [SerializeField] private GameObject blockedCellMarkingPrefab;
 
+        [Header("Vibrations")] 
+        [SerializeField] private float stateDragStartVibrationDuration;
+        [SerializeField] private float statePlaceVibrationDuration;
+        [SerializeField] private float transitionDrawStartVibrationDuration;
+        [SerializeField] private float transitionDrawCompleteVibrationDuration;
+        [SerializeField] private float transitionDeleteSelectionVibrationDuration;
+
         public Action InputStarted;
         public Action InputEnded;
 
@@ -243,6 +250,7 @@ namespace UI
             {
                 InputManager.DragEnded += HandleDragEnded;
                 ChangeInputPhase(UIInputPhase.InitiateTransitionLineDraw);
+                HapticPatterns.PlayConstant(0.7f, 0.7f, transitionDrawStartVibrationDuration);
                 _selectedDrawStateElement = stateElement;
                 _selectedDrawStateCell = _selectedDrawStateElement.ConnectedCell;
                 _selectedDrawStateCellCoordinates = _uiGridManager.GetCoordinatesFromCell(_selectedDrawStateCell);
@@ -270,7 +278,7 @@ namespace UI
             _selectedDragStateElement.transform.SetAsLastSibling();
             ChangeInputPhase(UIInputPhase.DraggingStateElement);
             SoundPlayer.Instance.PlayStateDragStart();
-            HapticPatterns.PlayConstant(0.7f, 0.7f, 0.04f);
+            HapticPatterns.PlayConstant(0.7f, 0.7f, stateDragStartVibrationDuration);
 
             var blockedCellPositions = _uiGridManager.GetCellPositionsAdjacentToStates();
             foreach (var blockedCellPosition in blockedCellPositions)
@@ -329,6 +337,7 @@ namespace UI
 
         private void CreateTransitionDeleteButton()
         {
+            HapticPatterns.PlayConstant(0.7f, 0.7f, transitionDeleteSelectionVibrationDuration);
             var inputPosition = _inputManager.GetPointerPosition();
             
             var buttonDestination = DetermineTransitionDeleteButtonPositioning(inputPosition);
@@ -441,6 +450,7 @@ namespace UI
                 _uiManager.AddTransition(_selectedDrawStateElement, TransitionLineDrawer.DestinationStateElement,
                     transitionSelection.CurrentSelected.Condition);
                 TransitionLineDrawer.FinishLine();
+                HapticPatterns.PlayConstant(0.7f, 0.7f, transitionDrawCompleteVibrationDuration);
             }
             else
             {
@@ -483,7 +493,7 @@ namespace UI
             {
                 _uiManager.PlaceStateElementOnGrid(_selectedDragStateElement, _hoveredDragStateChartCell);
                 SoundPlayer.Instance.PlayStateDragEnd();
-                HapticPatterns.PlayConstant(0.7f, 0.7f, 0.04f);
+                HapticPatterns.PlayConstant(0.7f, 0.7f, statePlaceVibrationDuration);
                 _selectedDragStateElement = null;
             }
             else

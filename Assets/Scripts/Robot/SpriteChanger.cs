@@ -428,14 +428,6 @@ namespace Robot
             Invoke(nameof(MovementToIdle), 0.6f);
         }
 
-        public void GoReverse(float moveTime)
-        {
-            headSpriteRenderer.enabled = false;
-            var reverseAnimation = _reverseMoveAnimations[(_direction, _keyState)];
-            bodyAnimator.CrossFade(reverseAnimation, 0, 0);
-            Invoke(nameof(MovementToIdle), moveTime);
-        }
-
         private void MovementToIdle()
         {
             headSpriteRenderer.enabled = true;

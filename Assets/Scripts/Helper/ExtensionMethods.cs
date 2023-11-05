@@ -114,11 +114,6 @@ namespace Helper
                      position.y < squareBottomLeft.y || position.y > squareBottomLeft.y + squareSize);
         }
 
-        public static bool IsDefault<T>(this T value)
-        {
-            return value.Equals(default(T));
-        }
-
         public static List<Vector2Int> GetAdjacentCoordinates(this Vector2Int coordinates)
         {
             return new List<Vector2Int>()

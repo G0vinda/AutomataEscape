@@ -355,10 +355,11 @@ public static class LevelDataStorage
                 {new Vector2Int(0, -2), LevelGridManager.KeyType.Blue}
              }),
         new LevelData( // Level 16
-            new Vector2Int(0, 0),
+            new Vector2Int(0, -1),
             Direction.Down,
             new[,]
             {
+                {Floor, None, None, None, Floor },
                 {Floor, Floor, None, Goal, Portal },
                 {Floor, Portal, None, Floor, Floor },
             },
@@ -369,11 +370,10 @@ public static class LevelDataStorage
                 new (TurnRight, new Vector2Int(4, 5))
             },new List<StateChartManager.TransitionCondition>()
             {
-                Default,
-                IsInFrontOfWall
+                Default
             },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
-            (new Vector2Int(1,-1), new Vector2Int(4,0))),
+            (new Vector2Int(1,-2), new Vector2Int(4,-1))),
         new LevelData( // Level 17
             new Vector2Int(2, 0),
             Direction.Up,
@@ -514,9 +514,9 @@ public static class LevelDataStorage
             Direction.Right,
             new[,]
             {
-                {Floor, Floor, Floor, Floor, Floor },
-                {Floor, Floor, Floor, Floor, Goal },
-                {Floor, Floor, Floor, Floor, Floor },
+                {Floor, Floor, Floor, Orange, Floor, Floor },
+                {Floor, Floor, Floor, Purple, Goal, Floor },
+                {Floor, Floor, Floor, Orange, Floor, Floor },
             },
             new List<LevelData.AvailableStateInfo>()
             {
@@ -526,7 +526,9 @@ public static class LevelDataStorage
             },new List<StateChartManager.TransitionCondition>()
             {
                 Default,
-                IsInFrontOfWall
+                IsInFrontOfWall,
+                StandsOnOrange,
+                StandsOnPurple
             },
             new Dictionary<Vector2Int, LevelGridManager.KeyType>(),
             new Dictionary<Vector2Int, Direction>

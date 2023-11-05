@@ -44,7 +44,7 @@ namespace UI
         private bool _stateChartPanelInitialized;
         private bool _availableSelectChanged;
         private bool _uiActive;
-        private Dictionary<(StateUIElement, StateUIPlaceElement), TransitionCondition> _connectedTransitions = new();
+        private List<ConnectedTransitionData> _connectedTransitions = new();
         private IButtonResettable _runButton;
         private IButtonResettable _viewButton;
 
@@ -238,12 +238,11 @@ namespace UI
             for (var i = 0; i < _connectedTransitions.Count; i++)
             {
                 var connectedTransition = _connectedTransitions.ElementAt(i);
-                if (connectedTransition.Key.Item2 != placeElement &&
-                    connectedTransition.Key.Item1 != placeElement.GetComponent<StateUIElement>())
+                if (connectedTransition.DestinationState != placeElement &&
+                    connectedTransition.SourceState != placeElement.GetComponent<StateUIElement>())
                     continue;
-
-                var condition = connectedTransition.Value;
-                RemoveTransition(connectedTransition.Key.Item1, condition);
+                
+                RemoveTransition(connectedTransition);
                 i--;
             }
 
@@ -257,35 +256,34 @@ namespace UI
         public void AddTransition(StateUIElement sourceState, StateUIPlaceElement destinationState,
             TransitionCondition condition)
         {
-            var newKey = (sourceState, destinationState);
-            if (_connectedTransitions.ContainsKey(newKey))
-            {
-                RemoveTransition(sourceState, _connectedTransitions[newKey]);
-            }
-
             var transitionWithSameCondition =
                 _connectedTransitions.FirstOrDefault(transition =>
-                    transition.Key.Item1 == sourceState && transition.Value == condition);
-            if (!transitionWithSameCondition.IsDefault())
+                    transition.SourceState == sourceState && transition.Condition == condition);
+            if (transitionWithSameCondition != null)
             {
-                RemoveTransition(sourceState, condition);
+                RemoveTransition(transitionWithSameCondition);
             }
 
-            TransitionCreated?.Invoke(newKey);
-            _connectedTransitions.Add(newKey, condition);
+            TransitionCreated?.Invoke((sourceState, destinationState));
+            _connectedTransitions.Add(new ConnectedTransitionData(sourceState, destinationState, condition));
             _stateChartManager.AddTransition(condition, sourceState.AssignedId, destinationState.GetAssignedId());
         }
 
         public void RemoveTransition(StateUIElement sourceState, TransitionCondition condition)
         {
-            var keyToRemove = _connectedTransitions.First(transition =>
-                transition.Key.Item1 == sourceState && transition.Value == condition).Key;
-            _connectedTransitions.Remove(keyToRemove);
+            var transitionToRemove = _connectedTransitions.First(transition =>
+                transition.SourceState == sourceState && transition.Condition == condition);
+            RemoveTransition(transitionToRemove);
+        }
 
-            TransitionRemoved?.Invoke(keyToRemove);
-            sourceState.RemoveTransitionByCondition(condition);
-            _stateChartManager.RemoveTransition(condition, sourceState.AssignedId);
-            TransitionLineDrawer.TransitionLineRemoved(condition);
+        private void RemoveTransition(ConnectedTransitionData connectedTransition)
+        {
+            TransitionRemoved?.Invoke((connectedTransition.SourceState, connectedTransition.DestinationState));
+            connectedTransition.SourceState.RemoveTransitionByCondition(connectedTransition.Condition);
+            _stateChartManager.RemoveTransition(connectedTransition.Condition, connectedTransition.SourceState.AssignedId);
+            TransitionLineDrawer.TransitionLineRemoved(connectedTransition.Condition);
+            
+            _connectedTransitions.Remove(connectedTransition);
         }
 
         public void SetStateImageToActive(int stateId)
@@ -317,6 +315,21 @@ namespace UI
         public float ScaleFloat(float scaledFloat)
         {
             return scaledFloat * _canvas.scaleFactor;
+        }
+        
+        private class ConnectedTransitionData
+        {
+            public StateUIElement SourceState;
+            public StateUIPlaceElement DestinationState;
+            public TransitionCondition Condition;
+
+            public ConnectedTransitionData(StateUIElement source, StateUIPlaceElement destination,
+                TransitionCondition condition)
+            {
+                SourceState = source;
+                DestinationState = destination;
+                Condition = condition;
+            }
         }
     }
 }

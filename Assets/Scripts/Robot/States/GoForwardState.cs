@@ -39,7 +39,7 @@ namespace Robot.States
                 SpriteChanger.GoForward();
                 SoundPlayer.Instance.PlayRobotHitWall();
                 animationSequence.Append(_robotTransform.DOMove(bumpPosition, bumpIntoWallTime)
-                    .SetEase(Ease.InCubic)).OnComplete(() => SpriteChanger.GoReverse(bumpRetreatTime));
+                    .SetEase(Ease.InCubic));
                 animationSequence.Append(_robotTransform.DOMove(robotStartPosition, bumpRetreatTime)
                     .SetEase(Ease.OutSine));
                 animation = animationSequence;
