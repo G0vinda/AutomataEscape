@@ -91,7 +91,7 @@ namespace UI.Grid
                     Debug.Log($"Time spent in PV with first connection: {_timeSpentInProgramViewWithOneConnection}");
                 }
 
-                if (_timeSpentInProgramViewWithOneConnection > createLoopHintWaitTime)
+                if (_timeSpentInProgramViewWithOneConnection > createLoopHintWaitTime && _createLoopHint == null)
                 {
                     _createLoopHint = Instantiate(createLoopHintPrefab, transform);
                     var stateCell = _hintStateUIPlaceElement.GetComponent<StateUIElement>().ConnectedCell;

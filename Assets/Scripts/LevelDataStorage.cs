@@ -386,7 +386,6 @@ public static class LevelDataStorage
             new List<LevelData.AvailableStateInfo>()
             {
                 new (GoForward, new Vector2Int(3, 1)),
-                new (TurnLeft, new Vector2Int(5, 1)),
                 new (TurnRight, new Vector2Int(3, 5)),
                 new (Grab, new Vector2Int(5, 5)),
                 new (Drop, new Vector2Int(1, 5))
@@ -535,7 +534,7 @@ public static class LevelDataStorage
             {
                 {new Vector2Int(2, 0), Direction.Down}
             }
-        ),
+        )
     };
 
     public static LevelData GetLevelData(int id)

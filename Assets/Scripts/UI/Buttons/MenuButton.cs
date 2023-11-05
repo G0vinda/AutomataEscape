@@ -34,8 +34,9 @@ namespace UI.Buttons
 
         public void ReturnToMenu()
         {
+            SoundPlayer.Instance.StopMusic();
             SoundPlayer.Instance.StopAtmoLevel();
-            SoundPlayer.Instance.PlayMusicMenu();
+            SoundPlayer.Instance.PlayMusicMenu();   
             SceneManager.LoadScene(menuSceneIndex);
         }
 

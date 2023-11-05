@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Codice.CM.WorkspaceServer.Tree.GameUI.Checkin.Updater;
 using DG.Tweening;
 using LevelGrid;
 using UI.Transition;
