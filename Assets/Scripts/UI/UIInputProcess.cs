@@ -14,7 +14,6 @@ namespace UI
     public class UIInputProcess : MonoBehaviour
     {
         [SerializeField] private TransitionSelection transitionSelection;
-        [SerializeField] private float transitionLineSelectionTime;
         [SerializeField] private TransitionDeleteButton transitionDeleteButtonPrefab;
         [Header("Blocked Cell Marking")]
         [SerializeField] private Transform blockedCellMarkingLayer;
@@ -41,10 +40,9 @@ namespace UI
         private Vector2 _previousDragPosition;
         
         // Variables for selecting and deleting TransitionLines
-        private SubCell _previousHoveredSubCell;
-        private float _transitionLineSelectionTimer;
         private TransitionLine _selectedTransitionLine;
         private TransitionDeleteButton _activeTransitionDeleteButton;
+        private bool _listeningToDeleteButtonEvents;
 
         // Variables for dragging state element
         private StateUIPlaceElement _selectedDragStateElement;
@@ -159,33 +157,17 @@ namespace UI
                     }
 
                     break;
-                case UIInputPhase.StartSelectingTransitionLine:
-                    if(_dragEnded)
-                        ChangeInputPhase(UIInputPhase.WaitingForInput);
+                case UIInputPhase.WaitingForDeleteButton:
+                    // meant to be empty
 
-                    var hoveredSubCell = _uiGridManager.GetSubCellOnPosition(_inputManager.GetPointerPosition());
-                    if (hoveredSubCell != _previousHoveredSubCell)
+                    if (!_listeningToDeleteButtonEvents)
                     {
-                        ChangeInputPhase(UIInputPhase.DraggingStateChart);
-                        break;
-                    }
-                    
-                    _transitionLineSelectionTimer -= Time.deltaTime;
-                    if (_transitionLineSelectionTimer <= 0)
-                    {
-                        _selectedTransitionLine.Highlight();
-                        CreateTransitionDeleteButton();
-                            
                         TransitionDeleteButton.ButtonPressed += HandleTransitionDeleteButtonPressed;
                         InputManager.InputOutsideOfDeleteButton += ExitDeleteState;
                         StopListeningToInputEvents();
                         
-                        ChangeInputPhase(UIInputPhase.WaitingForDeleteButton);
+                        _listeningToDeleteButtonEvents = true;
                     }
-                    
-                    break;
-                case UIInputPhase.WaitingForDeleteButton:
-                    // meant to be empty
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -298,12 +280,13 @@ namespace UI
             var hoveredSubCell = _uiGridManager.GetSubCellOnPosition(_inputManager.GetPointerPosition());
             if (hoveredSubCell != null)
             {
-                _previousHoveredSubCell = hoveredSubCell;
                 _selectedTransitionLine = CheckForTransitionLine(hoveredSubCell);
                 if (_selectedTransitionLine != null)
                 {
-                    _transitionLineSelectionTimer = transitionLineSelectionTime;
-                    ChangeInputPhase(UIInputPhase.StartSelectingTransitionLine);
+                    _selectedTransitionLine.Highlight();
+                    CreateTransitionDeleteButton();
+                    
+                    ChangeInputPhase(UIInputPhase.WaitingForDeleteButton);
                     return;
                 }
             }
@@ -417,6 +400,7 @@ namespace UI
             TransitionDeleteButton.ButtonPressed -= HandleTransitionDeleteButtonPressed;
             InputManager.InputOutsideOfDeleteButton -= ExitDeleteState;
             ListenToInputEvents();
+            _listeningToDeleteButtonEvents = false;
             ChangeInputPhase(UIInputPhase.WaitingForInput);
         }
 
@@ -526,7 +510,6 @@ namespace UI
             WaitingForInput,
             DraggingStateElement,
             DraggingStateChart,
-            StartSelectingTransitionLine,
             WaitingForDeleteButton,
             InitiateTransitionLineDraw,
             DrawingTransitionLine,

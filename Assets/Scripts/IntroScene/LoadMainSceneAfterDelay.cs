@@ -1,25 +1,36 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace IntroScene
 {
     public class LoadMainSceneAfterDelay : MonoBehaviour
     {
-        [SerializeField] private float delayInMiliseconds;
+        [SerializeField] private float delayInMilliseconds;
 
         private const int MainSceneIndex = 3;
 
         private void Start()
         {
-            var delay = delayInMiliseconds / 60;
-            Debug.Log($"Delay is {delay}");
-            Invoke(nameof(LoadMainScene), delay);
+            var delay = delayInMilliseconds / 60;
+            StartCoroutine(LoadMainSceneAfterDelayInSeconds(delay));
         }
 
-        private void LoadMainScene()
+        private IEnumerator LoadMainSceneAfterDelayInSeconds(float delay)
         {
-            SceneManager.LoadScene(MainSceneIndex);
+            yield return new WaitForSeconds(delay); // time of the cutscene
+
+            var scene = SceneManager.LoadSceneAsync(MainSceneIndex);
+            scene.allowSceneActivation = false;
+
+            while (scene.progress < 0.9f)
+            {
+                yield return null;
+            }
+
+            scene.allowSceneActivation = true;
         }
     }
 }
