@@ -275,6 +275,7 @@ namespace Robot
         {
             bodySpriteRenderer.sortingOrder = sortingOrder;
             headSpriteRenderer.sortingOrder = sortingOrder + 1;
+            facePlateRenderer.sortingOrder = sortingOrder + 1;
             headGateSpriteRenderer.sortingOrder = sortingOrder + 2;
             frontParticles.GetComponent<Renderer>().sortingOrder = sortingOrder + 1;
             backParticles.GetComponent<Renderer>().sortingOrder = sortingOrder - 1;
@@ -296,6 +297,7 @@ namespace Robot
         {
             headSpriteRenderer.enabled = false;
             headGateSpriteRenderer.enabled = false;
+            facePlateRenderer.enabled = false;
             SetToIdleClosed();
             SoundPlayer.Instance.PlayBeamDespawn();
             DOVirtual.Color(beamSolidColor, beamTransparentColor, beamTime, value =>
@@ -329,6 +331,7 @@ namespace Robot
             MovementToIdle();
             headSpriteRenderer.enabled = true;
             headGateSpriteRenderer.enabled = true;
+            facePlateRenderer.enabled = true;
             if (_direction == Direction.Down || _direction == Direction.Up)
             {
                 headGateAnimator.CrossFade(_robotHeadOpenFrontHash, 0, 0);
@@ -351,12 +354,21 @@ namespace Robot
         public void StartUp()
         {
             headAnimator.CrossFade(_headStartUpHash, 0, 0);
+            if (_direction == Direction.Down)
+            {
+                faceAnimator.CrossFade(_faceStartUpHash, 0, 0);
+            }
         }
 
         public void ShutDown()
         {
             headSpriteRenderer.enabled = true;
             headAnimator.CrossFade(_headShutDownHash, 0, 0);
+            if (_direction == Direction.Down)
+            {
+                facePlateRenderer.enabled = true;
+                faceAnimator.CrossFade(_faceShutDownHash, 0, 0);
+            }
         }
 
         public void SetHeadSpriteToOff()
@@ -384,6 +396,8 @@ namespace Robot
                 bodySpriteRenderer.flipX = true;
             if (nextDirection == Direction.Left)
                 bodySpriteRenderer.flipX = false;
+
+            facePlateRenderer.enabled = false;
             
             var turnAnimation = _turnAnimations[(_direction, nextDirection, _keyState)];
             bodyAnimator.CrossFade(turnAnimation, 0, 0);
@@ -394,6 +408,7 @@ namespace Robot
         public void GrabKey(LevelGridManager.KeyType keyType, Action pickUpAction)
         {
             headSpriteRenderer.enabled = false;
+            facePlateRenderer.enabled = false;
             _keyState = keyType;
             var grabAnimation = _grabAnimations[(_direction, keyType)];
             var animationToFloorTime = 22f / 60f;
@@ -405,6 +420,7 @@ namespace Robot
         public void DropKey(Action dropAction)
         {
             headSpriteRenderer.enabled = false;
+            facePlateRenderer.enabled = false;
             var dropAnimation = _dropAnimations[(_direction, _keyState)];
             var animationToFloorTime = 18f / 60f;
             bodyAnimator.CrossFade(dropAnimation, 0, 0);
@@ -422,6 +438,7 @@ namespace Robot
         public void GoForward()
         {
             headSpriteRenderer.enabled = false;
+            facePlateRenderer.enabled = false;
             var moveAnimation = _moveAnimations[(_direction, _keyState)];
             bodyAnimator.CrossFade(moveAnimation, 0, 0);
             Invoke(nameof(MovementToIdle), 0.6f);
