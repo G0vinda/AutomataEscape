@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FMOD;
-using Helper;
 using Robot;
 using UI.Buttons;
 using UI.Grid;
@@ -132,7 +130,7 @@ namespace UI
             SoundPlayer.Instance.PlayButtonClick();
         }
 
-        public void ToggleUI()
+        public void ToggleStateChartPanel()
         {
             
             if (_uiActive)
@@ -315,6 +313,11 @@ namespace UI
         public float ScaleFloat(float scaledFloat)
         {
             return scaledFloat * _canvas.scaleFactor;
+        }
+
+        public float UnscaleFloat(float unscaledFloat)
+        {
+            return unscaledFloat / _canvas.scaleFactor;
         }
         
         private class ConnectedTransitionData
