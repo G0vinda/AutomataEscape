@@ -24,6 +24,7 @@ namespace UI
         [SerializeField] private Transform transitionLayer;
         [SerializeField] private TransitionLine transitionLinePrefab;
         [SerializeField] private Image invalidActionMarker;
+        [SerializeField] private UserManual userManual;
 
         public static event Action<bool> ViewStateChanged;
         public static event Action<(StateUIElement, StateUIPlaceElement)> TransitionCreated;
@@ -79,6 +80,8 @@ namespace UI
             _availableStateInfo = availableStateInfo;
             _availableTransitionConditions = availableTransitionConditions;
             _stateChartManager = stateChartManager;
+            var stateActions = availableStateInfo.Select(info => info.Action).ToList();
+            userManual.EnableStateEntries(stateActions);
             if (_uiActive)
             {
                 SetupStatesAndTransitionSelection();
