@@ -15,16 +15,24 @@ namespace UI
         [SerializeField] private RectTransform stateListTransform;
         
         [Header("StateEntries")] 
-        [SerializeField] private GameObject startStateEntry;
         [SerializeField] private GameObject goForwardStateEntry;
         [SerializeField] private GameObject turnRightStateEntry;
         [SerializeField] private GameObject turnLeftStateEntry;
         [SerializeField] private GameObject grabStateEntry;
         [SerializeField] private GameObject dropStateEntry;
 
+        [Header("TransitionEntries")] 
+        [SerializeField] private GameObject defaultTransitionEntry;
+        [SerializeField] private GameObject isInFrontOfWallTransitionEntry;
+        [SerializeField] private GameObject standsOnOrangeTransitionEntry;
+        [SerializeField] private GameObject standsOnPurpleTransitionEntry;
+        [SerializeField] private GameObject standsOnKeyTransitionEntry;
+
         private ScrollRect _scrollRect;
         private Dictionary<StateChartManager.StateAction, GameObject> _stateEntries = new();
         private bool _dirtyState; // is true when rerender is needed
+        private List<StateChartManager.StateAction> _statesToEnable;
+        private List<StateChartManager.TransitionCondition> _transitionsToEnable;
 
         private void Awake()
         {
@@ -40,12 +48,8 @@ namespace UI
             UIManager.ViewStateChanged += HandleRobotOrViewStateChanged;
             if (_dirtyState)
             {
-                // LayoutRebuilder.ForceRebuildLayoutImmediate(stateListTransform);
-                // stateListTransform.GetComponent<Image>().SetAllDirty();
-                // ((RectTransform)transform).ForceUpdateRectTransforms();
                 _dirtyState = false;
-                gameObject.SetActive(false);
-                gameObject.SetActive(true);
+                StartCoroutine(DelayedStateSetup());
             }
         }
         private void OnDisable()
@@ -96,17 +100,22 @@ namespace UI
         public void EnableStateEntries(List<StateChartManager.StateAction> stateActions)
         {
             InitializeStateEntries();
-            
+            _dirtyState = true;
+            _statesToEnable = stateActions;
+        }
+
+        private IEnumerator DelayedStateSetup() // This delayed setup is necessary to render the layout correctly
+        {
             foreach (var (action, entry) in _stateEntries)
             {
-                if (stateActions.Contains(action))
+                if (_statesToEnable.Contains(action))
                 {
                     entry.SetActive(true);
                 }
             }
-
+            
+            yield return null;
             LayoutRebuilder.ForceRebuildLayoutImmediate(stateListTransform);
-            _dirtyState = true;
         }
     }
 }

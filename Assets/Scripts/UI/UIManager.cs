@@ -80,7 +80,7 @@ namespace UI
             _availableStateInfo = availableStateInfo;
             _availableTransitionConditions = availableTransitionConditions;
             _stateChartManager = stateChartManager;
-            var stateActions = availableStateInfo.Select(info => info.Action).ToList();
+            var stateActions = availableStateInfo.Select(info => info.Action).Distinct().ToList();
             userManual.EnableStateEntries(stateActions);
             if (_uiActive)
             {

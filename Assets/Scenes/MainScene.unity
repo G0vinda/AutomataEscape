@@ -4934,11 +4934,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218300469}
   m_CullTransparentMesh: 1
---- !u!1 &1220561315 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1083047152679073470, guid: 0fc77bbe6b0f3cd46a13ac400bf84ae9, type: 3}
-  m_PrefabInstance: {fileID: 1722664711251513556}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1234857210
 GameObject:
   m_ObjectHideFlags: 0
@@ -5328,12 +5323,16 @@ MonoBehaviour:
   viewport: {fileID: 856896361}
   topBottomMargin: 20
   stateListTransform: {fileID: 544542940}
-  startStateEntry: {fileID: 1220561315}
   goForwardStateEntry: {fileID: 1559039839}
   turnRightStateEntry: {fileID: 1409070625}
   turnLeftStateEntry: {fileID: 536667513}
   grabStateEntry: {fileID: 1050161761}
   dropStateEntry: {fileID: 1802460302}
+  defaultTransitionEntry: {fileID: 0}
+  isInFrontOfWallTransitionEntry: {fileID: 0}
+  standsOnOrangeTransitionEntry: {fileID: 0}
+  standsOnPurpleTransitionEntry: {fileID: 0}
+  standsOnKeyTransitionEntry: {fileID: 0}
 --- !u!1 &1458804222
 GameObject:
   m_ObjectHideFlags: 0
