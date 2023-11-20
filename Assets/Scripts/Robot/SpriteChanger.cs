@@ -331,7 +331,9 @@ namespace Robot
             MovementToIdle();
             headSpriteRenderer.enabled = true;
             headGateSpriteRenderer.enabled = true;
-            facePlateRenderer.enabled = true;
+            if(_direction == Direction.Down)
+                facePlateRenderer.enabled = true;
+            
             if (_direction == Direction.Down || _direction == Direction.Up)
             {
                 headGateAnimator.CrossFade(_robotHeadOpenFrontHash, 0, 0);

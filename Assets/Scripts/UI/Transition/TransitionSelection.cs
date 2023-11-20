@@ -10,7 +10,6 @@ namespace UI.Transition
     public class TransitionSelection : MonoBehaviour
     {
         [SerializeField] private List<TransitionSelectElement> selectElements;
-        [SerializeField] private Image lineImage;
 
         public static event Action<TransitionSelectElement> TransitionSelectElementSelected;
         public TransitionSelectElement CurrentSelected { get; private set; }
@@ -51,7 +50,6 @@ namespace UI.Transition
             var selectElement = selectElements.First(element => element.Condition == condition);
             selectElement.ShowSelectionMarking();
             CurrentSelected = selectElement;
-            lineImage.color = selectElement.GetColor();
 
             TransitionLineDrawer.CurrentTransitionCondition = condition;
             

@@ -13,6 +13,8 @@ namespace UI.Transition
         [SerializeField] private Image icon;
         [SerializeField] private Image background;
         [SerializeField] private Image selectionMarking;
+        [SerializeField] private Image transitionLine;
+        [SerializeField] private Transform containerTransform;
         
         public StateChartManager.TransitionCondition Condition { get; private set; }
         public static event Action<TransitionSelectElement> TransitionSelectElementEnabled;
@@ -20,6 +22,7 @@ namespace UI.Transition
         private void Awake()
         {
             background.color = data.color;
+            transitionLine.color = data.color;
             if (data.icon != null)
             {
                 icon.sprite = data.icon;   
@@ -38,19 +41,16 @@ namespace UI.Transition
             TransitionSelectElementEnabled?.Invoke(this);
         }
 
-        public Color GetColor()
-        {
-            return data.color;
-        }
-
         public void ShowSelectionMarking()
         {
             selectionMarking.gameObject.SetActive(true);
+            containerTransform.localPosition = new Vector3(100f, 0, 0);
         }
         
         public void HideSelectionMarking()
         {
             selectionMarking.gameObject.SetActive(false);
+            containerTransform.localPosition = Vector3.zero;
         }
     }
 }

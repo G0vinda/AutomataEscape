@@ -81,7 +81,7 @@ namespace UI
             _availableTransitionConditions = availableTransitionConditions;
             _stateChartManager = stateChartManager;
             var stateActions = availableStateInfo.Select(info => info.Action).Distinct().ToList();
-            userManual.EnableStateEntries(stateActions);
+            userManual.EnableManualEntries(stateActions, availableTransitionConditions);
             if (_uiActive)
             {
                 SetupStatesAndTransitionSelection();

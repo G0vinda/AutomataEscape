@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Robot;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
 
@@ -12,7 +13,7 @@ namespace UI
     {
         [SerializeField] private RectTransform viewport;
         [SerializeField] private float topBottomMargin;
-        [SerializeField] private RectTransform stateListTransform;
+        [SerializeField] private RectTransform contentTransform;
         
         [Header("StateEntries")] 
         [SerializeField] private GameObject goForwardStateEntry;
@@ -30,6 +31,7 @@ namespace UI
 
         private ScrollRect _scrollRect;
         private Dictionary<StateChartManager.StateAction, GameObject> _stateEntries = new();
+        private Dictionary<StateChartManager.TransitionCondition, GameObject> _transitionEntries = new();
         private bool _dirtyState; // is true when rerender is needed
         private List<StateChartManager.StateAction> _statesToEnable;
         private List<StateChartManager.TransitionCondition> _transitionsToEnable;
@@ -37,6 +39,34 @@ namespace UI
         private void Awake()
         {
             _scrollRect = GetComponent<ScrollRect>();
+            
+            _stateEntries = new Dictionary<StateChartManager.StateAction, GameObject>()
+            {
+                { StateChartManager.StateAction.GoForward, goForwardStateEntry },
+                { StateChartManager.StateAction.TurnRight, turnRightStateEntry },
+                { StateChartManager.StateAction.TurnLeft, turnLeftStateEntry },
+                { StateChartManager.StateAction.Grab, grabStateEntry },
+                { StateChartManager.StateAction.Drop, dropStateEntry }
+            };
+         
+            foreach (var (_, entry) in _stateEntries)
+            {
+                entry.SetActive(false);
+            }
+
+            _transitionEntries = new Dictionary<StateChartManager.TransitionCondition, GameObject>()
+            {
+                { StateChartManager.TransitionCondition.Default, defaultTransitionEntry },
+                { StateChartManager.TransitionCondition.IsInFrontOfWall, isInFrontOfWallTransitionEntry },
+                { StateChartManager.TransitionCondition.StandsOnOrange, standsOnOrangeTransitionEntry },
+                { StateChartManager.TransitionCondition.StandsOnPurple, standsOnPurpleTransitionEntry },
+                { StateChartManager.TransitionCondition.StandsOnKey, standsOnKeyTransitionEntry },
+            };
+            
+            foreach (var (_, entry) in _transitionEntries)
+            {
+                entry.SetActive(false);
+            }
         }
 
         #region OnEnable/OnDisable
@@ -80,28 +110,11 @@ namespace UI
             gameObject.SetActive(!gameObject.activeSelf);
         }
 
-        private void InitializeStateEntries()
+        public void EnableManualEntries(List<StateChartManager.StateAction> stateActions, List<StateChartManager.TransitionCondition> transitionConditions)
         {
-            _stateEntries = new Dictionary<StateChartManager.StateAction, GameObject>()
-            {
-                { StateChartManager.StateAction.GoForward, goForwardStateEntry },
-                { StateChartManager.StateAction.TurnRight, turnRightStateEntry },
-                { StateChartManager.StateAction.TurnLeft, turnLeftStateEntry },
-                { StateChartManager.StateAction.Grab, grabStateEntry },
-                { StateChartManager.StateAction.Drop, dropStateEntry }
-            };
-         
-            foreach (var (_, entry) in _stateEntries)
-            {
-                entry.SetActive(false);
-            }
-        }
-
-        public void EnableStateEntries(List<StateChartManager.StateAction> stateActions)
-        {
-            InitializeStateEntries();
             _dirtyState = true;
             _statesToEnable = stateActions;
+            _transitionsToEnable = transitionConditions;
         }
 
         private IEnumerator DelayedStateSetup() // This delayed setup is necessary to render the layout correctly
@@ -115,7 +128,25 @@ namespace UI
             }
             
             yield return null;
-            LayoutRebuilder.ForceRebuildLayoutImmediate(stateListTransform);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentTransform);
+            _scrollRect.verticalNormalizedPosition = 1f;
+
+            if (_transitionsToEnable.Count > 1)
+            {
+                foreach (var (condition, entry) in _transitionEntries)
+                {
+                    if (_transitionsToEnable.Contains(condition))
+                    {
+                        entry.SetActive(true);
+                    }
+                }
+            }
+            
+            yield return null;
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentTransform);
+            
+            yield return null;
+            _scrollRect.verticalNormalizedPosition = 1f;
         }
     }
 }
