@@ -45,12 +45,15 @@ namespace UI.Buttons
             }
             else
             {
+                if(_image.sprite == programViewSprite)
+                    return;
+                
                 _image.sprite = programViewSprite;
                 ListenToRobotGotClickedEvent(true);
             }
         }
 
-        private void ListenToRobotGotClickedEvent(bool listen)
+        public void ListenToRobotGotClickedEvent(bool listen)
         {
             if(listen == _listensToRobotClickEvent)
                 return;

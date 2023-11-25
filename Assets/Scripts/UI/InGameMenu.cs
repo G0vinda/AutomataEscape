@@ -1,3 +1,4 @@
+using UI.Buttons;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +7,9 @@ namespace UI
     public class InGameMenu : MonoBehaviour
     {
         [SerializeField] private GameObject runButton;
-        [SerializeField] private GameObject viewButton;
+        [SerializeField] private ViewButton viewButton;
+        [SerializeField] private GameObject userManualButton;
+        [SerializeField] private GameObject userManual;
         [SerializeField] private InputManager inputManager;
         [SerializeField] private Slider sfxSlider;
         [SerializeField] private Slider musicSlider;
@@ -20,13 +23,19 @@ namespace UI
         {
             gameObject.SetActive(value);
             runButton.SetActive(!value);
-            viewButton.SetActive(!value);
+            viewButton.gameObject.SetActive(!value);
+            userManualButton.SetActive(!value);
             inputManager.enabled = !value;
 
             if (value)
             {
                 sfxSlider.value = SoundPlayer.Instance.GetSfxVolume();
                 musicSlider.value = SoundPlayer.Instance.GetMusicVolume();
+                userManual.SetActive(false);
+            }
+            else
+            {
+                viewButton.ListenToRobotGotClickedEvent(true);
             }
         }
 

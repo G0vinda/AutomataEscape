@@ -36,6 +36,7 @@ namespace Robot
         
         private LevelGridManager.KeyType _keyState;
         private Direction _direction;
+        private bool _reachedGoal;
 
         private int _headStartUpHash;
         private int _headShutDownHash;
@@ -43,6 +44,7 @@ namespace Robot
 
         private int _faceStartUpHash;
         private int _faceShutDownHash;
+        private int _faceHappy;
         private int _faceOffHash;
         private int _faceOnHash;
         
@@ -50,8 +52,10 @@ namespace Robot
         private int _robotHeadOpenSideHash;
         private int _robotHeadCloseFrontHash;
         private int _robotHeadCloseSideHash;
-        private int _robotHeadIsClosedFront;
-        private int _robotHeadIsClosedSide;
+        private int _robotHeadIsClosedFrontHash;
+        private int _robotHeadIsClosedSideHash;
+
+        private int _idleDownHappyHash;
 
         private Dictionary<(Direction, LevelGridManager.KeyType), int> _idleAnimations;
         private Dictionary<Direction, int> _idleClosedAnimations;
@@ -71,6 +75,7 @@ namespace Robot
 
             _faceStartUpHash = Animator.StringToHash("RobotStartUp");
             _faceShutDownHash = Animator.StringToHash("RobotShutDown");
+            _faceHappy = Animator.StringToHash("RobotHappy");
             _faceOffHash = Animator.StringToHash("RobotOff");
             _faceOnHash = Animator.StringToHash("RobotOn");
             
@@ -78,10 +83,12 @@ namespace Robot
             _robotHeadOpenSideHash = Animator.StringToHash("RobotHeadOpenSide");
             _robotHeadCloseFrontHash = Animator.StringToHash("RobotHeadCloseFront");
             _robotHeadCloseSideHash = Animator.StringToHash("RobotHeadCloseSide");
-            _robotHeadIsClosedFront = Animator.StringToHash("RobotHeadIsClosedFront");
-            _robotHeadIsClosedSide = Animator.StringToHash("RobotHeadIsClosedSide");
+            _robotHeadIsClosedFrontHash = Animator.StringToHash("RobotHeadIsClosedFront");
+            _robotHeadIsClosedSideHash = Animator.StringToHash("RobotHeadIsClosedSide");
             
             // Body animations
+
+            _idleDownHappyHash = Animator.StringToHash("IdleDownClosedHappy");
             
             _idleAnimations = new Dictionary<(Direction, LevelGridManager.KeyType), int>()
             {
@@ -315,15 +322,20 @@ namespace Robot
         {
             if (_direction == Direction.Down || _direction == Direction.Up)
             {
-                headGateAnimator.CrossFade(_robotHeadIsClosedFront, 0, 0);   
+                headGateAnimator.CrossFade(_robotHeadIsClosedFrontHash, 0, 0);   
             }else{
-                headGateAnimator.CrossFade(_robotHeadIsClosedSide, 0, 0);
+                headGateAnimator.CrossFade(_robotHeadIsClosedSideHash, 0, 0);
             }
         }
 
         public void SetHeadToOpen()
         {
             headGateSpriteRenderer.enabled = false;
+            if(_direction == Direction.Down)
+            {
+                facePlateRenderer.enabled = true;
+                faceAnimator.CrossFade(_faceOffHash, 0, 0);
+            }
         }
 
         public void OpenHead()
@@ -460,6 +472,11 @@ namespace Robot
             MovementToIdle();
         }
 
+        public void SetToGoalReached()
+        {
+            _reachedGoal = true;
+        }
+
         public void Initialize()
         {
             bodySpriteRenderer.flipX = _direction == Direction.Right;
@@ -468,6 +485,12 @@ namespace Robot
 
         private void SetToIdleClosed()
         {
+            if (_reachedGoal && _direction == Direction.Down)
+            {
+                bodyAnimator.CrossFade(_idleDownHappyHash, 0, 0);
+                return;
+            }
+            
             var closedIdleAnimation = _idleClosedAnimations[_direction];
             bodyAnimator.CrossFade(closedIdleAnimation, 0, 0);
         }

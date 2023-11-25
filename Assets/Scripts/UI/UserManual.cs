@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Robot;
+using UI.Buttons;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -14,6 +15,8 @@ namespace UI
         [SerializeField] private RectTransform viewport;
         [SerializeField] private float topBottomMargin;
         [SerializeField] private RectTransform contentTransform;
+        [SerializeField] private GameObject transitionEntryList;
+        [SerializeField] private ViewButton viewButton;
         
         [Header("StateEntries")] 
         [SerializeField] private GameObject goForwardStateEntry;
@@ -107,7 +110,9 @@ namespace UI
 
         public void ToggleUserManual()
         {
-            gameObject.SetActive(!gameObject.activeSelf);
+            var activeValue = !gameObject.activeSelf;
+            gameObject.SetActive(activeValue);
+            viewButton.ListenToRobotGotClickedEvent(!activeValue);
         }
 
         public void EnableManualEntries(List<StateChartManager.StateAction> stateActions, List<StateChartManager.TransitionCondition> transitionConditions)
@@ -133,6 +138,7 @@ namespace UI
 
             if (_transitionsToEnable.Count > 1)
             {
+                transitionEntryList.SetActive(true);
                 foreach (var (condition, entry) in _transitionEntries)
                 {
                     if (_transitionsToEnable.Contains(condition))
@@ -140,6 +146,10 @@ namespace UI
                         entry.SetActive(true);
                     }
                 }
+            }
+            else
+            {
+                transitionEntryList.SetActive(false);
             }
             
             yield return null;

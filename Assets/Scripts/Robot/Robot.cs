@@ -140,6 +140,7 @@ namespace Robot
                 
             } while (true);
 
+            _spriteChanger.SetToGoalReached();
             _spriteChanger.CloseHead();
             yield return _stateWait;
             GameManager.Instance.ReachGoal();
