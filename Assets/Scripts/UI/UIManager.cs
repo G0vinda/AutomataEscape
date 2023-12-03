@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FMOD;
-using Helper;
 using Robot;
 using UI.Buttons;
 using UI.Grid;
@@ -26,6 +24,7 @@ namespace UI
         [SerializeField] private Transform transitionLayer;
         [SerializeField] private TransitionLine transitionLinePrefab;
         [SerializeField] private Image invalidActionMarker;
+        [SerializeField] private UserManual userManual;
 
         public static event Action<bool> ViewStateChanged;
         public static event Action<(StateUIElement, StateUIPlaceElement)> TransitionCreated;
@@ -81,6 +80,8 @@ namespace UI
             _availableStateInfo = availableStateInfo;
             _availableTransitionConditions = availableTransitionConditions;
             _stateChartManager = stateChartManager;
+            var stateActions = availableStateInfo.Select(info => info.Action).Distinct().ToList();
+            userManual.EnableManualEntries(stateActions, availableTransitionConditions);
             if (_uiActive)
             {
                 SetupStatesAndTransitionSelection();
@@ -132,7 +133,7 @@ namespace UI
             SoundPlayer.Instance.PlayButtonClick();
         }
 
-        public void ToggleUI()
+        public void ToggleStateChartPanel()
         {
             
             if (_uiActive)
@@ -315,6 +316,11 @@ namespace UI
         public float ScaleFloat(float scaledFloat)
         {
             return scaledFloat * _canvas.scaleFactor;
+        }
+
+        public float UnscaleFloat(float unscaledFloat)
+        {
+            return unscaledFloat / _canvas.scaleFactor;
         }
         
         private class ConnectedTransitionData

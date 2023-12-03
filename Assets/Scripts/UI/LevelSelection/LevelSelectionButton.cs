@@ -59,6 +59,7 @@ namespace UI.LevelSelection
             if(_locked)
                 return;
             
+            SoundPlayer.Instance.PlayButtonClickMenu();
             _levelSelectionManager.LoadLevel(this);
         }
     }

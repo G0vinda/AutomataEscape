@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,6 +9,7 @@ namespace Menu
     {
         [SerializeField] private GameObject newGamePrompt;
         [SerializeField] private Button continueButton;
+        [SerializeField] private GameObject loadingScreen;
 
         private const int LevelSelectionSceneIndex = 1;
         private const int IntroSceneIndex = 2;
@@ -42,8 +43,23 @@ namespace Menu
         {
             PlayerPrefs.DeleteAll();
             PlayerPrefs.SetInt("ReachedLevelId", 0);
+
+            StartCoroutine(LoadIntroScene());
+        }
+
+        private IEnumerator LoadIntroScene()
+        {
+            var scene = SceneManager.LoadSceneAsync(IntroSceneIndex);
+            scene.allowSceneActivation = false;
+            loadingScreen.SetActive(true);
+
+            while (scene.progress < 0.9f)
+            {
+                yield return null;
+            }
+
+            scene.allowSceneActivation = true;
             SoundPlayer.Instance.StopMusic();
-            SceneManager.LoadScene(IntroSceneIndex);
         }
 
         public void QuitGame()
