@@ -277,14 +277,15 @@ namespace UI
         private void HandleStateChartPanelDragStart()
         {
             InputManager.DragEnded += HandleDragEnded;
-            var hoveredSubCell = _uiGridManager.GetSubCellOnPosition(_inputManager.GetPointerPosition());
+            var inputPosition = _inputManager.GetPointerPosition();
+            var hoveredSubCell = _uiGridManager.GetSubCellOnPosition(inputPosition);
             if (hoveredSubCell != null)
             {
                 _selectedTransitionLine = CheckForTransitionLine(hoveredSubCell);
                 if (_selectedTransitionLine != null)
                 {
                     _selectedTransitionLine.Highlight();
-                    CreateTransitionDeleteButton();
+                    CreateTransitionDeleteButton(inputPosition);
                     
                     ChangeInputPhase(UIInputPhase.WaitingForDeleteButton);
                     return;
@@ -318,10 +319,9 @@ namespace UI
             transitionSelection.SelectTransitionCondition(transitionSelectElement.Condition);
         }
 
-        private void CreateTransitionDeleteButton()
+        private void CreateTransitionDeleteButton(Vector2 inputPosition)
         {
             HapticPatterns.PlayConstant(0.7f, 0.7f, transitionDeleteSelectionVibrationDuration);
-            var inputPosition = _inputManager.GetPointerPosition();
             
             var buttonDestination = DetermineTransitionDeleteButtonPositioning(inputPosition);
             _activeTransitionDeleteButton = Instantiate(transitionDeleteButtonPrefab, inputPosition,

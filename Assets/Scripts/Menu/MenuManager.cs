@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -60,7 +59,6 @@ namespace Menu
             }
 
             scene.allowSceneActivation = true;
-            loadingScreen.SetActive(false);
             SoundPlayer.Instance.StopMusic();
         }
 
