@@ -124,7 +124,7 @@ namespace Robot
 
         public bool CheckIfStartStateIsConnected()
         {
-            return _stateChart[0].Transitions.Count > 0;
+            return _stateChart[0].Transitions.Length > 0;
         }
 
         private void CheckForConnectedStates()

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using LevelGrid;
-using Mono.Collections.Generic;
 using Robot.Transitions;
 using UI;
 using UI.Transition;
@@ -20,7 +19,7 @@ namespace Robot.States
             ReachedGoal
         }
         
-        public ReadOnlyCollection<RobotTransition> Transitions => new (_transitions.ToArray());
+        public RobotTransition[] Transitions => _transitions.ToArray();
         public int Id { get; set; }
 
         protected LevelGridManager LevelGridManager;
